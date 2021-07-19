@@ -1,0 +1,1402 @@
+\label{sec:ifc-decls}
+
+Declarations are indicated by abstract declaration references.  This document
+uses \type{DeclIndex} to designate a typed abstract reference to a
+declaration.  Like all abstract references, it is a 32-bit value
+\begin{figure}[htbp]
+  \centering
+  \absref{5}{DeclSort}
+  \caption{\type{DeclIndex}: Abstract reference of declaration}
+  \label{fig:ifc-decl-index}
+\end{figure}
+
+\begin{SortEnum}{DeclSort}
+	\enumerator{VendorExtension}
+	\enumerator{Enumerator}
+	\enumerator{Variable}
+	\enumerator{Parameter}
+	\enumerator{Field}
+	\enumerator{Bitfield}
+	\enumerator{Scope}
+	\enumerator{Enumeration}
+	\enumerator{Alias}
+	\enumerator{Temploid}
+	\enumerator{Template}
+	\enumerator{PartialSpecialization}
+	\enumerator{ExplicitSpecialization}
+	\enumerator{ExplicitInstantiation}
+	\enumerator{Concept}
+	\enumerator{Function}
+	\enumerator{Method}
+	\enumerator{Constructor}
+	\enumerator{InheritedConstructor}
+	\enumerator{Destructor}
+	\enumerator{Reference}
+	\enumerator{UsingDeclaration}
+	\enumerator{UsingDirective}
+	\enumerator{Friend}
+	\enumerator{Expansion}
+	\enumerator{DeductionGuide}
+	\enumerator{Barren}
+	\enumerator{Tuple}
+	\enumerator{SyntaxTree}
+	\enumerator{Intrinsic}
+	\enumerator{Property}
+	\enumerator{OutputSegment}
+\end{SortEnum}
+
+\paragraph{Note:}
+The individual values a \type{DeclSort} enumerator is subject to change
+at any moment until the design stabilizes.
+
+\section{Declaration vocabulary types}
+\label{sec:ifc-decl-support-types}
+
+The description of declarations uses a set of common types values as described below.
+
+\subsection{Access specifiers}
+\label{sec:ifc-access-specifier}
+
+Every non-local declaration has an access specifier, of type:
+\begin{typedef}{Access}{}
+	enum class Access : uint8_t {
+		None,				// No access specifier
+		Private,				// "private" for scope member
+		Protected,			// "protected" for scope member
+		Public,				// "public" for scope member
+	};
+\end{typedef}
+
+\subsection{Basic specifiers}
+\label{sec:ifc-basic-specifiers}
+
+Certain cumulative properties common to all declarations are described by the bitmask type \type{BasicSpecifiers}:
+%
+\begin{typedef}{BasicSpecifiers}{}
+	enum class BasicSpecifiers : uint8_t {
+		Cxx                     = 0,        // C++ language linkage
+		C                       = 1 << 0,   // C language linkage
+		Internal                = 1 << 1,   // 
+		Vague                   = 1 << 2,   // Vague linkage, e.g. COMDAT, still external
+		External                = 1 << 3,   // External linkage.
+		Deprecated              = 1 << 4,   // [[deprecated("foo")]]
+		InitializedInClass      = 1 << 5,   // defined or initialized in a class
+		NonExported             = 1 << 6,   // Not explicitly exported
+		IsMemberOfGlobalModule  = 1 << 7    // member of the global module
+	};
+\end{typedef}
+%
+
+\note{The definition of \type{BasicSpecifiers} may change in the future, and may in fact be part of \type{Declaration} (\secref{sec:ifc-scope-member}).
+The numerical values assigned to these symbolic constants are subject to change.
+}
+
+\subsection{Reachable semantic properties}
+\label{sec:ifc-reachable-properties}
+
+In certain circumstances, the IFC stores more information than the bare minimum
+required by the ISO C++ Modules specification.  In such cases, it is necessarilyto know 
+which semantic properties are reachable, outside the owning module, to the importers.
+In other circumstances, known such additional information is useful in performing
+additional checks such as ODR violation detection.  The availability of such
+supplementary information is indicated by the bitmask \type{ReachableProperties}
+\begin{typedef}{ReachableProperties}{}
+    enum class ReachableProperties : uint8_t {
+        None                = 0,        // nothing beyond name, type, scope.
+        Initializer         = 1 << 0,   // IPR-initializer exported.
+        DefaultArguments    = 1 << 1,   // function or template default arguments exported
+        Attributes          = 1 << 2,   // standard attributes exported.
+        All                 = 0xff,     // Everything.
+    };
+\end{typedef}
+%
+
+
+
+\subsection{Object traits}
+\label{sec:ifc-object-traits}
+
+Certain cumulative properties common to all data/object declarations are described by the bitmask type \type{ObjectTraits}
+%
+\begin{typedef}{ObjectTraits}{}
+	enum class ObjectTraits : uint8_t {
+		None					= 0,
+		Constexpr				= 1 << 0,
+		Mutable				= 1 << 1,
+		ThreadLocal			= 1 << 2,
+		Inline					= 1 << 3,
+		InitializerExported	= 1 << 4,
+		Vendor					= 1 << 7,
+	};
+\end{typedef}
+%
+
+\note{The definition of \type{ObjectTraits} is subject to change.
+The numerical values assigned to these symbolic constants are subject to change.}
+
+\subsection{Vendor traits}
+\label{sec:ifc-msvc-trait-bitset}
+
+Declarations of certain entities may be endowed with vendor-specific traits.
+The MSVC-specific traits are defined by the following enumeration
+\begin{typedef}{MsvcTraits}{}
+	enum class MsvcTraits : uint32_t {
+		None					= 0,
+		ForceInline			= 1 << 0,
+		Naked					= 1 << 1,
+		NoAlias				= 1 << 2,
+		NoInline				= 1 << 3,
+		Restrict				= 1 << 4,
+		SafeBuffers			= 1 << 5,
+		DllExport				= 1 << 6,
+		DllImport				= 1 << 7,
+		CodeSegment			= 1 << 8,
+		Novtable				= 1 << 9,
+		IntrinsicType			= 1 << 10,
+		EmptyBases			= 1 << 11,
+		Process				= 1 << 12,
+		Allocate				= 1 << 13,
+		SelectAny				= 1 << 14,
+		Comdat				= 1 << 15,
+		Uuid					= 1 << 16,
+	};
+\end{typedef}
+
+\subsection{Parameter Level}
+
+A template declaration can have many nesting levesl.  This is the case of member templates of class templates; that is a member of a clsss template, that is itself a template.
+Parameter nesting level starts from 1.  The nesting level is given by a value of type \type{ParameterLevel} defined as
+\newtype{ParameterLevel}{32}
+
+\subsection{Parameter Position}
+
+A parameter at a given level can be identified by its position in its enclosing parameter list.  The  position of a template parameter is given by a value of type \type{ParameterPosition}, defined as \newtype{ParameterPosition}{32}
+
+\section{Declaration structures}
+\label{sec:ifc:decl-structures}
+
+\subsection{\valueTag{DeclSort::VendorExtension}}
+\label{sec:ifc:DeclSort:VendorExtension}
+A \type{DeclIndex} value with tag \valueTag{DeclSort::VendorExtension} represents an abstract reference to a vendor-specific declaration.
+This tag value is reserved for encoding vendor-specific extensions.
+
+\partition{decl.vendor-extension}
+
+\subsection{\valueTag{DeclSort::Enumerator}}
+\label{sec:ifc:DeclSort:Enumerator}
+
+A \type{DeclIndex} value with tag \valueTag{DeclSort::Enumerator} represents
+an abstract reference to an enumerator declaration.
+The \field{index} field is an index into the enumerator declaration partition.
+Each entry in that partition is a structure with the following components:
+a \field{name} field, a \field{locus} field, a \field{type} field, an \field{initializer} field,
+a \field{specifier} field, and an \field{access} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{specifier}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+	}
+	\caption{Structure of an enumerator declaration}
+	\label{fig:ifc-enumerator-decl-structure}
+\end{figure}
+%
+The \field{name} field denotes the C++ source-level name of the enumerator.
+The \field{locus} field denotes the source location.
+The \field{type} field denotes the type of the enumerator.
+The \field{initializer} field denotes the value or the initializer of the enumerator.
+The \field{specifier} field denotes the specifiers of the enumerator.
+The \field{access} field denotes the C++ source-level access specifier of the enumerator.
+
+\partition{decl.enumerator}
+
+\subsection{\valueTag{DeclSort::Variable}} 
+\label{sec:ifc:DeclSort:Variable}
+
+A \type{DeclIndex} value with tag \valueTag{DeclSort::Variable} represents an abstract
+reference to a variable declaration.  Note that static data members are also
+semantically variables and are represented as such.
+The \field{index} field is an index into the variable declaration partition.
+Each entry in that partition is a structure with the following components:
+a \field{name} field, a \field{locus} field, a \type{field}, a \field{home\_scope} field,
+an \field{initializer} field, an \field{alignment} field, a \field{specifier} field, a \field{traits}
+field, and an \field{access} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{alignment}{ExprIndex} \\
+		\DeclareMember{traits}{ObjectTraits} \\
+		\DeclareMember{specifier}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a variable declaration}
+	\label{fig:ifc-variable-decl-structure}
+\end{figure}
+%
+The \field{name} field denotes the name of the variable.  Note that it can be a plain identifier (a \type{TextOffset} into the string table), or something
+as elaborated as a template-id (for specializations of variable templates).
+The \field{locus} field denotes the source location.
+The \field{type} field denotes the C++ source-level type of the variable.
+The \field{home\_scope} field denotes the scope declaration that holds the object the variable designates.  The \field{home\_scope} 
+is not necessarily the lexical scope of a variable: for instance, a block-scope 'extern' declaration of a variable names a variable whose 
+home scope in the nearest enclosing namespace scope.
+The \field{initializer} field denotes the initializer expression in the variable declaration.
+The \field{alignment} field denotes the alignment of the variable.
+The \field{specifier} field denotes the declarations specifiers of the variable.
+The \field{traits} field denotes additional traits associated with the variable.
+The \field{properties} field indicates which semantic properties are reachable 
+to the importers.
+
+\partition{decl.variable}
+
+
+\subsection{\valueTag{DeclSort::Parameter}}
+\label{sec:ifc:DeclSort:Parameter}
+
+A \type{DeclIndex} value with \field{tag} \valueTag{DeclSort::Parameter} is an abstract reference to 
+either a function parameter or a template parameter declaration.
+The \field{index} field is an index into the parameter declaration partition.  
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+			\DeclareMember{name}{TextOffset} \\
+			\DeclareMember{locus}{SourceLocation} \\
+			\DeclareMember{type}{TypeIndex} \\
+			\DeclareMember{constraint}{ExprIndex} \\
+			\DeclareMember{initializer}{ExprIndex} \\
+			\DeclareMember{level}{ParameterLevel} \\
+			\DeclareMember{position}{ParameterPosition} \\
+			\DeclareMember{sort}{ParameterSort} \\
+			\DeclareMember{properties}{ReachableProperties} \\
+			\DeclareMember{pack}{bool} \\
+		}
+	\caption{Structure of a template parameter declaration}
+	\label{fig:ifc-template-parameter-structure}
+\end{figure}
+%
+and these meanings of the fields:
+\begin{itemize}
+	\item \field{name} denotes the name of the template parameter.  If null, the template parameter was unnamed in the source input.
+	\item \field{locus} denotes the location of the template parameter.
+	\item \field{type} designates the type of the parameter.
+	\item \field{constaint} designates the concept predicate used to declare this parameter, if the abbreviated form was used at the input source level.
+	\item \field{initializer} designates the corresponding default argument, if any.
+	\item \field{level} denotes the nesting level of this parameter
+	\item \field{position} denotes the position of this parameter in the parameter list
+	\item \field{sort} denotes the sort of parameter (function-parameter vs template-parameter)
+	\item \field{properties} denotes the set of reachable properties of this parameter.
+	\item \field{pack} is true if this parameter was declared as a parameter pack.  This field is no longer needed.
+\end{itemize}
+
+\note{This representation will change in the future as it is currently too irregular and too tightly coupled with VC++ internal representation oddities.}
+
+\partition{decl.parameter}
+
+\subsubsection{Parameter sort}
+\label{sec:ifc-parameter-sort}
+
+The various notions of parameters (function parameter, type template parameter, non-type template parameter, template template parameter) are described by:
+\begin{typedef}{ParameterSort}{}
+	enum class ParameterSort : uint8_t {
+		Object,					// Function parameter
+		Type,						// Type template parameter
+		NonType,					// Non-type template parameter
+		Template,					// Template template parameter
+	};
+\end{typedef}
+
+\subsection{\valueTag{DeclSort::Field}} 
+\label{sec:ifc:DeclSort:Field}
+
+A \type{DeclIndex} value with tag \valueTag{DeclSort::Field} represents 
+an abstract reference to the representation of a non-static data member declaration.
+The \field{index} field is an index into the field declaration partition.
+Each entry in that partition is a structure with the following components:
+a \field{name} field, a \field{locus} field, a \field{type} field, a \field{home\_scope} field,
+an \field{initializer} field, an \field{alignment} field, a \field{specifier} field,
+a \field{traits} field, and an \field{access} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{alignment}{ExprIndex} \\
+		\DeclareMember{traits}{ObjectTraits} \\
+		\DeclareMember{specifier}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a field declaration}
+	\label{fig:ifc-field-decl-structure}
+\end{figure}
+%
+The \field{name} field denotes the name of the non-static data member.
+The \field{locus} field denotes the source location.
+The \field{type} field denotes the C++ source-level type of the non-static data member.
+The \field{home\_scope} field denotes the scope declaration that holds the member declaration.  
+The \field{initializer} field denotes the initializer expression in the member declaration.
+The \field{alignment} field denotes the alignment of the non-static data member.
+The \field{specifier} field denotes the declarations specifiers of the non-static data member.
+The \field{traits} fields denotes additional traits associated with the non-static data member.
+
+
+\partition{decl.field}
+
+\subsection{\valueTag{DeclSort::Bitfield}}
+\label{sec:ifc:DeclSort:Bitfield}
+
+A \type{DeclIndex} value with tag \valueTag{DeclSort::Bitfield} represents 
+an abstract reference to the representation of a bitfield declaration.
+The \field{index} field is an index into the bitfield declaration partition.
+Each entry in that partition is a structure with the following components:
+a \field{name} field, a \field{locus} field, a \field{type} field, a \field{home\_scope} field,
+a \field{width} field,
+an \field{initializer} field, a \field{specifier} field,
+a \field{traits} field, and an \field{access} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{width}{ExprIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{traits}{ObjectTraits} \\
+		\DeclareMember{specifier}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a bitfield declaration}
+	\label{fig:ifc-bitfield-decl-structure}
+\end{figure}
+%
+The \field{name} field denotes the name of the bitfield.
+The \field{locus} field denotes the source location.
+The \field{type} field denotes the C++ source-level type of the bitfield.
+The \field{home\_scope} field denotes the scope declaration that holds the bitfield declaration.  
+The \field{width} field denotes the number bits specified in the bitfield declaration.
+The \field{initializer} field denotes the initializer expression in the bitfield declaration.
+The \field{specifier} field denotes the declarations specifiers of the bitfield.
+The \field{traits} fields denotes additional traits associated with the bitfield.
+
+\partition{decl.bitfield}
+
+\subsection{\valueTag{DeclSort::Scope}}
+\label{sec:ifc:DeclSort:Scope}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Scope} designates a class-type or a namespace definition.
+The \field{index} field of that abstract reference is an index into the scope declaration partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{base}{TypeIndex} \\
+		\DeclareMember{initializer}{ScopeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{alignment}{ExprIndex} \\
+		\DeclareMember{pack\_size}{PackSize} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{traits}{ScopeTraits} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a scope declaration}
+	\label{fig:ifc-scope-decl-structure}
+\end{figure}
+
+
+\noindent
+The \field{name} field designates the name of the scope.
+The \field{locus} field designates the source location.
+The \field{type} field indicates the kind (\secref{sec:ifc:TypeSort:Fundamental}) of scope:
+\begin{itemize}
+  \item \code{TypeBasis::Struct} means the scope was declared as "\code{struct}"
+  \item \code{TypeBasis::Class} means the scope was declared as "\code{class}"
+  \item \code{TypeBasis::Union} means the scope was declared as "\code{union}"
+  \item \code{TypeBasis::Namespace} means the scope was declared as "\code{namespace}"
+  \item \code{TypeBasis::Interface} means the scope was declared as "\code{\_\_interface}"
+\end{itemize}
+Any other value is invalid.
+
+\noindent
+The \field{base} field designates the base class(es) in case of inheritance.
+The \field{initializer} field designates the body of the scope definition, e.g. the sequence of declarations.  
+Note that valid \type{ScopeIndex} values start from 1, and 0 indicates absence of scope, e.g. an incomplete class type.
+The \field{home\_scope} field designates the declaration of the enclosing scope.
+The \field{alignment} field designates the alignment value of the scope, in case of class-type.
+The \field{pack\_size} field designates the packing value applied to the layout of the scope, in case of class-type.
+The \field{specifiers} field indicates the (cumulative) basic declaration specifiers that hold for the scope.
+The \field{traits} field designates scope-specific properties of the scope.
+The \field{access} field designates the access specifier of the scope declaration.
+The \field{properties} field designates the set of reachable semantic properties.
+
+\partition{decl.scope}
+
+\subsubsection{Scope traits}
+\label{sec:ifc-scope-traits}
+
+Properties specific to scope entities are described by values of the bitmask type \type{ScopeTraits}:
+%
+\begin{typedef}{ScopeTraits}{}
+	enum class ScopeTraits : uint8_t {
+		None			= 0,
+		Unnamed		= 1 << 0,
+		Inline			= 1 << 1,
+		InitializerExported	= 1 << 2,
+		ClosureType	= 1 << 3,
+		Vendor			= 1 << 7,
+	};
+\end{typedef}
+%
+with the following meaning:
+\begin{itemize}
+  \item \code{ScopeTraits::None}: No scope traits.
+  \item \code{ScopeTraits::Unnamed}: the scope is unnamed in the input source code.
+  \item \code{ScopeTraits::Inline}: valid only for namespace entties.  The namespace is declared "\code{inline}".
+   \item \code{ScopeTraits::InitializedExported}: valid only if the definition of this scope entity is lexically exported, in particular this indicates whether completeness of types is exported.
+	\item \code{ScopeTraits::Vendor}: valid only if the scope entity has vendor-defined traits.
+
+%  \item \code{ScopeTraits::NoVtable}: valid only for class-types.  The class declaration used \code{\_\_declspec(novtable)}.
+%  \item \code{ScopeTraits::CodeSegment}: valid only for class-types.  The class declaration used \code{\_\_declspec(code\_segment)}.
+%  \item \code{ScopeTraits::IntrinsicType}: valid only for class-types. The class declaration used \code{\_\_declspec(intrin_type)}.
+%  \item \code{ScopeTraits::EmptyBases}: valid only for class-types.  The class declaration used \code{\_\_declspec(empty\_bases)}.
+\end{itemize}
+
+\subsubsection{Class-type layout packing}
+\label{sec:ifc-class-layout-packing}
+
+A value of class layout packing is expressed as value of type \type{PackSize} defined as \newtype{PackSize}{16}
+
+\subsection{\valueTag{DeclSort::Enumeration}}
+\label{sec:ifc:DeclSort:Enumeration}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Enumeration} designates an enumeration declaration.
+The \field{index} of that abstract reference is an index into the enumeration declaration partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{base}{TypeIndex} \\
+		\DeclareMember{initializer}{Sequence} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{alignment}{ExprIndex} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of an enumeration declaration}
+	\label{fig:ifc-enumeration-decl-structure}
+\end{figure}
+%
+The \field{name} field designates the name of the enumeration type.
+The \field{locus} field designates the source location.
+The \field{type} field designates the kind of enumeration, with:
+\begin{itemize}
+   \item \code{TypeBasis::Enum} meaning a classic enumeration
+   \item \code{TypeBasis::Class} or \code{TypeBasis::Struct} meaning a scoped enumeration
+\end{itemize}
+The \field{base} field designates the underlying type of the enumeraion.
+The \field{initializer} is a slice (\secref{sec:ifc-sequence}) of the enumerator partition (\secref{sec:ifc:DeclSort:Enumerator}). 
+ It designates the sequence of enumerators (if any) declared as part
+of the enumeration declaration.
+The \field{home\_scope} field designates the declaration of the enclosing scope of the enumeration.
+The \field{alignment} designates the alignment specified in the declaration.  A non-zero value indicates an explicit alignment specification
+in the input source code.
+The \field{specifiers} designates the basic generic declaration specifiers of the enumeration.
+The \field{access} designates the access specifier.
+The \field{properties} designates the set of reachable semantic properties.
+
+\partition{decl.enum}
+
+\subsection{\valueTag{DeclSort::Alias}} 
+\label{sec:ifc:DeclSort:Alias}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Alias} designates a type alias declaration.
+The \field{index} field of that reference is an index into the type alias declaration partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{aliasee}{TypeIndex} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+	}
+	\caption{Structure of a type alias declaration}
+	\label{fig:ifc-type-alias-decl-structure}
+\end{figure}
+%
+\begin{itemize}
+	\item The \field{name} field designates the name of the alias.
+	\item The \field{locus} field designates the source location.
+	\item The \field{type} field denotes the kind of alias: it denotes \code{TypeBasis::Typename} for type aliases; it will be \code{TypeBasis::Namespace} for namespace aliases; it is abstract reference of sort \valueTag{TypeSort::Forall} for template aliases.
+	\item The \field{home\_scope} field designates the declaration of the enclosing scope.
+	\item The \field{aliasee} field designates the type the alias is declared for.
+	\item The \field{specifiers} field designates the basic declaration specifiers for the alias.
+	\item The \field{access} field designates the access specifier for the alias.
+\end{itemize}
+
+This structure is also used to represent template aliases -- mistakenly called alias templates in the ISO C++ document.  For template aliases,
+the \field{aliasee} field denotes a \valueTag{TypeSort::Forall} type (\sortref{Forall}{TypeSort}), which is the represenation of the \grammar{template-parameter} list followed by the \grammar{type-id} 
+that would syntactically appear on the right hand side of the source-level \grammar{using-declaration}.
+
+
+\partition{decl.alias}
+
+
+\subsection{\valueTag{DeclSort::Temploid}}
+\label{sec:ifc:DeclSort:Temploid}
+
+A member of a parameterized scope -- does not have template parameters of its own.
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{entity}{ParameterizedEntity}\\
+		\DeclareMember{chart}{ChartIndex}\\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a templated declaration}
+	\label{fig:ifc-type-temploid-structure}
+\end{figure}
+%
+The \field{entity} field represents the declaration being parameterized.
+The \field{chart} field designates the set of template parameter lists of the enclosing scope.
+The \field{properties} field designates the set of reachable semantics properties.
+
+
+\partition{decl.temploid}
+
+\subsubsection{Parameterized Entity}
+\label{sec:ifc-parameterized-entity}
+
+The structure \type{ParameterizedEntity} has the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{decl}{DeclIndex} \\
+		\DeclareMember{head}{SentenceIndex} \\
+		\DeclareMember{body}{SentenceIndex} \\
+		\DeclareMember{attributes}{SentenceIndex} \\
+	}
+	\caption{Structure of a declaration parameterized by a template}
+	\label{fig:ifc-parameterized-decl-structure}
+\end{figure}
+%
+The \field{decl} field denotes the declaration that is being 
+parameterized either directly or indirectly by a set of template parameeter lists.
+The \field{head} field designates the sentence (\secref{sec:ifc-sentence}) that makes up the
+non-defining declarative part of the current instantiation.
+That sentence is no longer meaningful in recent releases of MSVC since
+any semantics information can be obtained from the entity denoted
+by \field{decl}.
+The \field{body} field denotes the sentence of the defining ("body") part
+of the current instantiation.  This field is meaningful only
+for templated functions. 
+
+
+\subsection{\valueTag{DeclSort::Template}}
+\label{sec:ifc:DeclSort:Template}
+
+A template declaration: class, function, constructor, type alias, variable.
+
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{chart}{ChartIndex} \\
+		\DeclareMember{entity}{ParameterizedEntity} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a template declaration}
+	\label{fig:ifc-template-decl-structure}
+\end{figure}
+
+The \field{name} field denotes the name of this template.
+The \field{locus} field denotes the source location of this declaration.
+The \field{home\_scope} field designate the home scope of this template.
+The \field{chart} field denotes the set of parameter list to this template.
+The \field{entity} field describes the declaration being parameterized by this template.  Its structure is defined below.
+The \field{specifiers} field denotes declaration specifiers for this template.
+The \field{access} field denotes the access level of this declaration.
+The \field{properties} field designates the set of reachable semantic properties.
+
+\partition{decl.template}
+
+\subsection{\valueTag{DeclSort::PartialSpecialization}}
+\label{sec:ifc:DeclSort:PartialSpecialization}
+
+A partial specialization of a
+template (class-type or function). 
+
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{chart}{ChartIndex} \\
+		\DeclareMember{entity}{ParameterizedEntity} \\
+		\DeclareMember{form}{Index} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a partial specialization declaration}
+	\label{fig:ifc-partial-specialization-decl-structure}
+\end{figure}
+
+The \field{name} field denotes the name of the current instantiation of the partial specialization.
+The \field{locus} field denotes the source location.
+The \field{home\_scope} field denotes the parent declaration of this partial specialization.
+The \field{chart} field denotes the set of template-parameter lists of this partial specialization.
+The \field{entity} field describes the current instantiation of this partial specialization.
+The \field{form} field is an index into the partition of specialization form (template and template-argument list) named "form.spec".
+The \field{specifiers} field denotes the declaration specifiers of this partial specialization.
+The \field{access} field denotes the access level of this partial specialization.
+The \field{properties} field denotes the set of reachable semantic properties.
+
+\partition{decl.partial-specialization}
+
+
+\subsection{\valueTag{DeclSort::ExplicitSpecialization}} 
+\label{sec:ifc:DeclSort:ExplicitSpecialization}
+
+An explicit specialization
+of a template (class-type or function). 
+
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{form}{Index} \\
+		\DeclareMember{decl}{DeclIndex} \\
+	}
+	\caption{Structure of an explicit specialization declaration}
+	\label{fig:ifc-explicit-specialization-declaration}
+\end{figure}
+
+The \field{form} field is an index into the specialization form partition (named "form.spec").
+The \field{decl} field denotes the declaration under the empty template parameter list.
+The \field{properties} field designates the set of reachable semantic properties.
+
+\partition{decl.explicit-specialization}
+
+
+\subsection{\valueTag{DeclSort::ExplicitInstantiation}} 
+\label{sec:ifc:DeclSort:ExplicitInstantiation}
+
+An explicit instantiation
+request of a template specialization. 
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{form}{Index} \\
+		\DeclareMember{decl}{DeclIndex} \\
+	}
+	\caption{Structure of an explicit instantiation declaration}
+	\label{fig:ifc-explicit-instantiation-declaration}
+\end{figure}
+%
+
+The \field{form} field is an index into the partition of specialization forms.
+The \field{decl} field denotes the declarations designated by the explicit instantiation.
+
+\partition{decl.explicit-instantiation}
+
+\subsection{\valueTag{DeclSort::Concept}}
+\label{sec:ifc:DeclSort:Concept}
+
+A \type{DeclIndex} value with tag \valueTag{DeclSort::Concept} represents an abstract reference
+to a concept declaration.  The \field{index} of that abstract reference is an index into the concept
+definition partition.  Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{chart}{ChartIndex} \\
+		\DeclareMember{constraint}{ExprIndex} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{head}{SentenceIndex} \\
+		\DeclareMember{body}{SentenceIndex} \\
+	}
+	\caption{Structure of a concept declaration}
+	\label{fig:ifc-concept-decl-structure}
+\end{figure}
+%
+and meaning of the fields:
+\begin{itemize}
+	\item \field{name} designates the name of the concept
+	\item \field{locus} designates the source location of the concept definition
+	\item \field{home\_scope} desinates the declaration of the enclosing scope
+	\item \field{type} designates the full type of the concept definition
+	\item \field{chart} is the paramater list list to the concept
+	\item \field{constraint} is the body of predicate defining the concept
+	\item \field{specifiers} is the set of basic declaration specifiers
+	\item \field{access} is the access specifier for the concept definition
+	\item \field{head} is the sequence of words making up the declarative part of the concept
+	\item \field{body} is the sequence of words making up the body of the concept definition
+\end{itemize}
+
+\partition{decl.concept}
+
+\note{This representation is subject to change in future releases.}
+
+\subsection{\valueTag{DeclSort::Function}}
+\label{sec:ifc:DeclSort:Function}
+
+A \type{DeclIndex} value with tag \valueTag{DeclSort::Function} represents
+an abstract reference to a function declaration. Note that a static member function is represented as a function.
+The \field{index} field is an index into the function declaration partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure [text width = 15em] {
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{chart}{ChartIndex} \\
+		\DeclareMember{traits}{FunctionTraits} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a function declaration}
+	\label{fig:ifc-function-decl-structure}
+\end{figure}
+%
+The \field{name} field designates the name of the function.
+The \field{locus} field designates the source location.
+The \field{type} field designates the type of the function, including the noexcept-specification (which is now part of the type of a function in C++17).
+The \field{home\_scope} denotes the enclosing scope of the function. This may not be the lexical scope of the declaration.
+The \field{chart} denotes the chart (\secref{sec:ifc-charts}) of the function parameter list along with their default arguments.  These parameters may be unnamed.
+The \field{specifier} denotes basic declaration specifiers; the \field{traits} field adds additional function traits.
+Finally, the \field{access} denotes the access specifier for the function.
+
+\note{The set of parameter declarations in a function definition is listed in a separate trait (\secref{sec:ifc-msvc-fun-parms}).  That representation is subject to removal in future MSVC releases.}
+
+\partition{decl.function}
+
+\subsubsection{Function traits}
+\label{sec:ifc-function-traits}
+
+Certain function-specific cumulative properties are expressed as values of the bitmask type \type{FunctionTraits} defined as
+%
+\begin{typedef}{FunctionTraits}{}
+	enum class FunctionTraits : uint16_t {
+		None			= 0,
+		Inline			= 1 << 0,
+		Constexpr		= 1 << 1,
+		Explicit		= 1 << 2,
+		Virtual			= 1 << 3,
+		NoReturn		= 1 << 4,
+		PureVirtual	= 1 << 5,
+		HiddenFriend	= 1 << 6,
+		Defaulted		= 1 << 7,
+		Deleted		= 1 << 8,
+		Constrained   = 1 << 9,
+		Immediate = 1 << 10,
+		Vendor			= 1 << 15,
+	};
+\end{typedef}
+%
+with the following meaning
+\begin{description}
+	\item \code{FunctionTraits::None}: no property
+	\item \code{FunctionTraits::Inline}: the function is declared \code{inline}
+%	\item \code{FunctionTraits::ForceInline}: the function is declared \code{\_\_forceinline}
+	\item \code{FunctionTraits::Constexpr}: the function is declared \code{constexpr}
+	\item \code{FunctionTraits::Explicit}: the function is declared \code{explicit}
+	\item \code{FunctionTraits::Virtual}: the function is declared \code{virtual}
+	\item \code{FunctionTraits::NoReturn}: the function is declared \code{[[noreturn]]} or \code{\_\_declspec(noreturn)}
+%	\item \code{FunctionTraits::Naked}: the function is declared \code{\_\_declspec(naked)}
+%	\item \code{FunctionTraits::NoAlias}: the function is declared \code{\_\_declspec(noalias)}
+%	\item \code{FunctionTraits::NoThrow}: the function is declared \code{\_\_declspec(nothrow)}
+%	\item \code{FunctionTraits::NoInline}: the function is declared \code{\_\_declspec(noinline)}
+%	\item \code{FunctionTraits::Restrict}: the function is declared \code{\_\_declspec(restrict)}
+%	\item \code{FunctionTraits::SafeBuffers}: the function is declared \code{\_\_declspec(safebuffers)}
+%	\item \code{FunctionTrsits::DllExport}: the function is declared \code{\_\_declspec(dllexport)}
+%	\item \code{FunctionTraits::CodeSegment}: the function is declared \code{\_\_declspec(code\_seg)}
+	\item \code{FunctionTraits::PureVirtual}: the function is pure virtual, e.g. with \code{ = 0}
+	\item \code{FunctionTraits::HiddenFriend}: the function is a hidden friend
+     \item \code{FunctionTraits::Constrained} : the function has requires-constraints
+     \item \code{FunctionTraits::Immediate}: the function is a \code{consteval}, or an immediate function. 
+     \item \code{FunctionTraits::Vendor}: the function has vendor-defined traits stored in the
+	 MSVC vendor-specific traits (\secref{sec:ifc-msvc-vendor-specific-trait}).
+\end{description}
+
+
+\subsection{\valueTag{DeclSort::Method}} 
+\label{sec:ifc:DeclSort:Method}
+
+A \type{DeclIndex} abstract reference with tag \code{DeclSort::Method} designates a non-static member function (which is neither a constructor nor a destructor) declaration.
+The \field{index} of that abstract reference is an index into the non-static member function declaration partition.
+Each entry in that partition is a structure with the following components
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{chart}{ChartIndex} \\
+		\DeclareMember{traits}{FunctionTraits} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a non-static member function declaration}
+	\label{fig:ifc-method-decl-structure}
+\end{figure}
+%
+The \field{name} field designates the name of the non-static member function.
+The \field{locus} field designates the source location of this declaration.
+The \field{type} field designates the type of this non-static member function.  Note that the type also includes the calling convention.
+The \field{home\_scope} designates the enclosing type declaration.
+The \field{chart} designates the function parameter list aling with their default arguments.
+The \field{traits} indicates any additional function-specific traits (\secref{sec:ifc-function-traits}).
+The \field{access} designates the access specifier for this function.
+
+\partition{decl.method}
+
+
+\subsection{\valueTag{DeclSort::Constructor}} 
+\label{sec:ifc:DeclSort:Constructor}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Constructor} designates a constructor declaration.
+The \field{index} field of that abstract reference is an index into the constructor declaration partition.
+Each entry in that partition is a structure with the following components.
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{chart}{ChartIndex} \\
+		\DeclareMember{traits}{FunctionTraits} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a constructor declaration}
+	\label{fig:ifc-constructor-decl-structure}
+\end{figure}
+%
+The meaning of the fields is as follows:
+\begin{itemize}
+	\item \field{name} designates the name of the constructor.
+	\item \field{locus} denotes the source location of the constructor.
+	\item \field{type} denotes the type of this constructor, a type described in \sortref{Tor}{TypeSort}.
+	\item \field{home\_scope} denotes the declaration of the enclosing type.
+	\item \field{chart} denotes the function parameter list along with thir default argument expressions.
+	\item \field{traits} designates function-specific traits (\secref{sec:ifc-function-traits}).
+	\item \field{specifiers} designate the usual basic declaration specifiers.
+	\item \field{access} designates the access specifier of the constructor.
+	\item \field{properties} denotes the set of reachable semantic properties of this constructor declaration.
+\end{itemize}
+
+\partition{decl.constructor}
+
+\note{The \field{name} field is subject of further design modification}
+
+The structure \type{NoexceptSpecification} has the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{words}{SentenceIndex} \\
+		\DeclareMember{sort}{NoexceptSort} \\
+	}
+	\caption{Structure of a \code{noexcept}-specification}
+	\label{fig:ifc-noexcept-specification-structure}
+\end{figure}
+%
+The \field{words} field denotes the sentence making up the syntax of the noexcept-specification.
+This field is meaningful only for templated functions for which the noexcept-specification is a dependent expression.
+The \field{sort} field describes the computed semantics, if not dependent.
+It has type
+\begin{typedef}{NoexceptSort}{}
+	enum class NoexceptSort : uint8_t {
+		None,
+		False,
+		True,
+		Expression,
+		Inferred,
+		Unenforced,
+	};
+\end{typedef}
+with the following meaning
+\begin{itemize}
+	\item \valueTag{NoexceptSort::None}:  No specification is lexically present in the input source
+	\item \valueTag{NoexceptSort::False}: The syntax \code{noexcept(false)} was explicitly used, or the determination has similar semantic effect
+	\item \valueTag{NoexceptSort::True}: The syntax \code{noexcept(true)} was explicitly used, or the determination has similar semantic effect.
+	\item \valueTag{NoexceptSort::Expression}: The syntax \code{noexcept(expr)} was explicitly used, and no determination could be made because the expression is dependent.
+	\item \valueTag{NoexceptSort::Inferred}: The \code{noexcept} specification (for a special member) is inferred and dependent on that of the associated functions
+		the special member invokes from base class subobjects or non-static data members. 
+	\item \valueTag{NoexceptSort::Unenforced}: This is the specification for the static type system, but with no runtime termination enforcement
+\end{itemize}
+
+\subsection{\valueTag{DeclSort::InheritedConstructor}}
+\label{sec:ifc:DeclSort:InheritedConstructor}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::InheritedConstructor}
+designates an inheritated constructor.  The \field{index} of that abstract reference
+is an index into the inherited constructor partition.  Each entry in that partition
+is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{chart}{ChartIndex} \\
+		\DeclareMember{traits}{FunctionTraits} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{base\_ctor}{DeclIndex} \\
+	}
+\end{figure}
+%
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{name} designates the name pf this constructor
+	\item \field{locus} denotes the source location of this declaration.
+	\item \field{type} denotes the type of this constructor, a type described in \sortref{Tor}{TypeSort}.
+	\item \field{home\_scope} denotes the declaration of the enclosing type.
+	\item \field{chart} denotes the function parameter list along with thir default argument expressions.
+	\item \field{traits} designates function-specific traits (\secref{sec:ifc-function-traits}).
+	\item \field{specifiers} designate the usual basic declaration specifiers.
+	\item \field{access} designates the access specifier of the constructor.
+	\item \field{base\_ctor} denotes the constructor from the base class this constructor inherits.
+\end{itemize}
+
+\partition{decl.inherited-constructor}
+
+\subsection{\valueTag{DeclSort::Destructor}} 
+\label{sec:ifc:DeclSort:Destructor}
+
+ A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Destructor} designates a destructor declaration.
+The \field{index} field of that abstract reference is an index into the destructor declaration partition.
+Each entry in that partition is a structure with the following components.
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{eh\_spec}{NoexceptSpecification} \\ 
+		\DeclareMember{traits}{FunctionTraits} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{convention}{CallingConvention} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+	\caption{Structure of a destructor declaration}
+	\label{fig:ifc-destructor-decl-structure}
+\end{figure}
+%
+The \field{name} field designates the name of the destructor declaration.
+The \field{locus} field designates the source location of the declaration.
+The \field{home\_scope} field designates the declaration of the enclosing type.
+The \field{eh\_spec} field designates the exception specification of the declaration.
+The \field{traits} field designates function-specific properties (\secref{sec:ifc-function-traits}) of the declaration.
+The \field{specifiers} field designate the usual basic declaration specifiers.
+The \field{access} field designates the access specifier of the destructor declaration.
+The \field{convention} field designates the calling convention used by the destructor.
+
+
+\note{The \field{name} field is subject of further design modification}
+
+
+\partition{decl.destructor}
+
+
+\subsection{\valueTag{DeclSort::Reference}} 
+\label{sec:ifc:DeclSort:Reference}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Reference} designates a reference to a declaration
+made available by an imported module.
+The \field{index} field of that abstract reference is an index into the declaration reference partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{unit}{ModuleReference} \\
+		\DeclareMember{local\_index}{DeclIndex} \\
+	}
+	\caption{Structure of a declaration reference declaration}
+	\label{fig:ifc-reference-decl-structure}
+\end{figure}
+%
+The \field{unit} field designates the owning translation unit.
+The \field{local\_index} is the \type{DeclIndex} abstract reference assigned to that entity by the current (importing) module unit.
+
+\partition{decl.reference}
+
+\subsubsection{\type{ModuleReference}}
+
+The type \type{ModuleReference} is a structure with the following layout
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{owner}{TextOffset} \\
+		\DeclareMember{partition}{TextOffset} \\
+	}
+	\caption{Structure of a module reference}
+	\label{fig:ifc-module-reference-decl-structure}
+\end{figure}
+
+Then the \field{owner} field is null, then it means the IFC comes from the
+global module, and the \field{partition} field is the name of the source file
+out of which the header unit was built.  Otherwise, \field{owner} is the name
+of the owning module of the IFC, and the \field{partition} designates the module
+partition when it is not null.
+
+\subsection{\valueTag{DeclSort::UsingDeclaration}} 
+\label{sec:ifc:DeclSort:UsingDeclaration}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::UsingDeclaration} designates a using declaration.
+The \field{index} field of that abstract reference is an index into the using declaration partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{resolution}{DeclIndex} \\
+		\DeclareMember{parent}{ExprIndex} \\
+		\DeclareMember{name2}{TextOffset} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{hidden}{bool} \\
+	}
+	\caption{Structure of a using-declaration structure}
+	\label{fig:ifc-using-declaration-structure}
+\end{figure}
+%
+
+The \field{name} field is the unqualified part of the using declaration.
+The \field{locus} field is the source location of the declaration.
+The \field{home\_scope} field designates the enclosing scope of the declaration.
+The \field{resolution} field designates the set of used declarations: either a single declaration, or a tuple of declarations.
+The \field{parent} field designates the qualifying part of the declaration.
+The \field{name2} is a redundant field referring to the name of the member.
+The \field{specifiers} field denotes the basic declaration specifiers.
+The \field{hidden} field indicates whether the member is hidden.
+
+\partition{decl.using-declaration}
+
+\note{This representation is subject to change.}
+
+
+\subsection{\valueTag{DeclSort::UsingDirective}}
+\label{sec:ifc:DeclSort:UsingDirective}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::UsingDirective} designates a using directive.
+
+
+%
+\begin{figure}[H]
+	\centering
+	TBD.
+\end{figure}
+%
+
+\note{The structure of this declaration is not yet defined.}
+
+\partition{decl.using-directive}
+
+
+\subsection{\valueTag{DeclSort::Friend}}
+\label{sec:ifc:DeclSort:Friend}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Friend} designates a friend declaration.
+The \field{index} field of that abstract reference is an index into the friend declaration partition.
+Each entry in that partition is a structure with the following component:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{entity}{ExprIndex}\\
+	}
+	\caption{Structure of a friend declaration}
+	\label{fig:ifc:DeclSort:Friend}
+\end{figure}
+%
+
+The \field{entity} field denotes and expression that references the declared friend.  For instance, \field{entity}
+would denote a named declaration (\sortref{NamedDecl}{ExprSort}) if the input source-level friend declaration references
+a lexically declared entity.  If that friend is a specialization of a template then \field{entity} would denote 
+the corresponding \grammar{template-id} (\sortref{TemplateId}{ExprSort}).
+
+\partition{decl.friend}
+
+
+\subsection{\valueTag{DeclSort::Expansion}}
+\label{sec:ifc:DeclSort:Expansion}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Expansion} designates
+a declaration obtained by expanding a pack.  The \field{index} field is an index
+into the expansion declaration partition.  Each entry in that partition is a structure
+with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{operand}{DeclIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of an expansion declaration}
+	\label{fig:ifc-expansion-declaration-structure}
+\end{figure}
+%
+
+\partition{decl.expansion}
+
+
+\subsection{\valueTag{DeclSort::DeductionGuide}}
+\label{sec:ifc:DeclSort:DeductionGuide}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::DeductionGuide} designates
+a deduction guide declaration.  The \field{index} field is an index into the 
+deduction guide partition.  Each entry in that partition is a structure with the 
+following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{parameters}{ChartIndex} \\
+		\DeclareMember{specialization}{TypeIndex} \\
+		\DeclareMember{traits}{FunctionTraits} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+	}
+	\caption{Structure of a deduction guide declaration}
+	\label{fig:ifc-deduction-guide-decl-structure}
+\end{figure}
+
+\partition{decl.deduction-guide}
+
+
+\subsection{\valueTag{DeclSort::Barren}}
+\label{sec:ifc:DeclSort:Barren}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Barren} designates
+a declaration that introduces no name, e.g. \grammar{asm-declaration}, \grammar{static\_assert-declaration}, \grammar{attribute-declaration}, \grammar{empty-declaration}.
+The \field{index} field is an index into the barren declaration partition.  Each entry
+in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	TBD.
+\end{figure}
+%
+
+\partition{decl.barren}
+
+
+\subsection{\valueTag{DeclSort::Tuple}}
+\label{sec:ifc:DeclSort:Tuple}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Tuple} designates a sequence
+of declarations referenced in other source-level contructs, e.g. a set of bindings during 
+parsing of templated declarations.  The \field{index} field is an index into the
+tuple declaration partition.  Each entry in that partition is a structure with the following
+layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+	}
+	\caption{Structure of a tuple declaration}
+	\label{fig:ifc-tuple-declaration-structure}
+\end{figure}
+%
+The \field{start} field is an index into the declaration heap 
+partition (\secref{sec:ifc-decl-heap}) pointing to the first declaration in 
+the tuple sequence.  The \field{cardinality} field
+denotes the number of declaration in the tuple sequence.
+
+\partition{decl.tuple}
+
+
+
+\subsection{\valueTag{DeclSort::SyntaxTree}}
+\label{sec:ifc:DeclSort:SyntaxTree}
+
+A syntax tree in template declaration.
+\begin{figure}[H]
+	\centering
+	TBD
+\end{figure}
+
+\partition{decl.syntax-tree}
+
+\note{This is a vendor extension, the meta description of which is subject to change}
+
+
+\subsection{\valueTag{DeclSort::Intrinsic}} 
+\label{sec:ifc:DeclSort:Intrinsic}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Intrinsic} designates an intrinsic function declaration.
+The \field{index} field of that abstract reference is an index into the intrinsic function declaration partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+	}
+	\caption{Structure of an intrinsic function declaration}
+	\label{fig:ifc-intrinsic-decl-structure}
+\end{figure}
+%
+
+\partition{decl.intrinsic}
+
+\note{This is a vendor extension, the meta description of which is subject to change}
+
+
+\subsection{\valueTag{DeclSort::Property}}
+\label{sec:ifc:DeclSort:Property}
+
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Property}
+designates MSVC's extenion of ``property declaration.''  The \field{index}
+field is an index into the property declaration partition.  Each entry in that partition
+is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{member}{DeclIndex} \\
+		\DeclareMember{getter}{TextOffset} \\
+		\DeclareMember{setter}{TextOffset} \\
+	}
+	\caption{Structure of a property declaration}
+	\label{fig:ifc-property-declaration-structure}
+\end{figure}
+%
+The \field{member} field designates the declaration of the non-static data member
+being declared a property.  The \field{getter} and the \field{setter} fields 
+denote the names of the getters and the setters non-static member functions associated
+with the property.
+
+\partition{decl.property}
+
+\note{This is a vendor extension, the meta description of which is subject to change}
+
+
+\subsection{\valueTag{DeclSort::OutputSegment}}
+\label{sec:ifc:DeclSort:OutputSegment}
+
+ Code segment. These are 'declared' via pragmas.
+
+ A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::OutputSegment}
+ designates an MSVC extension declaration of a code segment --- typically declared with a pragma.
+ The \field{index} field is an index into the code segment partition.  Each entry
+ in that partition is a structure with the following layout
+ %
+ \begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{ID}{TextOffset} \\
+		\DeclareMember{traits}{SegmentTraits} \\
+		\DeclareMember{type}{SegmentType} \\
+	}
+	\caption{Sturucture of a code segment declaration}
+	\label{fig:ifc-code-segment-structure}
+ \end{figure}
+ %
+
+ The \field{name} field denotes the name of the code segment.
+ The \field{ID} field denotes the class-ID of the code segment.
+ The \field{traits} field denotes the set of traits of the code segment.
+ The \field{type} field denotes the code segment type.
+
+\subsubsection{Code segment traits}
+\label{sec:ifc-code-segment-traits}
+
+Each code segment is associated with a set of traits encoded as a value
+of type
+%
+\begin{typedef}{SegmentTraits}{}
+	enum class SegmentTraits : uint32_t { };
+\end{typedef}
+%
+
+\subsubsection{Code segment type}
+\label{sec:ifc-code-segment-type}
+
+Each code segment is associated with a ``code segment type'', a value of type
+%
+\begin{typedef}{SegmentType}{}
+	enum class SegmentType : uint8_t { };
+\end{typedef}
+
+\partition{decl.segment}
+
+\note{This is a vendor extension, the meta description of which is subject to change}

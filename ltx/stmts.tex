@@ -1,0 +1,301 @@
+\label{sec:ifc-statements}
+
+\paragraph{Note: All data structures described in this chapter are subject to change.}
+
+Statements are represented in an IFC as part of the body of constexpr or inline function defined in a
+module interface source file.  A statement is designated an abstract reference of type \type{StmtIndex}:
+\begin{figure}[H]
+  \centering
+  \absref{5}{StmtSort}
+  \caption{\type{StmtIndex}: Abstract reference of statement}
+  \label{fig:ifc-stmt-index}
+\end{figure}
+
+\begin{SortEnum}{StmtSort}
+	\enumerator{VendorExtension}
+	\enumerator{Empty}
+	\enumerator{If}
+	\enumerator{For}
+	\enumerator{Case}
+	\enumerator{While}
+	\enumerator{Block}
+	\enumerator{Break}
+	\enumerator{Switch}
+	\enumerator{DoWhile}
+	\enumerator{Default}
+	\enumerator{Continue}
+	\enumerator{Expression}
+	\enumerator{Return}
+	\enumerator{VariableDecl}
+	\enumerator{Expansion}
+	\enumerator{SyntaxTree}
+\end{SortEnum}
+
+\section{Statement structures}
+\label{sec:ifc-ststement-structures}
+
+\subsection{\valueTag{VendorExtension}}
+\label{sec:ifc:StmtSort:VendorExtension}
+
+\partition{stmt.vendor-extension}
+
+
+\subsection{\valueTag{StmtSort::Empty}}
+\label{sec:ifc:StmtSort:Empty}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of an empty statement}
+	\label{fig:ifc-empty-stmt-structure}
+\end{figure}
+
+
+\partition{stmt.empty}
+
+
+\subsection{\valueTag{StmtSort::If}}
+\label{sec:ifc:StmtSort:If}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{initialization}{StmtIndex} \\
+		\DeclareMember{condition}{StmtIndex} \\
+		\DeclareMember{consequence}{StmtIndex} \\
+		\DeclareMember{alternative}{StmtIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of an if-statement}
+	\label{fig:ifc-if-stmt-structure}
+\end{figure}
+
+\partition{stmt.if}
+
+
+\subsection{\valueTag{StmtSort::For}}
+\label{sec:ifc:StmtSort:For}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{initialization}{StmtIndex} \\
+		\DeclareMember{condition}{StmtIndex} \\
+		\DeclareMember{continuation}{StmtIndex} \\
+		\DeclareMember{body}{StmtIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a for-statement}
+	\label{fig:ifc-for-stmt-structure}
+\end{figure}
+
+\partition{stmt.for}
+
+
+\subsection{\valueTag{StmtSort::Case}}
+\label{sec:ifc:StmtSort:Case}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a case-label}
+	\label{fig:ifc-case-label-structure}
+\end{figure}
+
+\partition{stmt.case}
+
+
+
+\subsection{\valueTag{StmtSort::While}}
+\label{sec:ifc:StmtSort:While}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{condition}{StmtIndex} \\
+		\DeclareMember{body}{StmtIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a while-statement}
+	\label{fig:ifc-while-stmt-structure}
+\end{figure}
+
+\partition{stmt.while}
+
+
+\subsection{\valueTag{StmtSort::Block}}
+\label{sec:ifc:StmtSort:Block}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+	}
+	\caption{Structure of a block statement}
+	\label{fig:ifc-block-stmt-structure}
+\end{figure}
+
+\partition{stmt.block}
+
+
+\subsection{\valueTag{StmtSort::Break}}
+\label{sec:ifc:StmtSort:Break}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a break statement}
+	\label{fig:ifc-break-stmt-structure}
+\end{figure}
+
+\partition{stmt.break}
+
+
+
+\subsection{\valueTag{StmtSort::Switch}}
+\label{sec:ifc:StmtSort:Switch}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{initialization}{StmtIndex} \\
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{body}{StmtIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a switch-statement}
+	\label{fig:ifc-switch-stmt-structure}
+\end{figure}
+
+\partition{stmt.switch}
+
+\subsection{\valueTag{StmtSort::DoWhile}}
+\label{sec:ifc:StmtSort:DoWhile}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{condition}{StmtIndex} \\
+		\DeclareMember{body}{StmtIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a do-statement}
+	\label{fig:ifc-do-stmt-structure}
+\end{figure}
+
+\partition{stmt.do-while}
+
+
+\subsection{\valueTag{StmtSort::Default}}
+\label{sec:ifc:StmtSort:Default}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a default label}
+	\label{fig:ifc-default-label-structure}
+\end{figure}
+
+\partition{stmt.default}
+
+
+\subsection{\valueTag{StmtSort::Continue}}
+\label{sec:ifc:StmtSort:Continue}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a continue statement}
+	\label{fig:ifc-continue-stmt-structure}
+\end{figure}
+
+\partition{stmt.continue}
+
+\subsection{\valueTag{StmtSort::Expression}}
+\label{sec:ifc:StmtSort:Expression}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of an expression-statement}
+	\label{fig:ifc-expr-stmt-structure}
+\end{figure}
+
+\partition{stmt.expression}
+
+\subsection{\valueTag{StmtSort::Return}}
+\label{sec:ifc:StmtSort:Return}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{function\_type}{TypeIndex} \\
+		\DeclareMember{expression\_type}{TypeIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a return statement}
+	\label{fig:ifc-return-stmt-structure}
+\end{figure}
+
+\partition{stmt.return}
+
+\subsection{\valueTag{StmtSort::VariableDecl}}
+\label{sec:ifc:StmtSort:VariableDecl}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{decl}{DeclIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a variable-declaration statement}
+	\label{fig:ifc-decl-stmt-structure}
+\end{figure}
+
+\partition{stmt.variable}
+
+\subsection{\valueTag{StmtSort::Expansion}}
+\label{sec:ifc:StmtSort:Expansion}
+
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Expansion}
+designates a statement expansion.
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{operand}{StmtIndex} \\
+	}
+	\caption{Structure of an expansion statement}
+	\label{fig:ifc-expansion-stmt-structure}
+\end{figure}
+
+\partition{stmt.expansion}
+
+\subsection{\valueTag{StmtSort::SyntaxTree}}
+\label{sec:ifc:StmtSort:SyntaxTree}
+
+\begin{figure}[H]
+	\centering
+	TBD
+\end{figure}
+
+\partition{stmt.syntax-tree}
+
+

@@ -1,0 +1,55 @@
+\label{sec:ifc-scopes}
+
+Every non-empty C++ translation unit contains at least one declaration, reachable from the global scope.
+
+\section{Scope index}
+\label{sec:ifc-scope-index}
+
+A scope is referenced via an abstract reference of type \type{ScopeIndex} defined as \newtype{ScopeIndex}{32}
+%
+A value of type \type{ScopeIndex} is an index into the scope partition described below.  Valid values start at 1.  A \type{ScopeIndex} value 0 
+indicates a missing scope, not an empty scope.
+
+\section{Scope descriptor}
+\label{sec:ifc-scope-desc}
+
+A scope is a sequence of declarations (\secref{sec:ifc-scope-member}) -- this definition is a generalization of standard C++'s.
+%
+\begin{figure}[h]
+	\centering
+	\structure{
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+	}
+	\caption{Structure of a \type{Scope}}
+	\label{fig:ifc-scope-structure}
+\end{figure}
+%
+The \field{start} is an index into the scope member partition (\secref{sec:ifc-scope-member}), designating the first declaration in the scope.
+The \field{cardinality} designates the number of declarations in the scope.  Only members declared in that scope from that module partition
+are accounted for in the scope descriptor.
+
+\partition{scope.desc}
+
+\note{The \field{global\_scope} field of the table of contents (\secref{sec:ifc-file-header}) is index into this partition.}
+
+\section{Scope member}
+\label{sec:ifc-scope-member}
+
+A scope member represents a declaration.
+%
+\begin{figure}[h]
+	\centering
+	\structure{
+		\DeclareMember{index}{DeclIndex} \\
+	}
+	\caption{Structure of a \type{Declarataion} -- a scope member}
+	\label{fig:ifc-declaration-structure}
+\end{figure}
+%
+
+The \field{index} field of a declaration is a \type{DeclIndex} value designating the entity (\secref{sec:ifc-decls}) referenced by this declaration.
+
+\partition{scope.member}
+
+\note{At this point in time, a \type{Declaration} is just a structure with an index as member.  In the future, it may evolve to contain explicitly attributes such as 'imported', 'exported', or 'internal'. }

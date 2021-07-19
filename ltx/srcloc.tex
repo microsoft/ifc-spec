@@ -1,0 +1,51 @@
+\label{sec:ifc-source-location}
+
+At various places, especially in the description of declarations (\secref{sec:ifc-decls}), it is necessary to specify 
+locations in input source code.  Ideally, there should be distinction between source location as seen by the
+user (before macro expansions), a span of source location, and location traking macro expansions.
+For the time being, source location is described in a fairly simplistic way using the unsophisticated
+structure \type{SourceLocation} defined as follows:
+%
+\begin{figure}[h]
+	\centering
+	\structure{
+		\DeclareMember{line}{LineIndex} \\
+		\DeclareMember{column}{Column} \\
+	}
+	\caption{Structure of a source location}
+	\label{fig:ifc-source-location-structure}
+\end{figure}
+
+
+\noindent
+The \field{line} field is of type \type{LineIndex} defined as \newtype{LineIndex}{32}
+A value of this type is an index into the partition of file and line (\secref{sec:ifc-file-and-line-location}).
+
+\noindent
+The \field{column} field is of type \type{Column} defined as \newtype{Column}{32}
+A value of this type indicates the position of the character from the beginning of the \field{line}.
+Columns are numbered from 0.
+
+\section{File and line}
+\label{sec:ifc-file-and-line-location}
+
+The file and line source location information is collectively stored in a dedicated partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[h]
+	\centering
+	\structure{
+		\DeclareMember{file}{NameIndex} \\
+		\DeclareMember{line}{LineNumber} \\
+	}
+	\caption{Structure of a file-and-line location information}
+	\label{fig:ifc-file-and-line-structure}
+\end{figure}
+%
+The \field{file} field designates the name of the input source file (sec:ifc-source-file-name).
+
+\noindent
+The \field{line} field is the line number in the designated source file. Lines are numbered from 1.
+A line number is of type \type{LineNumber} defined as \newtype{LineNumber}{32}
+
+\partition{src.line}

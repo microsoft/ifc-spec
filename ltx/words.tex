@@ -1,0 +1,1032 @@
+\label{sec:ifc-token-streams}
+
+Ideally, definitions of templates should have an AST representation.
+At the moment, MSVC lacks AST representation so the body of certain 
+template definitions are represented as sequences of 
+MSVC-internal ``tokens'' that are replayed every time an
+instantiation is needed.  This part of the IFC will gradually vanish
+in favor of the semantics graph representation used for non-template
+entities.  Also, these MSVC-internal tokens are nothing like ISO C++ tokens;
+consequently, this document uses the term \emph{words} (\secref{sec:ifc-words})
+to describe them.
+
+\section{Sentences}
+\label{sec:ifc-sentence}
+
+Each MSVC-internal token stream is represented as a \emph{sentence}, a sequence of words (\secref{sec:ifc-words}).
+Each sentence is referenced by a value of type \newtype{SentenceIndex}{32}
+
+A valid value of type \type{SentenceIndex} denotes an index into the sentence partition
+described below.  A \type{SentenceIndex} value $0$ indicates a missing sentence, not
+an empty sentence.  Valid \type{SentenceIndex} values start at $1$.
+
+Each entry of the the sentence partition has the following structure:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{start}{WordIndex} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a sentence}
+	\label{fig:ifc-sentence-structure}
+\end{figure}
+%
+The \field{start} field is an index of type \newtype{WordIndex}{32}
+into the word partition  (\secref{sec:ifc-words}).
+It points to the first word in that sentence.  
+The \field{cardinality} field denotes the numbers of words in the sentence.
+The \field{locus} field denotes the source location of the sentence.
+
+\partition{src.sentence}
+
+
+
+\section{Words}
+\label{sec:ifc-words}
+
+Each entry in the word partition is a $16$-byte structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{index}{Index} \\
+		\DeclareMember{value}{u16} \\
+		\DeclareMember{sort}{WordSort} \\
+		\DeclareMember{<padding>}{u8} \\
+	}
+	\caption{Structure of a word}
+	\label{fig:ifc-word-structure}
+\end{figure}
+%
+The \field{locus} field denotes the location of the word.
+The \field{index} field is a $16$-bit value, the interpretation of which depends
+on the \field{sort} field, which itself is a $8$-bit value.  
+
+In this document, we use the phrase \emph{word} to emphasize that these "tokens" are not tokens in ISO C++ standards sense.
+They are MSVC-internal parser (complex) data structures.
+
+\partition{src.word}
+
+\subsection{Word structures}
+\label{sec:ifc:word-structures}
+
+The type \type{WordSort} is a set of 8-bit values enumerated as follows
+\begin{Enumeration}{WordSort}
+	\enumerator{Unknown}
+	\enumerator{Directive}
+	\enumerator{Punctuator}
+	\enumerator{Literal}
+	\enumerator{Operator}
+	\enumerator{Keyword}
+	\enumerator{Identifier}
+\end{Enumeration}
+
+The interpertation of the \field{value} field of a 
+word (\secref{fig:ifc-word-structure})
+depends of the value its \field{sort} field as follows:
+\begin{itemize}
+	\item \valueTag{WordSort::Unknown}: no particular meaning
+	\item \valueTag{WordSort::Directive}: \field{value} is of type
+		\type{SourceDirective} (\secref{sec:ifc:WordSort:Directive})
+	\item \valueTag{WordSort::Punctuator}: \field{value} is of type 
+	\type{SourcePunctuator} (\secref{sec:ifc:WordSort:Punctuator})
+	\item \valueTag{WordSort::Literal}: \field{value} is of type
+	  \type{SourceLiteral} (\secref{sec:ifc:WordSort:Literal})
+	\item \valueTag{WordSort::Operator}: \field{value} is of type
+	   \type{SourceOperator} (\secref{sec:ifc:WordSort:Operator})
+	\item \valueTag{WordSort::Keyword}: \field{value} is of type
+		\type{SourceKeyword} (\secref{sec:ifc:WordSort:Keyword})
+	\item \valueTag{WordSort::Identifier}: \field{value} is of type
+	    \type{SourceIdentifier} (\secref{sec:ifc:WordSort:Identifier})
+\end{itemize}
+
+\subsubsection{\valueTag{WordSort::Unkown}}
+\label{sec:ifc:WordSort:Unknown}
+
+A word  (\figref{fig:ifc-word-structure})  with the \field{sort} field that holds
+\valueTag{WordSort::Unknown} shall not be produced. 
+
+\subsubsection{\valueTag{WordSort::Directive}}
+\label{sec:ifc:WordSort:Directive}
+
+
+A word (\figref{fig:ifc-word-structure})  with the \field{sort} field that holds
+\valueTag{WorSort::Directive} is a \emph{directive word}.  The corresponding 
+\field{value} field is of type \newtype{SourceDirective}{16}.
+
+Valid values of type \type{SourceDirective} are enumerated as follows
+\begin{Enumeration}{SourceDirective}\setcounter{enumi}{8190}
+	\enumerator{Msvc}
+	\enumerator{MsvcPragmaPush}
+	\enumerator{MsvcPragmaPop}
+	\enumerator{MsvcDirectiveStart}
+	\enumerator{MsvcDirectiveEnd}
+	\enumerator{MsvcPragmaAllocText}
+	\enumerator{MsvcPragmaAutoInline}
+	\enumerator{MsvcPragmaBssSeg}
+	\enumerator{MsvcPragmaCheckStack}
+	\enumerator{MsvcPragmaCodeSeg}
+	\enumerator{MsvcPragmaComment}
+	\enumerator{MsvcPragmaComponent}
+	\enumerator{MsvcPragmaConform}
+	\enumerator{MsvcPragmaConstSeg}
+	\enumerator{MsvcPragmaDataSeg}
+	\enumerator{MsvcPragmaDeprecated}
+	\enumerator{MsvcPragmaDetectMismatch}
+	\enumerator{MsvcPragmaEndregion}
+	\enumerator{MsvcPragmaExecutionCharacterSet}
+	\enumerator{MsvcPragmaFenvAccess}
+	\enumerator{MsvcPragmaFileHash}
+	\enumerator{MsvcPragmaFloatControl}
+	\enumerator{MsvcPragmaFpContract}
+	\enumerator{MsvcPragmaFunction}
+	\enumerator{MsvcPragmaBGI}
+	\enumerator{MsvcPragmaIdent}
+	\enumerator{MsvcPragmaImplementationKey}
+	\enumerator{MsvcPragmaIncludeAlias}
+	\enumerator{MsvcPragmaInitSeg}
+	\enumerator{MsvcPragmaInlineDepth}
+	\enumerator{MsvcPragmaInlineRecursion}
+	\enumerator{MsvcPragmaIntrinsic}
+	\enumerator{MsvcPragmaLoop}
+	\enumerator{MsvcPragmaMakePublic}
+	\enumerator{MsvcPragmaManaged}
+	\enumerator{MsvcPragmaMessage}
+	\enumerator{MsvcPragmaOMP}
+	\enumerator{MsvcPragmaOptimize}
+	\enumerator{MsvcPragmaPack}
+	\enumerator{MsvcPragmaPointerToMembers}
+	\enumerator{MsvcPragmaPopMacro}
+	\enumerator{MsvcPragmaPrefast}
+	\enumerator{MsvcPragmaPushMacro}
+	\enumerator{MsvcPragmaRegion}
+	\enumerator{MsvcPragmaRuntimeChecks}
+	\enumerator{MsvcPragmaSameSeg}
+	\enumerator{MsvcPragmaSection}
+	\enumerator{MsvcPragmaSegment}
+	\enumerator{MsvcPragmaSetlocale}
+	\enumerator{MsvcPragmaStartMapRegion}
+	\enumerator{MsvcPragmaStopMapRegion}
+	\enumerator{MsvcPragmaStrictGSCheck}
+	\enumerator{MsvcPragmaSystemHeader}
+	\enumerator{MsvcPragmaUnmanaged}
+	\enumerator{MsvcPragmaVtordisp}
+	\enumerator{MsvcPragmaWarning}
+	\enumerator{MsvcPragmaP0include}
+	\enumerator{MsvcPragmaP0line}
+\end{Enumeration}
+
+It should be noted that MSVC transforms preprocessor level \code{\#pragma} directives to 
+post-preprocessor ``directives'' introduced by the \code{__pragma} keyword to be processed
+by the parser.
+
+\ifcdoc{Msvc}{SourceDirective}  No directive word of this value shall be produced.  All MSVC-specific
+directive words (which all directives are at this time of writing) have values greater than this.
+
+\ifcdoc{MsvcPragmaPush}{SourceDirective}
+\ifcdoc{MsvcPragmaPop}{SourceDirective}
+\ifcdoc{MsvcDirectiveStart}{SourceDirective}
+\ifcdoc{MsvcDirectiveEnd}{SourceDirective}
+\ifcdoc{MsvcPragmaAllocText}{SourceDirective}
+\ifcdoc{MsvcPragmaAutoInline}{SourceDirective}
+\ifcdoc{MsvcPragmaBssSeg}{SourceDirective}
+\ifcdoc{MsvcPragmaCheckStack}{SourceDirective}
+\ifcdoc{MsvcPragmaCodeSeg}{SourceDirective}
+\ifcdoc{MsvcPragmaComment}{SourceDirective}
+\ifcdoc{MsvcPragmaComponent}{SourceDirective}
+\ifcdoc{MsvcPragmaConform}{SourceDirective}
+\ifcdoc{MsvcPragmaConstSeg}{SourceDirective}
+\ifcdoc{MsvcPragmaDataSeg}{SourceDirective}
+\ifcdoc{MsvcPragmaDeprecated}{SourceDirective}
+\ifcdoc{MsvcPragmaDetectMismatch}{SourceDirective}
+\ifcdoc{MsvcPragmaEndregion}{SourceDirective}
+\ifcdoc{MsvcPragmaExecutionCharacterSet}{SourceDirective}
+\ifcdoc{MsvcPragmaFenvAccess}{SourceDirective}
+\ifcdoc{MsvcPragmaFileHash}{SourceDirective}
+\ifcdoc{MsvcPragmaFloatControl}{SourceDirective}
+\ifcdoc{MsvcPragmaFpContract}{SourceDirective}
+\ifcdoc{MsvcPragmaFunction}{SourceDirective}
+\ifcdoc{MsvcPragmaBGI}{SourceDirective}
+\ifcdoc{MsvcPragmaIdent}{SourceDirective}
+\ifcdoc{MsvcPragmaImplementationKey}{SourceDirective}
+\ifcdoc{MsvcPragmaIncludeAlias}{SourceDirective}
+\ifcdoc{MsvcPragmaInitSeg}{SourceDirective}
+\ifcdoc{MsvcPragmaInlineDepth}{SourceDirective}
+\ifcdoc{MsvcPragmaInlineRecursion}{SourceDirective}
+\ifcdoc{MsvcPragmaIntrinsic}{SourceDirective}
+\ifcdoc{MsvcPragmaLoop}{SourceDirective}
+\ifcdoc{MsvcPragmaMakePublic}{SourceDirective}
+\ifcdoc{MsvcPragmaManaged}{SourceDirective}
+\ifcdoc{MsvcPragmaMessage}{SourceDirective}
+\ifcdoc{MsvcPragmaOMP}{SourceDirective}
+\ifcdoc{MsvcPragmaOptimize}{SourceDirective}
+\ifcdoc{MsvcPragmaPack}{SourceDirective}
+\ifcdoc{MsvcPragmaPointerToMembers}{SourceDirective}
+\ifcdoc{MsvcPragmaPopMacro}{SourceDirective}
+\ifcdoc{MsvcPragmaPrefast}{SourceDirective}
+\ifcdoc{MsvcPragmaPushMacro}{SourceDirective}
+\ifcdoc{MsvcPragmaRegion}{SourceDirective}
+\ifcdoc{MsvcPragmaRuntimeChecks}{SourceDirective}
+\ifcdoc{MsvcPragmaSameSeg}{SourceDirective}
+\ifcdoc{MsvcPragmaSection}{SourceDirective}
+\ifcdoc{MsvcPragmaSegment}{SourceDirective}
+\ifcdoc{MsvcPragmaSetlocale}{SourceDirective}
+\ifcdoc{MsvcPragmaStartMapRegion}{SourceDirective}
+\ifcdoc{MsvcPragmaStopMapRegion}{SourceDirective}
+\ifcdoc{MsvcPragmaStrictGSCheck}{SourceDirective}
+\ifcdoc{MsvcPragmaSystemHeader}{SourceDirective}
+\ifcdoc{MsvcPragmaUnmanaged}{SourceDirective}
+\ifcdoc{MsvcPragmaVtordisp}{SourceDirective}
+\ifcdoc{MsvcPragmaWarning}{SourceDirective}
+\ifcdoc{MsvcPragmaP0include}{SourceDirective}
+\ifcdoc{MsvcPragmaP0line}{SourceDirective}
+
+
+\subsubsection{\valueTag{WordSort::Punctuator}}
+\label{sec:ifc:WordSort:Punctuator}
+
+A word (\figref{fig:ifc-word-structure})  with the \field{sort} field that holds
+\valueTag{WorSort::Punctuator} is a \emph{punctuator word}.  The corresponding 
+\field{value} field is of type \newtype{SourcePunctuator}{16}
+
+Values of type \type{SourcePunctuator} are classified in two groups.
+\begin{Enumeration}{SourcePunctuator}
+	\enumerator{Unknown}
+	\enumerator{LeftParenthesis}
+	\enumerator{RightParenthesis}
+	\enumerator{LeftBracket}
+	\enumerator{RightBracket}
+	\enumerator{LeftBrace}
+	\enumerator{RightBrace}
+	\enumerator{Colon}
+	\enumerator{Question}
+	\enumerator{Semicolon}
+	\enumerator{ColonColon}
+\end{Enumeration}
+and those with values greater than $0x1FFF$
+\begin{Enumeration}{SourcePunctuator}\setcounter{enumi}{8190}
+	\enumerator{Msvc}
+	\enumerator{MsvcZeroWidthSpace}
+	\enumerator{MsvcEndOfPhrase}
+	\enumerator{MsvcFullStop}
+	\enumerator{MsvcNestedTemplateStart}
+	\enumerator{MsvcDefaultArgumentStart}
+	\enumerator{MsvcAlignasEdictStart}
+	\enumerator{MsvcDefaultInitStart}
+\end{Enumeration}
+
+\paragraph{SourcePunctuator::Unknown}
+\label{sec:ifc:SourcePunctuator:Unknown}
+
+No punctuator word of this value shall be produced.
+
+\paragraph{SourcePunctuator::LeftParenthesis}
+\label{sec:ifc:SourcePunctuator:LeftParenthesis}
+
+A punctuator word for C++ source level ``\code{(}''.
+
+\paragraph{SourcePunctuator::RightParenthesis}
+\label{sec:ifc:SourcePunctuator:RightParenthesis}
+
+A punctuator word for C++ source level ``\code{)}''.
+
+\paragraph{SourcePunctuator::LeftBracket}
+\label{sec:ifc:SourcePunctuator:LeftBracket}
+
+A punctuator word for C++ source level ``\code{[}''.
+
+\paragraph{SourcePunctuator::RightBracket}
+\label{sec:ifc:SourcePunctuator:RightBracket}
+
+A punctuator word for C++ source level ``\code{]}''.
+
+\paragraph{SourcePunctuator::LeftBrace}
+\label{sec:ifc:SourcePunctuator:LeftBrace}
+
+A punctuator word for C++ source level ``\code{\{}''.
+
+\paragraph{SourcePunctuator::RightBrace}
+\label{sec:ifc:SourcePunctuator:RightBrace}
+
+A punctuator word for C++ source level ``\code{\}}''.
+
+\paragraph{SourcePunctuator::Colon}
+\label{sec:ifc:SourcePunctuator:Colon}
+
+A punctuator word for C++ source level ``\code{:}''.
+
+\paragraph{SourcePunctuator::Question}
+\label{sec:ifc:SourcePunctuator:Question}
+
+A punctuator word for C++ source level ``\code{?}''.
+
+\paragraph{SourcePunctuator::Semicolon}
+\label{sec:ifc:SourcePunctuator:Semicolon}
+
+A punctuator word for C++ source level ``\code{;}''.
+
+\paragraph{SourcePunctuator::ColonColon}
+\label{sec:ifc:SourcePunctuator:ColonColon}
+
+A punctuator word for C++ source level ``\code{::}''.
+
+\paragraph{SourcePunctuator::Msvc}
+\label{sec:ifc:SourcePunctuator:Msvc}
+
+No punctuator word of this value shall be produced.  All MSVC-specific punctuators
+have values greater than this.
+
+\paragraph{SourcePunctuator::MsvcZeroWidthSpace}
+\label{sec:ifc:SourcePunctuator:MsvcZeroWidthSpace}
+
+A punctuator word of this value acts effectively as a whitespace.  Its practical effect
+is to record a source location position within a sentence.
+
+\paragraph{SourcePunctuator::MsvcEndOfPhrase}
+\label{sec:ifc:SourcePunctuator:MsvcEndOfPhrase}
+
+A punctuator word of this value terminates a word sequence to be parsed or interpreted
+independently; typically this is the case of default arguments or default member
+initializers or templated definitions.
+
+\paragraph{SourcePunctuator::MsvcFullStop}
+\label{sec:ifc:SourcePunctuator:MsvcFullStop}
+
+A punctuator word of this value ends the parsing of the current translation unit.
+
+\paragraph{SourcePunctuator::MsvcNestedTempltateStart}
+\label{sec:ifc:SourcePunctuator:MsvcNestedTemplateStart}
+
+A punctuator word of this value designates the start of template declaration
+that is itself in a templated lexical scope.
+
+\paragraph{SourcePunctuator::MsvcDefaultArgumentStart}
+\label{sec:ifc:SourcePunctuator:MsvcDefaultArgumentStart}
+
+A punctuator word of this value indicates the beginning of the words comprising
+a default argument for function parameters.
+
+\paragraph{SourcePunctuator::MsvcAlignasEdictStart}
+\label{sec:ifc:SourcePunctuator:MsvcAlignasEdictStart}
+
+A punctuator word of this value marks the start of the words comprising the operands
+of the \code{alignas} keyword.
+
+
+\paragraph{SourcePunctuator::MsvcDefaultInitStart}
+\label{sec:ifc:SourcePunctuator:MsvcDefaultInitStart}
+
+A punctuator word of this value marks the start of the words comprising the
+initializer for default member initialization. 
+
+\subsubsection{\valueTag{WordSort::Literal}}
+\label{sec:ifc:WordSort:Literal}
+
+A word (\figref{fig:ifc-word-structure})  with the \field{sort} field that holds
+\valueTag{WorSort::Literal} is a \emph{literal word}.  The corresponding 
+\field{value} field is of type \newtype{SourceLiteral}{16}
+
+Values of \type{SourceLiteral} are classified in two groups.
+\begin{Enumeration}{SourceLiteral}
+	\enumerator{Unknown}
+	\enumerator{Scalar}
+	\enumerator{String}
+	\enumerator{DefinedString}
+\end{Enumeration}
+and those with values greater than $0x1FFF$
+\begin{Enumeration}{SourceLiteral}\setcounter{enumi}{8190}
+	\enumerator{Msvc}
+	\enumerator{MsvcFunctionNameMacro}
+	\enumerator{MsvcStringPrefixMacro}
+	\enumerator{MsvcBinding}
+\end{Enumeration}
+
+\paragraph{\valueTag{SourceLiteral::Unknown}}
+\label{sec:ifc:SourceLiteral:Unknown}
+
+No literal word of this value shall be produced.
+
+\paragraph{\valueTag{SourceLiteral::Scalar}}
+\label{sec:ifc:SourceLiteral:Scalar}
+
+A literal word of this value denotes a C++ source-level scalar literal.  The \field{index} field
+is of type \type{ExprIndex} and desigates that literal expression (\secref{sec:ifc:ExprSort:Literal}).
+
+
+\paragraph{\valueTag{SourceLiteral::String}}
+\label{sec:ifc:SourceLiteral:String}
+
+A literal word of this value denotes a C++ source level string literal.  The \field{index} index
+is of type \type{StringIndex} (\figref{fig:ifc-string-index}), and designates that string literal expression.
+
+
+\paragraph{\valueTag{SourceLiteral::DefinedString}}
+\label{sec:ifc:SourceLiteral:DefinedString}
+
+A literal word of this value denotes a C++ source level user-defined string literal.  The \field{index} index
+is of type \type{StringIndex} (\figref{fig:ifc-string-index}), and designates that 
+user-defined string literal expression.
+
+\paragraph{\valueTag{SourceLiteral::Msvc}}  
+\label{sec:ifc:SourceLiteral:Msvc}
+
+There is no literal word of this value.  All MSVC-specific
+literal words have values greater than this value.
+
+
+\paragraph{\valueTag{SourceLiteral::MsvcFunctionNameMacro}}  
+\label{sec:ifc:SourceLiteral:MsvcFunctionNameMacro}
+
+A literal word of this value denotes any of the special function-local 
+macros \code{__func__}, \code{__FUNCTION__}, \code{__FUNCDNAME__}, and \code{__FUNCSIG__}.
+The \field{index} field is of type \type{TextOffset} and designates the actual special macro name.
+
+
+\paragraph{\valueTag{SourceLiteral::MsvcStringPrefixMacro}}  
+\label{sec:ifc:SourceLiteral:MsvcStringPrefixMacro}
+
+A literal word of this value denotes any of the special prefix macros
+\code{__LPREFIX}, \code{__lPREFIX}, \code{__UPREFIX}, and \code{__uPREFIX}.
+The \field{index} field is of type \type{TextOffset} and designates the actual
+special macro name.
+
+
+\paragraph{\valueTag{SourceLiteral::MsvcBinding}}  
+\label{sec:ifc:SourceLiteral:MsvcBinding}
+
+A literal word of this value denotes a C++ source-level identifier bound to 
+declaration in the context of a templated definition -- this binding designates
+the result of the first phase of 2-phase name lookup up as applied to 
+templated definitions.   The \field{index} field is of type \type{ExprIndex}
+and references (\secref{sec:ifc:ExprSort:NamedDecl}) the declarations bound 
+to that identifier.
+
+\subsubsection{\valueTag{WordSort::Operator}}
+\label{sec:ifc:WordSort:Operator}
+
+
+A word (\figref{fig:ifc-word-structure})  with the \field{sort} field that holds
+\valueTag{WorSort::Operator} is an \emph{operator word}.  The corresponding 
+\field{value} field is of type \newtype{SourceOperator}{16}
+
+Values of type \type{SourceOperator} are enumerated as follows
+\begin{Enumeration}{SourceOperator}
+	\enumerator{Unknown}
+	\enumerator{Equal}
+	\enumerator{Comma}
+	\enumerator{Exclaim}
+	\enumerator{Plus}
+	\enumerator{Dash}
+	\enumerator{Star}
+	\enumerator{Slash}
+	\enumerator{Percent}
+	\enumerator{LeftChevron}
+	\enumerator{RightChevron}
+	\enumerator{Tilde}
+	\enumerator{Caret}
+	\enumerator{Bar}
+	\enumerator{Ampersand}
+	\enumerator{PlusPlus}
+	\enumerator{DashDash}
+	\enumerator{Less}
+	\enumerator{LessEqual}
+	\enumerator{Greater}
+	\enumerator{GreaterEqual}
+	\enumerator{EqualEqual}
+	\enumerator{ExclaimEqual}
+	\enumerator{Diamond}
+	\enumerator{PlusEqual}
+	\enumerator{DashEqual}
+	\enumerator{StarEqual}
+	\enumerator{SlashEqual}
+	\enumerator{PercentEqual}
+	\enumerator{AmpersandEqual}
+	\enumerator{BarEqual}
+	\enumerator{CaretEqual}
+	\enumerator{LeftChevronEqual}
+	\enumerator{RightChevronEqual}
+	\enumerator{AmpersandAmpersand}
+	\enumerator{BarBar}
+	\enumerator{Ellipsis}
+	\enumerator{Dot}
+	\enumerator{Arrow}
+	\enumerator{DotStar}
+	\enumerator{ArrowStar}
+\end{Enumeration}
+
+\ifcdoc{Unknown}{SourceOperator}
+No operator word of this value shall be produced.
+
+\ifcdoc{Equal}{SourceOperator} An operator word for ``\code{=}''.
+\ifcdoc{Comma}{SourceOperator}  An operator word for ``\code{,}''.
+\ifcdoc{Exclaim}{SourceOperator}   An operator word for ``\code{!}''.
+\ifcdoc{Plus}{SourceOperator}   An operator word for ``\code{+}''.
+\ifcdoc{Dash}{SourceOperator}   An operator word for ``\code{-}''.
+\ifcdoc{Star}{SourceOperator}   An operator word for ``\code{*}''.
+\ifcdoc{Slash}{SourceOperator}   An operator word for ``\code{/}''.
+\ifcdoc{Percent}{SourceOperator}   An operator word for ``\code{\%}''.
+\ifcdoc{LeftChevron}{SourceOperator}   An operator word for ``\code{<<}''.
+\ifcdoc{RightChevron}{SourceOperator}   An operator word for ``\code{>>}''.
+\ifcdoc{Tilde}{SourceOperator}   An operator word for ``\code{\~}''.
+\ifcdoc{Caret}{SourceOperator}   An operator word for ``\code{\^}''.
+\ifcdoc{Bar}{SourceOperator}   An operator word for ``\code{|}''.
+\ifcdoc{Ampersand}{SourceOperator}   An operator word for ``\code{\&}''.
+\ifcdoc{PlusPlus}{SourceOperator}   An operator word for ``\code{++}''.
+\ifcdoc{DashDash}{SourceOperator}   An operator word for ``\code{--}''.
+\ifcdoc{Less}{SourceOperator}   An operator word for ``\code{<}''.
+\ifcdoc{LessEqual}{SourceOperator}   An operator word for ``\code{<=}''.
+\ifcdoc{Greater}{SourceOperator}   An operator word for ``\code{>}''.
+\ifcdoc{GreaterEqual}{SourceOperator}   An operator word for ``\code{>=}''.
+\ifcdoc{EqualEqual}{SourceOperator}   An operator word for ``\code{==}''.
+\ifcdoc{ExclaimEqual}{SourceOperator}   An operator word for ``\code{\!=}''.
+\ifcdoc{Diamond}{SourceOperator}   An operator word for ``\code{<=>}''.
+\ifcdoc{PlusEqual}{SourceOperator}   An operator word for ``\code{+=}''.
+\ifcdoc{DashEqual}{SourceOperator}   An operator word for ``\code{-=}''.
+\ifcdoc{StarEqual}{SourceOperator}   An operator word for ``\code{*=}''.
+\ifcdoc{SlashEqual}{SourceOperator}   An operator word for ``\code{/=}''.
+\ifcdoc{PercentEqual}{SourceOperator}   An operator word for ``\code{\%=}''.
+\ifcdoc{AmpersandEqual}{SourceOperator}   An operator word for ``\code{\&=}''.
+\ifcdoc{BarEqual}{SourceOperator}   An operator word for ``\code{|=}''.
+\ifcdoc{CaretEqual}{SourceOperator}   An operator word for ``\code{\^=}''.
+\ifcdoc{LeftChevronEqual}{SourceOperator}   An operator word for ``\code{<<=}''.
+\ifcdoc{RightChevronEqual}{SourceOperator}   An operator word for ``\code{>>=}''.
+\ifcdoc{AmpersandAmpersand}{SourceOperator}   An operator word for ``\code{\&\&}''.
+\ifcdoc{BarBar}{SourceOperator}   An operator word for ``\code{||}''.
+\ifcdoc{Ellipsis}{SourceOperator}   An operator word for ``\code{...}''.
+\ifcdoc{Dot}{SourceOperator}   An operator word for ``\code{.}''.
+\ifcdoc{Arrow}{SourceOperator}   An operator word for ``\code{->}''.
+\ifcdoc{DotStar}{SourceOperator}   An operator word for ``\code{.*}''.
+\ifcdoc{ArrowStar}{SourceOperator}   An operator word for ``\code{->*}''.
+
+
+\subsubsection{\valueTag{WordSort::Keyword}}
+\label{sec:ifc:WordSort:Keyword}
+
+A word (\figref{fig:ifc-word-structure})  with the \field{sort} field that holds
+\valueTag{WorSort::Keyword} is a \emph{reserved word}.  The corresponding 
+\field{value} field is of type \newtype{SourceKeyword}{16}
+
+Values of type \type{SourceKeyword} are classified in two groups.
+\begin{Enumeration}{SourceKeyword}
+	\enumerator{Unknown}
+	\enumerator{Alignas}
+	\enumerator{Alignof}
+	\enumerator{Asm}
+	\enumerator{Auto}
+	\enumerator{Bool}
+	\enumerator{Break}
+	\enumerator{Case}
+	\enumerator{Catch}
+	\enumerator{Char}
+	\enumerator{Char8T}
+	\enumerator{Char16T}
+	\enumerator{Char32T}
+	\enumerator{Class}
+	\enumerator{Concept}
+	\enumerator{Const}
+	\enumerator{Consteval}
+	\enumerator{Constexpr}
+	\enumerator{Constinit}
+	\enumerator{ConstCast}
+	\enumerator{Continue}
+	\enumerator{CoAwait}
+	\enumerator{CoReturn}
+	\enumerator{CoYield}
+	\enumerator{Decltype}
+	\enumerator{Default}
+	\enumerator{Delete}
+	\enumerator{Do}
+	\enumerator{Double}
+	\enumerator{DynamicCast}
+	\enumerator{Else}
+	\enumerator{Enum}
+	\enumerator{Explicit}
+	\enumerator{Export}
+	\enumerator{Extern}
+	\enumerator{False}
+	\enumerator{Float}
+	\enumerator{For}
+	\enumerator{Friend}
+	\enumerator{Generic}
+	\enumerator{Goto}
+	\enumerator{If}
+	\enumerator{Inline}
+	\enumerator{Int}
+	\enumerator{Long}
+	\enumerator{Mutable}
+	\enumerator{Namespace}
+	\enumerator{New}
+	\enumerator{Noexcept}
+	\enumerator{Nullptr}
+	\enumerator{Operator}
+	\enumerator{Pragma}
+	\enumerator{Private}
+	\enumerator{Protected}
+	\enumerator{Public}
+	\enumerator{Register}
+	\enumerator{ReinterpretCast}
+	\enumerator{Requires}
+	\enumerator{Restrict}
+	\enumerator{Return}
+	\enumerator{Short}
+	\enumerator{Signed}
+	\enumerator{Sizeof}
+	\enumerator{Static}
+	\enumerator{StaticAssert}
+	\enumerator{StaticCast}
+	\enumerator{Struct}
+	\enumerator{Switch}
+	\enumerator{Template}
+	\enumerator{This}
+	\enumerator{ThreadLocal}
+	\enumerator{Throw}
+	\enumerator{True}
+	\enumerator{Try}
+	\enumerator{Typedef}
+	\enumerator{Typeid}
+	\enumerator{Typename}
+	\enumerator{Union}
+	\enumerator{Unsigned}
+	\enumerator{Using}
+	\enumerator{Virtual}
+	\enumerator{Void}
+	\enumerator{Volatile}
+	\enumerator{WcharT}
+	\enumerator{While}
+\end{Enumeration}
+and those with values greater than $0x1FFF$
+\begin{Enumeration}{SourceKeyword}\setcounter{enumi}{8190}
+	\enumerator{Msvc}
+	\enumerator{MsvcAsm}
+	\enumerator{MsvcAssume}
+	\enumerator{MsvcAlignof}
+	\enumerator{MsvcBased}
+	\enumerator{MsvcCdecl}
+	\enumerator{MsvcClrcall}
+	\enumerator{MsvcDeclspec}
+	\enumerator{MsvcEabi}
+	\enumerator{MsvcEvent}
+	\enumerator{MsvcSehExcept}
+	\enumerator{MsvcFastcall}
+	\enumerator{MsvcSehFinally}
+	\enumerator{MsvcForceinline}
+	\enumerator{MsvcHook}
+	\enumerator{MsvcIdentifier}
+	\enumerator{MsvcIfExists}
+	\enumerator{MsvcIfNotExists}
+	\enumerator{MsvcInt8}
+	\enumerator{MsvcInt16}
+	\enumerator{MsvcInt32}
+	\enumerator{MsvcInt64}
+	\enumerator{MsvcInt128}
+	\enumerator{MsvcInterface}
+	\enumerator{MsvcLeave}
+	\enumerator{MsvcMultipleInheritance}
+	\enumerator{MsvcNullptr}
+	\enumerator{MsvcNovtordisp}
+	\enumerator{MsvcPragma}
+	\enumerator{MsvcPtr32}
+	\enumerator{MsvcPtr64}
+	\enumerator{MsvcRestrict}
+	\enumerator{MsvcSingleInheritance}
+	\enumerator{MsvcSptr}
+	\enumerator{MsvcStdcall}
+	\enumerator{MsvcSuper}
+	\enumerator{MsvcThiscall}
+	\enumerator{MsvcSehTry}
+	\enumerator{MsvcUptr}
+	\enumerator{MsvcUuidof}
+	\enumerator{MsvcUnaligned}
+	\enumerator{MsvcUnhook}
+	\enumerator{MsvcVectorcall}
+	\enumerator{MsvcVirtualInheritance}
+	\enumerator{MsvcW64}
+
+	\enumerator{MsvcIsClass}
+	\enumerator{MsvcIsUnion}
+	\enumerator{MsvcIsEnum}
+	\enumerator{MsvcIsPolymorphic}
+	\enumerator{MsvcIsEmpty}
+	\enumerator{MsvcHasTrivialConstructor}
+	\enumerator{MsvcIsTriviallyConstructible}
+	\enumerator{MsvcIsTriviallyCopyConstructible}
+	\enumerator{MsvcIsTriviallyCopyAssignable}
+	\enumerator{MsvcIsTriviallyDestructible}
+	\enumerator{MsvcHasVirtualDestructor}
+	\enumerator{MsvcIsNothrowConstructible}
+	\enumerator{MsvcIsNothrowCopyConstructible}
+	\enumerator{MsvcIsNothrowCopyAssignable}
+	\enumerator{MsvcIsPod}
+	\enumerator{MsvcIsAbstract}
+	\enumerator{MsvcIsBaseOf}
+	\enumerator{MsvcIsConvertibleTo}
+	\enumerator{MsvcIsTrivial}
+	\enumerator{MsvcIsTriviallyCopyable}
+	\enumerator{MsvcIsStandardLayout}
+	\enumerator{MsvcIsLiteralType}
+	\enumerator{MsvcIsTriviallyMoveConstructible}
+	\enumerator{MsvcHasTrivialMoveAssign}
+	\enumerator{MsvcIsTriviallyMoveAssignable}
+	\enumerator{MsvcIsNothrowMoveAssignable}
+	\enumerator{MsvcIsConstructible}
+	\enumerator{MsvcUnderlyingType}
+	\enumerator{MsvcIsTriviallyAssignable}
+	\enumerator{MsvcIsNothrowAssignable}
+	\enumerator{MsvcIsDestructible}
+	\enumerator{MsvcIsNothrowDestructible}
+	\enumerator{MsvcIsAssignable}
+	\enumerator{MsvcIsAssignableNocheck}
+	\enumerator{MsvcHasUniqueObjectRepresentations}
+	\enumerator{MsvcIsAggregate}
+	\enumerator{MsvcBuiltinAddressOf}
+	\enumerator{MsvcBuiltinOffsetOf}
+	\enumerator{MsvcBuiltinBitCast}
+	\enumerator{MsvcBuiltinIsLayoutCompatible}
+	\enumerator{MsvcBuiltinIsPointerInterconvertibleBaseOf}
+	\enumerator{MsvcBuiltinIsPointerInterconvertibleWithClass}
+	\enumerator{MsvcBuiltinIsCorrespondingMember}
+	\enumerator{MsvcIsRefClass}
+	\enumerator{MsvcIsValueClass}
+	\enumerator{MsvcIsSimpleValueClass}
+	\enumerator{MsvcIsInterfaceClass}
+	\enumerator{MsvcIsDelegate}
+	\enumerator{MsvcIsFinal}
+	\enumerator{MsvcIsSealed}
+	\enumerator{MsvcHasFinalizer}
+	\enumerator{MsvcHasCopy}
+	\enumerator{MsvcHasAssign}
+	\enumerator{MsvcHasUserDestructor}
+
+	\enumerator{MsvcPackCardinality}
+	\enumerator{MsvcConfusedSizeof}
+	\enumerator{MsvcConfusedAlignas}
+\end{Enumeration}
+
+
+\ifcdoc{Unknown}{SourceKeyword} No reserved word of this word shall be produced.
+\ifcdoc{Alignas}{SourceKeyword} A reserved word for ``\code{alignas}''.
+\ifcdoc{Alignof}{SourceKeyword} A reserved word for ``\code{alignof}''.
+\ifcdoc{Asm}{SourceKeyword} A reserved word for ``\code{asm}''.
+\ifcdoc{Auto}{SourceKeyword} A reserved word for ``\code{auto}''.
+\ifcdoc{Bool}{SourceKeyword} A reserved word for ``\code{bool}''.
+\ifcdoc{Break}{SourceKeyword} A reserved word for ``\code{break}''.
+\ifcdoc{Case}{SourceKeyword} A reserved word for ``\code{case}''.
+\ifcdoc{Catch}{SourceKeyword} A reserved word for ``\code{catch}''.
+\ifcdoc{Char}{SourceKeyword} A reserved word for ``\code{char}''.
+\ifcdoc{Char8T}{SourceKeyword} A reserved word for ``\code{char8_t}''.
+\ifcdoc{Char16T}{SourceKeyword} A reserved word for ``\code{char16_t}''.
+\ifcdoc{Char32T}{SourceKeyword} A reserved word for ``\code{char32_t}''.
+\ifcdoc{Class}{SourceKeyword} A reserved word for ``\code{class}''.
+\ifcdoc{Concept}{SourceKeyword} A reserved word for ``\code{concept}''.
+\ifcdoc{Const}{SourceKeyword} A reserved word for ``\code{const}''.
+\ifcdoc{Consteval}{SourceKeyword} A reserved word for ``\code{consteval}''.
+\ifcdoc{Constexpr}{SourceKeyword} A reserved word for ``\code{constexpr}''.
+\ifcdoc{Constinit}{SourceKeyword} A reserved word for ``\code{constinit}''.
+\ifcdoc{ConstCast}{SourceKeyword} A reserved word for ``\code{const_cast}''.
+\ifcdoc{Continue}{SourceKeyword} A reserved word for ``\code{continue}''.
+\ifcdoc{CoAwait}{SourceKeyword} A reserved word for ``\code{co_await}''.
+\ifcdoc{CoReturn}{SourceKeyword} A reserved word for ``\code{co_return}''.
+\ifcdoc{CoYield}{SourceKeyword} A reserved word for ``\code{co_yield}''.
+\ifcdoc{Decltype}{SourceKeyword} A reserved word for ``\code{decltype}''.
+\ifcdoc{Default}{SourceKeyword} A reserved word for ``\code{default}''.
+\ifcdoc{Delete}{SourceKeyword} A reserved word for ``\code{delete}''.
+\ifcdoc{Do}{SourceKeyword} A reserved word for ``\code{do}''.
+\ifcdoc{Double}{SourceKeyword} A reserved word for ``\code{double}''.
+\ifcdoc{DynamicCast}{SourceKeyword} A reserved word for ``\code{dynamic_cast}''.
+\ifcdoc{Else}{SourceKeyword} A reserved word for ``\code{else}''.
+\ifcdoc{Enum}{SourceKeyword} A reserved word for ``\code{enum}''.
+\ifcdoc{Explicit}{SourceKeyword} A reserved word for ``\code{explicit}''.
+\ifcdoc{Export}{SourceKeyword} A reserved word for ``\code{export}''.
+\ifcdoc{Extern}{SourceKeyword} A reserved word for ``\code{extern}''.
+\ifcdoc{False}{SourceKeyword} A reserved word for ``\code{false}''.
+\ifcdoc{Float}{SourceKeyword} A reserved word for ``\code{float}''.
+\ifcdoc{For}{SourceKeyword} A reserved word for ``\code{for}''.
+\ifcdoc{Friend}{SourceKeyword} A reserved word for ``\code{friend}''.
+\ifcdoc{Generic}{SourceKeyword} A reserved word for ``\code{_Generic}''.
+\ifcdoc{Goto}{SourceKeyword} A reserved word for ``\code{goto}''.
+\ifcdoc{If}{SourceKeyword} A reserved word for ``\code{if}''.
+\ifcdoc{Inline}{SourceKeyword} A reserved word for ``\code{inline}''.
+\ifcdoc{Int}{SourceKeyword} A reserved word for ``\code{int}''.
+\ifcdoc{Long}{SourceKeyword} A reserved word for ``\code{long}''.
+\ifcdoc{Mutable}{SourceKeyword} A reserved word for ``\code{mutable}''.
+\ifcdoc{Namespace}{SourceKeyword} A reserved word for ``\code{namespace}''.
+\ifcdoc{New}{SourceKeyword} A reserved word for ``\code{new}''.
+\ifcdoc{Noexcept}{SourceKeyword} A reserved word for ``\code{noexcept}''.
+\ifcdoc{Nullptr}{SourceKeyword} A reserved word for ``\code{nullptr}''.
+\ifcdoc{Operator}{SourceKeyword} A reserved word for ``\code{operator}''.
+\ifcdoc{Pragma}{SourceKeyword} A reserved word for ``\code{_Pragma}''.
+\ifcdoc{Private}{SourceKeyword} A reserved word for ``\code{private}''.
+\ifcdoc{Protected}{SourceKeyword} A reserved word for ``\code{protected}''.
+\ifcdoc{Public}{SourceKeyword} A reserved word for ``\code{public}''.
+\ifcdoc{Register}{SourceKeyword} A reserved word for ``\code{register}''.
+\ifcdoc{ReinterpretCast}{SourceKeyword} A reserved word for ``\code{reinterpret_cast}''.
+\ifcdoc{Requires}{SourceKeyword} A reserved word for ``\code{requires}''.
+\ifcdoc{Restrict}{SourceKeyword} A reserved word for ``\code{restrict}''.
+\ifcdoc{Return}{SourceKeyword} A reserved word for ``\code{return}''.
+\ifcdoc{Short}{SourceKeyword} A reserved word for ``\code{short}''.
+\ifcdoc{Signed}{SourceKeyword} A reserved word for ``\code{signed}''.
+\ifcdoc{Sizeof}{SourceKeyword} A reserved word for ``\code{sizeof}''.
+\ifcdoc{Static}{SourceKeyword} A reserved word for ``\code{static}''.
+\ifcdoc{StaticAssert}{SourceKeyword} A reserved word for ``\code{static_assert}''.
+\ifcdoc{StaticCast}{SourceKeyword} A reserved word for ``\code{static_cast}''.
+\ifcdoc{Struct}{SourceKeyword} A reserved word for ``\code{struct}''.
+\ifcdoc{Switch}{SourceKeyword} A reserved word for ``\code{switch}''.
+\ifcdoc{Template}{SourceKeyword} A reserved word for ``\code{template}''.
+\ifcdoc{This}{SourceKeyword} A reserved word for ``\code{this}''.
+\ifcdoc{ThreadLocal}{SourceKeyword} A reserved word for ``\code{thread_local}''.
+\ifcdoc{Throw}{SourceKeyword} A reserved word for ``\code{throw}''.
+\ifcdoc{True}{SourceKeyword} A reserved word for ``\code{true}''.
+\ifcdoc{Try}{SourceKeyword} A reserved word for ``\code{try}''.
+\ifcdoc{Typedef}{SourceKeyword} A reserved word for ``\code{typedef}''.
+\ifcdoc{Typeid}{SourceKeyword} A reserved word for ``\code{typeid}''.
+\ifcdoc{Typename}{SourceKeyword} A reserved word for ``\code{typename}''.
+\ifcdoc{Union}{SourceKeyword} A reserved word for ``\code{union}''.
+\ifcdoc{Unsigned}{SourceKeyword} A reserved word for ``\code{unsigned}''.
+\ifcdoc{Using}{SourceKeyword} A reserved word for ``\code{using}''.
+\ifcdoc{Virtual}{SourceKeyword} A reserved word for ``\code{virtual}''.
+\ifcdoc{Void}{SourceKeyword} A reserved word for ``\code{void}''.
+\ifcdoc{Volatile}{SourceKeyword} A reserved word for ``\code{volatile}''.
+\ifcdoc{WcharT}{SourceKeyword} A reserved word for ``\code{wchar_t}''.
+\ifcdoc{While}{SourceKeyword} A reserved word for ``\code{while}''.
+
+
+\ifcdoc{Msvc}{SourceKeyword}  No reserved word of this value shall be produced.  All MSVC-specific
+reserved words have values greater than thi.s
+
+\ifcdoc{MsvcAsm}{SourceKeyword} A reserved word for the MSVC extension ``\code{__asm}''.
+\ifcdoc{MsvcAssume}{SourceKeyword} A reserved word for the MSVC extension ``\code{__assume}''.
+\ifcdoc{MsvcAlignof}{SourceKeyword} A reserved word for the MSVC extension ``\code{__alignof}''.
+\ifcdoc{MsvcBased}{SourceKeyword} A reserved word for the MSVC extension ``\code{__based}''.
+\ifcdoc{MsvcCdecl}{SourceKeyword} A reserved word for the MSVC extension ``\code{__cdecl}''.
+\ifcdoc{MsvcClrcall}{SourceKeyword} A reserved word for the MSVC extension ``\code{__clrcall}''.
+\ifcdoc{MsvcDeclspec}{SourceKeyword} A reserved word for the MSVC extension ``\code{__declspec}''.
+\ifcdoc{MsvcEabi}{SourceKeyword} A reserved word for the MSVC extension ``\code{__eabi}''.
+\ifcdoc{MsvcEvent}{SourceKeyword} A reserved word for the MSVC extension ``\code{__event}''.
+\ifcdoc{MsvcSehExcept}{SourceKeyword} A reserved word for the MSVC extension ``\code{__except}''.
+\ifcdoc{MsvcFastcall}{SourceKeyword} A reserved word for the MSVC extension ``\code{__fastcall}''.
+\ifcdoc{MsvcSehFinally}{SourceKeyword} A reserved word for the MSVC extension ``\code{__finally}''.
+\ifcdoc{MsvcForceinline}{SourceKeyword} A reserved word for the MSVC extension ``\code{__forceinline}''.
+\ifcdoc{MsvcHook}{SourceKeyword} A reserved word for the MSVC extension ``\code{__hook}''.
+\ifcdoc{MsvcIdentifier}{SourceKeyword} A reserved word for the MSVC extension ``\code{__identifier}''.
+\ifcdoc{MsvcIfExists}{SourceKeyword} A reserved word for the MSVC extension ``\code{__if_exists}''.
+\ifcdoc{MsvcIfNotExists}{SourceKeyword} A reserved word for the MSVC extension ``\code{__if_not_exists}''.
+\ifcdoc{MsvcInt8}{SourceKeyword} A reserved word for the MSVC extension ``\code{__int8}''.
+\ifcdoc{MsvcInt16}{SourceKeyword} A reserved word for the MSVC extension ``\code{__int16}''.
+\ifcdoc{MsvcInt32}{SourceKeyword} A reserved word for the MSVC extension ``\code{__int32}''.
+\ifcdoc{MsvcInt64}{SourceKeyword} A reserved word for the MSVC extension ``\code{__int64}''.
+\ifcdoc{MsvcInt128}{SourceKeyword} A reserved word for the MSVC extension ``\code{__int128}''.
+\ifcdoc{MsvcInterface}{SourceKeyword} A reserved word for the MSVC extension ``\code{__interface}''.
+\ifcdoc{MsvcLeave}{SourceKeyword} A reserved word for the MSVC extension ``\code{__leave}''.
+\ifcdoc{MsvcMultipleInheritance}{SourceKeyword} A reserved word for the MSVC extension ``\code{__multiple_inheritance}''.
+\ifcdoc{MsvcNullptr}{SourceKeyword} A reserved word for the MSVC extension ``\code{__nulptr}''.
+\ifcdoc{MsvcNovtordisp}{SourceKeyword} A reserved word for the MSVC extension ``\code{__novtordisp}''.
+\ifcdoc{MsvcPragma}{SourceKeyword} A reserved word for the MSVC extension ``\code{__pragma}''.
+\ifcdoc{MsvcPtr32}{SourceKeyword} A reserved word for the MSVC extension ``\code{__ptr32}''.
+\ifcdoc{MsvcPtr64}{SourceKeyword} A reserved word for the MSVC extension ``\code{__ptr64}''.
+\ifcdoc{MsvcRestrict}{SourceKeyword} A reserved word for the MSVC extension ``\code{__restrict}''.
+\ifcdoc{MsvcSingleInheritance}{SourceKeyword} A reserved word for the MSVC extension ``\code{__single_inheritance}''.
+\ifcdoc{MsvcSptr}{SourceKeyword} A reserved word for the MSVC extension ``\code{__sptr}''.
+\ifcdoc{MsvcStdcall}{SourceKeyword} A reserved word for the MSVC extension ``\code{__stdcall}''.
+\ifcdoc{MsvcSuper}{SourceKeyword} A reserved word for the MSVC extension ``\code{__super}''.
+\ifcdoc{MsvcThiscall}{SourceKeyword} A reserved word for the MSVC extension ``\code{__thiscall}''.
+\ifcdoc{MsvcSehTry}{SourceKeyword} A reserved word for the MSVC extension ``\code{__try}''.
+\ifcdoc{MsvcUptr}{SourceKeyword} A reserved word for the MSVC extension ``\code{__uptr}''.
+\ifcdoc{MsvcUuidof}{SourceKeyword} A reserved word for the MSVC extension ``\code{__uuidof}''.
+\ifcdoc{MsvcUnaligned}{SourceKeyword} A reserved word for the MSVC extension ``\code{__unaligned}''.
+\ifcdoc{MsvcUnhook}{SourceKeyword} A reserved word for the MSVC extension ``\code{__unhook}''.
+\ifcdoc{MsvcVectorcall}{SourceKeyword} A reserved word for the MSVC extension ``\code{__vectorcall}''.
+\ifcdoc{MsvcVirtualInheritance}{SourceKeyword} A reserved word for the MSVC extension ``\code{__vritual_inheritance}''.
+\ifcdoc{MsvcW64}{SourceKeyword} A reserved word for the MSVC extension ``\code{__w64}''.
+
+\ifcdoc{MsvcIsClass}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_class}''.
+\ifcdoc{MsvcIsUnion}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_union}''.
+\ifcdoc{MsvcIsEnum}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_enum}''.
+\ifcdoc{MsvcIsPolymorphic}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_polymorphic}''.
+\ifcdoc{MsvcIsEmpty}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_empty}''.
+\ifcdoc{MsvcHasTrivialConstructor}{SourceKeyword} A reserved word for the MSVC extension ``\code{__has_trivial_constructor}''.
+\ifcdoc{MsvcIsTriviallyConstructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivially_constructible}''.
+\ifcdoc{MsvcIsTriviallyCopyConstructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivially_copy_constructible}''.
+\ifcdoc{MsvcIsTriviallyCopyAssignable}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivially_copy_constructible}''.
+\ifcdoc{MsvcIsTriviallyDestructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivially_destructible}''.
+\ifcdoc{MsvcHasVirtualDestructor}{SourceKeyword} A reserved word for the MSVC extension ``\code{__has_virtual_destructor}''.
+\ifcdoc{MsvcIsNothrowConstructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_nothrow_constructible}''.
+\ifcdoc{MsvcIsNothrowCopyConstructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_nothrow_copy_constructible}''.
+\ifcdoc{MsvcIsNothrowCopyAssignable}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_nothrow_copy_assignable}''.
+\ifcdoc{MsvcIsPod}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_pod}''.
+\ifcdoc{MsvcIsAbstract}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_abstract}''.
+\ifcdoc{MsvcIsBaseOf}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_base_of}''.
+\ifcdoc{MsvcIsConvertibleTo}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_convertible_to}''.
+\ifcdoc{MsvcIsTrivial}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivial}''.
+\ifcdoc{MsvcIsTriviallyCopyable}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivially_copyable}''.
+\ifcdoc{MsvcIsStandardLayout}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_standard_layout}''.
+\ifcdoc{MsvcIsLiteralType}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_literal_type}''.
+\ifcdoc{MsvcIsTriviallyMoveConstructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivially_move_constructible}''.
+\ifcdoc{MsvcHasTrivialMoveAssign}{SourceKeyword} A reserved word for the MSVC extension ``\code{__has_trivial_move_assign}''.
+\ifcdoc{MsvcIsTriviallyMoveAssignable}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivially_move_assignable}''.
+\ifcdoc{MsvcIsNothrowMoveAssignable}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_nothrow_move_assignable}''.
+\ifcdoc{MsvcIsConstructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_constructible}''.
+\ifcdoc{MsvcUnderlyingType}{SourceKeyword} A reserved word for the MSVC extension ``\code{__underlying_type}''.
+\ifcdoc{MsvcIsTriviallyAssignable}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_trivially_assignable}''.
+\ifcdoc{MsvcIsNothrowAssignable}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_nothrow_assignable}''.
+\ifcdoc{MsvcIsDestructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_destructible}''.
+\ifcdoc{MsvcIsNothrowDestructible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_nothrow_destructible}''.
+\ifcdoc{MsvcIsAssignable}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_assignable}''.
+\ifcdoc{MsvcIsAssignableNocheck}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_assignable_no_precondition_check}''.
+\ifcdoc{MsvcHasUniqueObjectRepresentations}{SourceKeyword} A reserved word for the MSVC extension ``\code{__has_unique_object_representations}''.
+\ifcdoc{MsvcIsAggregate}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_aggregate}''.
+\ifcdoc{MsvcBuiltinAddressOf}{SourceKeyword} A reserved word for the MSVC extension ``\code{__builtin_addressof}''.
+\ifcdoc{MsvcBuiltinOffsetOf}{SourceKeyword} A reserved word for the MSVC extension ``\code{__builtin_offsetof}''.
+\ifcdoc{MsvcBuiltinBitCast}{SourceKeyword} A reserved word for the MSVC extension ``\code{__builtin_bit_cast}''.
+\ifcdoc{MsvcBuiltinIsLayoutCompatible}{SourceKeyword} A reserved word for the MSVC extension ``\code{__builtin_is_layout_compatible}''.
+\ifcdoc{MsvcBuiltinIsPointerInterconvertibleBaseOf}{SourceKeyword} A reserved word for the MSVC extension ``\code{__builtin_is_pointer_interconvertible_base_of}''.
+\ifcdoc{MsvcBuiltinIsPointerInterconvertibleWithClass}{SourceKeyword} A reserved word for the MSVC extension ``\code{__builtin_is_pointer_interconvertible_with_class}''.
+\ifcdoc{MsvcBuiltinIsCorrespondingMember}{SourceKeyword} A reserved word for the MSVC extension ``\code{__builtin_is_corresponding_member}''.
+\ifcdoc{MsvcIsRefClass}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_ref_class}''.
+\ifcdoc{MsvcIsValueClass}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_value_class}''.
+\ifcdoc{MsvcIsSimpleValueClass}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_simple_value_class}''.
+\ifcdoc{MsvcIsInterfaceClass}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_interface_class}''.
+\ifcdoc{MsvcIsDelegate}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_delegate}''.
+\ifcdoc{MsvcIsFinal}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_final}''.
+\ifcdoc{MsvcIsSealed}{SourceKeyword} A reserved word for the MSVC extension ``\code{__is_sealed}''.
+\ifcdoc{MsvcHasFinalizer}{SourceKeyword} A reserved word for the MSVC extension ``\code{__has_finalizer}''.
+\ifcdoc{MsvcHasCopy}{SourceKeyword} A reserved word for the MSVC extension ``\code{__has_copy}''.
+\ifcdoc{MsvcHasAssign}{SourceKeyword} A reserved word for the MSVC extension ``\code{__has_assign}''.
+\ifcdoc{MsvcHasUserDestructor}{SourceKeyword} A reserved word for the MSVC extension ``\code{__has_user_destructor}''.
+
+\ifcdoc{MsvcPackCardinality}{SourceKeyword} A reserved word for ``\code{sizeof...}''.
+\ifcdoc{MsvcConfusedSizeof}{SourceKeyword} A reserved word for ``\code{sizeof}''.
+\ifcdoc{MsvcConfusedAlignas}{SourceKeyword} A reserved word for ``\code{alignas}''.
+
+
+
+\subsubsection{\valueTag{WordSort::Identifier}}
+\label{sec:ifc:WordSort:Identifier}
+
+A word (\figref{fig:ifc-word-structure})  with the \field{sort} field that holds
+\valueTag{WorSort::Identifier} is an \emph{identifier word}.  The corresponding 
+\field{value} field is of type \newtype{SourceIdentifier}{16}
+
+Values of type \type{SourceIdentifier} are classified in two groups.
+\begin{Enumeration}{SourceIdentifier}
+	\enumerator{Plain}
+\end{Enumeration}
+and those with values greater than $0x1FFF$
+\begin{Enumeration}{SourceIdentifier}\setcounter{enumi}{8190}
+	\enumerator{Msvc}
+	\enumerator{MsvcBuiltinHugeVal}
+	\enumerator{MsvcBuiltinHugeValf}
+	\enumerator{MsvcBuiltinNan}
+	\enumerator{MsvcBuiltinNanf}
+	\enumerator{MsvcBuiltinNans}
+	\enumerator{MsvcBuiltinNansf}
+\end{Enumeration}
+
+\paragraph{\valueTag{SourceIdentifier::Plain}}
+\label{sec:ifc:SourceIdentifier:Plain}
+
+An identifier word with the \field{value} field holding \valueTag{SourceIdentifier::Plain}
+designates a C++ source-level identifier.  The spelling of that identifier is indicated 
+by the \field{index} field which is of type \type{TexOffset} (\secref{sec:ifc-textoffset-data-type}).
+
+\paragraph{\valueTag{SourceIdentifier::Msvc}}
+\label{sec:ifc:SourceIdentifier:Msvc}
+
+No identifier word has a \field{value} field holding this value.  It serves purely as a marker denoting
+the starting point of identifiers with built-in meaning to MSVC.
+
+\paragraph{\valueTag{SourceIdentifier::MsvcBuiltinHugeVal}}
+\label{sec:ifc:SourceIdentifier:MsvcBuiltinHugeVal}
+
+An identifier word for \code{__builtin_huge_val}.
+
+\paragraph{\valueTag{SourceIdentifier::MsvcBuiltinHugeValf}}
+\label{sec:ifc:SourceIdentifier:MsvcBuiltinHugeValf}
+
+An identifier word for \code{__builtin_huge_valf}.
+
+
+\paragraph{\valueTag{SourceIdentifier::MsvcBuiltinNan}}
+\label{sec:ifc:SourceIdentifier:MsvcBuiltinNan}
+
+An identifier word for  \code{__builtin_nan}.
+
+
+\paragraph{\valueTag{SourceIdentifier::MsvcBuiltinNanf}}
+\label{sec:ifc:SourceIdentifier:MsvcBuiltinNanf}
+
+An identifier word for \code{__builtin_nanf}.
+
+
+\paragraph{\valueTag{SourceIdentifier::MsvcBuiltinNans}}
+\label{sec:ifc:SourceIdentifier:MsvcBuiltinNans}
+
+An identifier word for \code{__builtin_nans}.
+
+
+\paragraph{\valueTag{SourceIdentifier::MsvcBuiltinNansf}}
+\label{sec:ifc:SourceIdentifier:MsvcBuiltinNansf}
+
+An identifier word for \code{__builtin_nansf}.

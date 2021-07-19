@@ -1,0 +1,354 @@
+\label{sec:structure}
+
+\section{Overview}
+\label{sec:overview}
+
+Compiled module interfaces are persisted in an IFC format.  The general
+representation is as follows
+\begin{figure}[hbp]
+  \centering
+  \begin{tikzpicture}
+    \matrix (ifc) [matrix of nodes,
+            row sep=-\pgflinewidth,
+            nodes={rectangle,draw,anchor=west,text width=10em}]
+    {
+      {File Signature} \\
+      {Header} \\
+      \textit{Partition 1} \\
+      $\vdots$ \\
+      \textit{Partition n} \\
+	{String Table} \\
+      {Table of Contents}\\
+    };
+	%% Header gives offsets to ToC, String Table, Global Scope.
+	\draw [->] (ifc-2-1.west) to [out=180,in=180] (ifc-7-1.north west);
+	\draw [->] (ifc-2-1.west) to [out=180,in=180] (ifc-6-1.north west);
+	\draw [->] (ifc-2-1.west) to [out=180,in=180] (ifc-4-1.west);
+
+	\draw[->] (ifc-7-1.east) to [out=0,in=0] (ifc-3-1.north east);
+	\draw[->] (ifc-7-1.east) to [out=0,in=0] (ifc-4-1.north east);
+	\draw[dotted,->] (ifc-7-1.east) to [out=0,in=0] (ifc-4-1.east);
+	\draw[->] (ifc-7-1.east) to [out=0,in=0] (ifc-5-1.north east);
+  \end{tikzpicture}
+  \caption{IFC file general structure}
+  \label{fig:ifc-file-overview}
+\end{figure}
+
+\noindent
+An IFC represents the \emph{abstract semantics graph} that is the result
+of elaborating declarations in an input source file, e.g. a module interface file,
+ or a header unit, or indeed any C++ source file that leads to a 
+well-formed translation unit.
+Declarations and expressions are designated by \emph{abstract references}.  An
+abstract reference is essentially a typed pointer that refers to an index in a
+partition.  The specific partition is given by the \field{tag} field of the abstract
+reference, and the index is given by the \term{index} field of the reference.  All
+abstract references are multiple-byte values with 32-bit precision:
+%
+\begin{figure}[H]
+  \centering
+	\begin{BasicAbstractReferenceLayout}{32}
+		\bitfield{10}{\field{tag}: \clipType{Sort}{N}}
+      		\bitfield{22}{\field{index}: \clipType{Index}{32 - N} }
+		\bitFormatTextAt{N-1}{8}
+ 		\bitSeparate{10}
+		\bitFormatTextAt{N}{10}
+	\end{BasicAbstractReferenceLayout} 
+  \caption{Abstract reference parameterized by the sort of designated entity.}
+  \label{fig:ifc-abstract-reference}
+\end{figure}
+%
+
+\noindent
+The overall aim is to define the binary representations after the 
+\emph{Internal Program Representation} (IPR), a work done by Gabriel Dos~Reis
+and Bjarne Stroustrup \cite{gdr-bs:ipr-macis-special-issue,ipr:web} to define a more regular 
+foundational semantics for
+C++, capable of capturing ISO C++ and practical dialects.
+
+\section{Multiple IFCs per file}
+\label{sec:ifc-multiple-ifcs-per-file}
+
+The current specification only defines one IFC per containing file.  However, the long term goal is to support multiple IFCs per contaning file.
+Where there is a mention of "offset from the beginning of the file", it should be understood "offset from the beginning of the current IFC".
+
+\section{Type of IFC container}
+\label{sec:ifc-type-of-ifc-container}
+
+An IFC can be embedded in just any binary file.  The VC++ compiler by default generates IFCs in binary files with the 
+\code{.ifc} extension.  However, they can also be embedded in archives (e.g. files with \code{.a} or \code{.lib} extensions), or
+in shared or dynamically linked libraries (e.g. files with \code{.so}, \code{.dll}, \code{.dylib} extensions.)
+
+\section{On-demand materialization}
+
+The IFC format is designed to support (and encourage) ``on-demand''
+materialization of declarations.  That is, when the compiler sees an
+import-declaration, it does \emph{not} bring in all the declarations
+right away.  Rather, the idea is that it only makes visible
+the set of (toplevel) names exported by the nominated module.  An
+on-demand materialization strategy will only reconstruct declarations
+upon name lookup (in response to a name use in the importing
+translation unit) however referenced.  The on-demand materialization
+strategy embodies C++'s long standing philosophy of ``you don't pay
+for what you don't use.''
+
+\section{Endianness}
+\label{sec:ifc-endianness}
+
+Each multibyte scalar value used in the description of an IFC file header (\secref{sec:ifc-file-header})
+and in the table of contents (\secref{sec:ifc-toc})
+is stored in little endian format. Multibyte scalar values stored in the partitions use the
+endianness of the target architecture.
+
+\section{Basic data types}
+\label{sec:ifc-basic-data-types}
+
+This document uses a few fundamental data types, \type{u8}, \type{u16}, and \type{32} with the following characteristics:
+\begin{itemize}
+	\item \type{u8}: $1$ octet, with alignment $1$; usually equivalent to C++'s \code{uint8_t}
+	\item \type{u16}: $2$ octets, with alignment $2$; usually equivalent to C++'s \code{uint16_t}
+	\item \type{u32}: $4$ octets, with alignment %4%; usually equivalent to C++'s \code{uint32_t} 
+\end{itemize} 
+
+\subsection{File offset in bytes}
+At various places, the locations of certain tables (especially partitions) are
+described in terms of byte offset from the beginning of the current IFC file.  The
+document uses the following abstract data type for those quantities.
+\newtype{ByteOffset}{32}
+
+\paragraph{Note:}
+The current implementation uses 4-byte for file offsets, but that will change
+in coming updates to 8-byte in anticipation of large IFC file support.
+
+\subsection{Cardinality: counting items}
+At various places, the IFC indicates how many elements there are in a given
+table.  That information is given by a 32-bit integer value abstacted as
+follows: \newtype{Cardinality}{32}
+
+\subsection{Extent of entities}
+\label{sec:ifc-entity-size}
+At various places, in partitular in partition summaries (\secref{sec:ifc-partition}), the IFC needs to indicate 
+the number of bytes contain in entity representation.  That information is
+indicated by a 32-bit value of type \newtype{EntitySize}{32}
+
+\subsection{Generic Indices}
+\label{sec:ifc-index-type}
+The type of generic indices into tables is defined as \newtype{Index}{32}
+
+\subsection{Sequence}
+\label{sec:ifc-sequence}
+A sequence is generically described by a pair:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality}\\
+	}
+	\caption{Structure of a sequence}
+	\label{fig:ifc-sequence-structure}
+\end{figure}
+%
+The \field{start} field is an index into the partition the sequence is part of.  It designates the first item in the sequence.
+The \field{cardinality} designates the number of items in the sequence.
+
+\subsection{Content Hash}
+\label{sec:content-sha256-hash}
+The interesting portion of the content of an IFC file is hashed using SHA-256 algorithm, and stored as a value of type \type{SHA256}:
+A basic data type with 256 bits width, and with alignment 4.
+
+\subsection{File Format Versioning}
+\label{sec:ifc-versioning-data-type}
+
+Each IFC header has version information, major and minor of type defined as \newtype{Version}{8}
+
+\subsection{ABI}
+\label{sec:ifc-abi-data-type}
+The ABI targeted by an IFC is recorded in a field of the IFC header, of type \newtype{Abi}{8}
+
+\subsection{Architecture}
+\label{sec:ifc-architecture-data-type}
+The architecture targeted by an IFC is recorded in a field of the IFC header, of type
+\begin{typedef}{Architecture}{}
+	enum class Architecture : uint8_t {
+		Unknown	= 0x00,		// Unknown target
+		X86			= 0x01,		// x86 (32-bit) target
+		X64			= 0x02,		// x64 (64-bit) target
+		ARM32		= 0x03,		// ARM (32-bit) target
+		ARM64		= 0x04,		// ARM (64-bit) target
+		HybridX86ARM64 = 0x05,	// Hybrid x86-arm64
+	};
+\end{typedef}
+
+\subsection{Language Version}
+\label{sec:ifc-language-version}
+
+The C++ language version is a 32-bit value of type \newtype{LanguageVersion}{32}
+
+\section{IFC File Signature}
+\label{sec:ifc-file-signature}
+
+Each valid IFC file (see \figref{fig:ifc-file-overview}) starts with the following 4-byte file signature:
+\begin{lstlisting}
+  0x54  0x51 0x45 0x1A
+\end{lstlisting}
+
+
+\section{IFC File Header}
+\label{sec:ifc-file-header}
+
+Following the file signature (\secref{sec:ifc-file-signature}) is a header that describes a checksum, 
+format version information, ABI information, target architecture information, C++ language version,
+ the offset to the string table (\secref{sec:ifc-string-table}) and how long it is, 
+the name of the IFC's module, the filename of the original C++ source file, the index of the global scope,
+then an indication on
+where to find the ``table of contents'' (\secref{sec:ifc-toc}), and finally how many partitions (\secref{sec:ifc-partition})
+the IFC contains.
+%
+\begin{figure}[H]
+  \centering
+    \structure[text width = 15em]{
+	\DeclareMember{checksum}{SHA256} \\
+	\DeclareMember{major\_version}{Version} \\
+      \DeclareMember{minor\_version}{Version} \\
+      \DeclareMember{abi}{Abi} \\
+      \DeclareMember{arch}{Architecture} \\
+	\DeclareMember{dialect}{LanguageVersion} \\
+	\DeclareMember{string\_table\_bytes}{ByteOffset} \\
+	\DeclareMember{string\_table\_size}{Cardinality} \\
+	\DeclareMember{unit}{UnitIndex} \\
+	\DeclareMember{src\_path}{TextOffset} \\
+	\DeclareMember{global\_scope}{ScopeIndex} \\
+      \DeclareMember{toc}{ByteOffset} \\
+	\DeclareMember{partition\_count}{Cardinality} \\
+	\DeclareMember{internal}{bool} \\
+    }
+  \caption{Structure of an IFC binary file header}
+  \label{fig:ifc-file-header}
+\end{figure}
+
+The interpretation of the fields is as follows:
+\begin{description}
+\item[Content checksum]
+	The field \field{checksum} represents the SHA-256 hash of the portion of the IFC file content starting from right after 
+	that field to the end of the IFC file.
+
+\item[Version]
+	The fields \field{major\_version} and \field{minor\_version} collectively denote the version of the data structures in the
+	IFC. The current format version is $0.25$, meaning \field{major\_version} is $0$,
+	and \field{minor\_version} is $25$.
+
+\item[Target ABI] 
+	The field \field{abi} records the ABI of the target platform of the IFC.
+
+\item[Target Architecture]
+	The field \field{arch} records the architecture targeted by the IFC.
+
+\item[C++ Language Version]
+	The field \field{dialect} records the value of the C++ pre-defined macro \code{\_\_cplusplus} in effect
+	when the IFC was created.
+
+\item[String Table]
+	The field \field{string\_table\_bytes} is an offset from the beginning of the IFC to the first byte of the string table (\secref{sec:ifc-string-table}).
+	the number of bytes in table is indicated by \field{string\_table\_size}.
+
+	The string table holds the representation of any single strings or identifiers in the IFC.  Consequently, locating it is
+	essential for determining the IFC's module name, and also for locating partitions by name.
+
+\item[Translation Unit Descriptor]
+	A classification of the translation unit for which this IFC was generated is described by the field \field{unit},  value of
+     type \type{UnitIndex} (\secref{sec:ifc-tu}).
+
+\item[Source Pathname]
+	The filename of the C++ source file out of which the IFC was produced is indicated by the field \field{src\_path}, an
+	offset into the string table.  In the current implementation, this is an ordinary NUL-terminated narrow string.
+
+\item[Global Scope]
+	Every declaration is rooted in the global namespace.  The field \field{global\_scope} is index into the
+	scope partition (\secref{sec:ifc-scope-desc}), pointing to the description of the global namespace.  Traversing the global scope, and recursively any 
+	contained declaration, gives the entire abstract semantics graph making up the IFC.
+
+\item[Table of Contents]
+	The table of contents is an array of all partition summaries in the IFC.  The field \field{toc} indicates the offset (in bytes)
+	from the beginning of the offset to the first partition descriptor.  The number of partition summaries in the table of contents
+	is given by the field \field{partition\_count}.
+
+\item[Internal Unit]
+	Whether the IFC is for an exported module unit or not is indicated by \field{internal}.  This field is false for all
+	translation units are produced except non-exported module partitions.
+
+\end{description}
+
+\paragraph{Note}
+The values of the major and minor versions, the ABI, and the architecture fields
+are not fixed yet.   All multi-byte integer values in header are stored according to a little endian format.  All multi-byte integer values
+stored in the partitions are stored according to the endianness of the target architecture.
+The structure of the field {internal} may change in future revisions.
+
+
+%% \paragraph{ToC offset}
+%% The offset to the table of contents is currently
+%% encoded over 4 bytes, but that may change soon to 8 bytes.  
+%% This field
+%% indicates the relative position (in bytes) of the \code{TableOfContents} from
+%% the beginning of the IFC file.
+
+\section{IFC Table of Contents}
+\label{sec:ifc-toc}
+
+The data in an IFC are essentially homoegenous tables (called
+\emph{partitions}) with entries referencing each other.  
+
+The table of 
+contents is written near the end of the IFC file as that arrangement
+allows one-pass algorithms for writing out IFC files while minimizing
+the amount of intermediary internal storage needed to compute the full
+abstract semantics graph.
+
+\subsection{Partition}
+\label{sec:ifc-partition}
+
+Each partition is described by a \emph{partition summary} information with the
+following layout
+\begin{figure}[H]
+  \centering
+  \structure{
+      \DeclareMember{name}{TextOffset} \\
+      \DeclareMember{offset}{ByteOffset} \\
+      \DeclareMember{cardinality}{Cardinality} \\
+      \DeclareMember{entry\_size}{EntitySize} \\
+    }
+  \caption{Partition summary}
+  \label{fig:ifc-partition-summary}
+\end{figure}
+
+\begin{description}
+\item[name] An index into the string pool.  It points to the name (a
+  NUL-terminated character string) of the partition.
+
+\item[offset] Location (file offset in bytes) of the partition relative to the
+  beginning of the IFC file.
+
+\item[cardinality] The number of items in the partition.
+
+\item[entry\_size] The (common) size of an item in the partition.
+\end{description}
+
+So, the byte count of a partition is obtained by multiplying the individual
+\field{entry\_size} by the \field{cardinality}.
+
+\section{Elaboration vs. syntax tree}
+\label{sec:ifc-elaboration-vs-syntax-tree}
+
+The IFC, like the IPR, is designed to represent all of C++, including extensions.  This means representing faithfully
+non-template entities as well as template entities.  An \term{elaboration} of an entity is the result of full semantics
+anlysis (e.g. the result of name lookup, type checking, overload resolution, template specialization if needed, etc.) of that
+entity.  A node, in the abstract semantics graph of an IFC, representing a non-template is an elaboration.
+
+By contrast, semantics analysis of templates proceeds in two steps, by language definition.  For example, in a template code where \code{T} is a type parameter, the meaning of the expression \code{T\{ 42 \}} depends both on the meaning and structure of the 
+actual argument value for \code{T}.  It could be a constructor invocation, or a conversion function call, or a non-narrowing
+static cast.  Consequently, representations of templates need to be fairly syntactic since only instantiations are fully semantically
+analyzed.  Syntax trees (\secref{sec:ifc-syntax-tree-table}) are used to represent templates. 
+That representation occasionally contains nodes that are
+elaborations, since a certain amount of semantics analysis is required when parsing template definitions.
+

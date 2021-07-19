@@ -1,0 +1,208 @@
+\label{sec:ifc-names}
+
+Names are indicated by abstract references.  This document
+uses \type{NameIndex} to designate a typed abstract reference to a
+name.  Like all abstract references, it is a 32-bit value
+\begin{figure}[H]
+  \centering
+	\absref{3}{NameSort}
+  \caption{\type{NameIndex}: Abstract reference of names}
+  \label{fig:ifc-name-index}
+\end{figure}
+
+\begin{SortEnum}{NameSort}
+	\enumerator{Identifier}
+	\enumerator{Operator}
+	\enumerator{Conversion}
+	\enumerator{Literal}
+	\enumerator{Template}
+	\enumerator{Specialization}
+	\enumerator{SourceFile}
+	\enumerator{Guide}
+\end{SortEnum}
+
+\noindent
+In most cases, the \field{index} field of a \type{NameIndex} is a numerical index into a partition (\secref{sec:ifc-partition}) denoted by the \field{tag} field.
+
+\section{Name structures}
+\label{sec:ifc:name-structures}
+
+\subsection{\valueTag{NameSort::Identifier}}
+\label{sec:ifc:NameSort:Identifier}
+
+A \type{NameIndex} value with tag \valueTag{NameSort::Identifier} represents an abstract reference for normal alphabetic identifiers.
+The \field{index} field in this case is also the structure representation of the identifier: it is conceptually a value of 
+type \type{TextOffset}, represented with $29$ bits.  It is an index into the string table (\secref{sec:ifc-string-table}).
+\begin{figure}[H]
+  \centering
+	\structure{
+		{\field{tag} = \clipValue{NameSort::Identifier}{3}} \\
+		{\field{value} : \clipValue{\type{TextOffset}}{29}} \\
+	}
+  \caption{Structure of a \type{NameIndex} representing an identifier}
+  \label{fig:ifc-identifier-structure}
+\end{figure}
+
+\note{Identifiers do not have a separate dedicated partition.  Rather, identifiers are stored in the IFC's string table.}
+%\partition{name.identifier}
+
+\subsection{\valueTag{NameSort::Operator}}
+\label{sec:ifc:NameSort:Operator}
+
+A \type{NameIndex} value with tag \valueTag{NameSort::Operator} represents an operator function name.  
+The \field{index} field is an index into the operator partition (\secref{sec:ifc-partition}).  
+Each entry in that partition has two components: a \field{category} field denoting the specified operator, and an \field{encoded} field.
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{encoded}{TextOffset} \\
+		\DeclareMember{operator}{Operator} \\
+	}
+	\caption{Structure of an operator-function name}
+	\label{fig:ifc-operator-function-structure}
+\end{figure}
+%
+The \field{encoded} field is a text encoding of the operator function name.
+The \field{operator} field is a 16-bit value (\secref{sec:ifc-operators}) 
+capable of denoting any operator used in a valid C++ program. 
+
+\partition{name.operator}
+
+\subsection{\valueTag{NameSort::Conversion}}
+\label{sec:ifc:NameSort:Conversion}
+
+A \type{NameIndex} value with tag \valueTag{NameSort::Conversion} represents a conversion-function name.
+The \field{index} field is an index into the conversion function name partition.
+Each entry in that partition is a structure with two components.
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{target}{TypeIndex} \\
+		\DeclareMember{encoded}{TextOffset} \\
+	}
+	\caption{Structure of a conversion-function name}
+	\label{fig:ifc-conversion-function-id-structure}
+\end{figure}
+%
+The \field{target} field is an abstract reference to the target type (\secref{sec:ifc-types}) of the conversion function.
+The \field{encoded} field designates a text encoding of the operator function name.
+
+\note{This data structure is subject to change}
+
+\partition{name.conversion}
+
+\subsection{\valueTag{NameSort::Literal}}
+\label{sec:ifc:NameSort:Literal}
+
+A \type{NameIndex} value with tag \valueTag{NameSort::Literal} represents a reference to a string literal operator name.
+The \field{index} fied is an index into the string literal operator partition (\secref{sec:ifc-partition}). Each element in that
+partition has two components: a \field{suffix} field, and an \field{encoded} field. 
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+%		\DeclareMember{suffix}{TextOffset} \\
+		\DeclareMember{encoded}{TextOffset} \\
+	}
+	\caption{Structure of a literal-operator name}
+	\label{fig:ifc-literal-operator-name-structure}
+\end{figure}
+% The \field{suffix} field is an index into the string table (\secref{sec:string-table}) and denotes the suffix in the declaration of the string literal operator.
+The \field{encoded} field is an index into the string table, and represents the text encoding of the literal operator.
+
+\note{Previous versions of this document showed a \field{suffix} for the literal operator name.  That did not match recent behavior of the VC++ compiler.  That field will be added back in the future.}
+
+\partition{name.literal}
+
+\subsection{\valueTag{NameSort::Template}}
+\label{sec:ifc:NameSort:Template}
+
+A \type{NameIndex} value with tag \valueTag{NameSort::Template} represents a reference
+to an assumed (as opposed to \emph{declared}) template name.  This is the case of nested-name of qualified-id where
+the qualifier is a dependent name and the unqualified part is asserted to name a template.
+The \field{index} field is an index into the partition of assumed template names.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{NameIndex} \\
+	}
+	\caption{Structure of an assumed template name}
+	\label{fig:ifc-assumed-template-name-structure}
+\end{figure}
+%
+Each entry in that partition is a structure with exactly one field, \field{name}, that is itself a \type{NameIndex}. 
+It is an error for the \field{tag} field of \field{name} to be \valueTag{NameSort::Template}.
+
+\partition{name.template}
+
+\subsection{\valueTag{NameSort::Specialization}}
+\label{sec:ifc:NameSort:Specialization}
+
+A \type{NameIndex} value with tag \valueTag{NameSort::Specialization} represents a reference
+to a template-id, i.e. what in C++ source code is a template-name followed by a template-argument list.
+The \field{index} field is an index into the template-id partition.  Each entry in that partition has two components:
+a \field{primary} field, and an \field{arguments} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{primary}{NameIndex} \\
+		\DeclareMember{arguments}{ExprIndex} \\
+	}
+	\caption{Structure of a template-id name}
+	\label{fig:ifc-template-id-structure}
+\end{figure}
+%
+The \field{primary} field represents the name of the primary template.
+The \field{arguments} field represents the template argument list as an expression (\secref{sec:ifc-exprs}).
+If the template-argument list is empty or a singleton, the \field{arguments} field an abstraction reference
+to that expression.  Otherwise, the \field{arguments} field is a tuple expression.
+
+\partition{name.specialization}
+
+\subsection{\valueTag{NameSort::SourceFile}}
+\label{sec:ifc:NameSort:SourceFile}
+
+A \type{NameIndex} value with tag \valueTag{NameSort::SourceFile} represents a reference
+to a source file name. The \field{index} field is an index into the partition of source file names.
+Each entry in that partition has two components: a \field{path} field, and a \field{guard} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{path}{TextOffset} \\
+		\DeclareMember{guard}{TextOffset} \\
+	}
+	\caption{Structure of a source file name}
+	\label{fig:ifc-source-file-name-structure}
+\end{figure}
+%
+The \field{path} field is an index into the string table.
+The \field{guard} field is also an index into the string table, and represents the identifier of the source-level
+include guard of the file, if it has any.
+
+\partition{name.source-file}
+
+\subsection{\valueTag{NameSort::Guide}}
+\label{sec:ifc:NameSort:Guide}
+
+A \type{NameIndex} value with tag \valueTag{NameSort::SourceFile} represents a reference to a 
+user-authored deduction guide name for a class template.
+Note that deduction guides don't have names at the C++ source level.  
+The \field{index} field is an index into the deduction guides partition.  
+Each entry in that partition has one component: a \type{DeclIndex} designating the 
+primary (class) template ({sec:ifc:DeclSort:Template}):
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{primary\_template}{DeclIndex} \\
+	}
+	\caption{Structure of a deduction guide name}
+	\label{fig:ifc-guide-name-structure}
+\end{figure} 
+
+\partition{name.guide}
+
+

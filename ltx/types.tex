@@ -1,0 +1,800 @@
+\label{sec:ifc-types}
+
+Similar to declarations, types are also indicated by abstract type references.
+They are values of type \type{TypeIndex}, with 32-bit precision and the
+following layout
+\begin{figure}[H]
+  \centering
+  \absref{5}{TypeSort}
+  \caption{\type{TypeIndex}: Abstract reference of type}
+  \label{fig:ifc-type-index}
+\end{figure}
+
+\begin{SortEnum}{TypeSort}
+	\enumerator{VendorExtension}
+	\enumerator{Fundamental}
+	\enumerator{Designated}
+	\enumerator{Tor}
+	\enumerator{Syntactic}
+	\enumerator{Expansion}
+	\enumerator{Pointer}
+	\enumerator{PointerToMember}
+	\enumerator{LvalueReference}
+	\enumerator{RvalueReference}
+	\enumerator{Function}
+	\enumerator{Method}
+	\enumerator{Array}
+	\enumerator{Typename}
+	\enumerator{Qualified}
+	\enumerator{Base}
+	\enumerator{Decltype}
+	\enumerator{Placeholder}
+	\enumerator{Tuple}
+	\enumerator{Forall}
+	\enumerator{Unaligned}
+	\enumerator{SyntaxTree}
+\end{SortEnum}
+
+
+\section{Type structures}
+\label{sec:ifc-type-structures}
+
+\subsection{\valueTag{TypeSort::VendorExtension}}
+\label{sec:ifc:TypeSort:VendorExtension}
+
+\partition{type.vendor-extension}
+
+\subsection{\valueTag{TypeSort::Fundamental}}
+\label{sec:ifc:TypeSort:Fundamental}
+
+A \type{TypeIndex} abstract reference with tag \type{TypeSort::Fundamental} designates a fundamental type.
+The \field{index} field of that abstract reference is an index into the fundamental type partition.
+Each entry in that partition is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{basis}{TypeBasis} \\
+		\DeclareMember{precision}{TypePrecision} \\
+		\DeclareMember{sign}{TypeSign} \\
+		\DeclareMember{<padding>}{uint8\_t} \\
+	}
+	\caption{Structure of a fundamental type}
+	\label{fig:ifc-fundamental-type-structure}
+\end{figure}
+%
+The \field{basis} field designates the fundamental basis of the fundamental type.
+The \field{precision} field designates the "bit precision" variant of the basis type.
+The \field{sign} field indicates the "sign" variant of the basis type.
+
+\partition{type.fundamental}
+
+\subsubsection{Fundamental type basis}
+\label{sec:ifc-fundamental-type-basis}
+
+The fundamental types are made out a small set of type basis defined as:
+%
+\begin{typedef}{TypeBasis}{}
+	enum class TypeBasis : uint8_t {
+		Void,
+		Bool,
+		Char,
+		Wchar_t,
+		Int,
+		Float,
+		Double,
+		Nullptr,
+		Ellipsis,
+		SegmentType,
+		Class,
+		Struct,
+		Union,
+		Enum,
+		Typename,
+		Namespace,
+		Interface,
+		Function,
+		Empty,
+		VariableTemplate,
+		Auto,
+		DecltypeAuto,
+	};
+\end{typedef}
+%
+with the following meaning:
+\begin{itemize}
+  \item \code{TypeBasis::Void}: fundamental type \code{void}
+  \item \code{TypeBasis::Bool}: fundamental type \code{bool}
+  \item \code{TypeBasis::Char}: fundamental type \code{char}
+  \item \code{TypeBasis::Wchar\_t}: fundamental type \code{wchar\_t}
+  \item \code{TypeBasis::Int}: fundamental type \code{int}
+  \item \code{TypeBasis::Float}: fundamental type \code{float}
+  \item \code{TypeBasis::Double}: fundamental type \code{double}
+  \item \code{TypeBasis::Nullptr}: fundamental type \code{decltype(nullptr)}
+  \item \code{TypeBasis::Ellipsis}: fundamental type denoted by \code{...}
+  \item \code{TypeBasis::SegmentType}
+  \item \code{TypeBasis::Class}: fundamental type \code{class}
+  \item \code{TypeBasis::Struct}: fundamental type \code{struct}
+  \item \code{TypeBasis::Union}: fundamental type \code{union}
+  \item \code{TypeBasis::Enum}: fundamental type \code{enum}
+  \item \code{TypeBasis::Typename}: fundamental concept \code{typename}
+  \item \code{TypeBasis::Namespace}: fundamental type \code{namespace}
+  \item \code{TypeBasis::Interface}: fundamental type \code{\_\_interface}
+  \item \code{TypeBasis::Function}: fundamental concept of function
+  \item \code{TypeBasis::Empty}: fundamental type resulting from an empty pack expansion
+  \item \code{TypeBasis::VariableTemplate}: concept of variable template
+  \item \code{TypeBasis::Auto}: type placeholder \code{auto}
+  \item \code{TypeBasis::DecltypeAuto} type placeholder \code{decltype(auto)}
+\end{itemize}
+
+\note{The current set of type basis is subject to change.}
+
+\subsubsection{Fundamental type precision}
+\label{sec:ifc-fundamental-type-precision}
+
+The bit precision of a funamental type is a value of type \type{TypePrecision} defined as follows:
+%
+\begin{typedef}{TypePrecision}{}
+	enum class TypePrecision : uint8_t {
+		Default,
+		Short,
+		Long,
+		Bit16,
+		Bit32,
+		Bit64,
+		Bit128,
+	};
+\end{typedef}
+%
+with the following meaning:
+\begin{itemize}
+  \item \code{TypePrecision::Default}: the default precision of the basis type
+  \item \code{TypePrecision::Short}: the \code{short} variant of the basis type
+  \item \code{TypePrecision::Long}: the \code{long} variant of the basis type
+  \item \code{TypePrecision::Bit16}: the 16-bit variant of the basis type
+  \item \code{TypePrecision::Bit32}: the 32-bit variant of the basis type
+  \item \code{TypePrecision::Bit64}: the 64-bit variant of the basis type
+  \item \code{TypePrecision::Bit128}: the 128-bit variant of the basis type
+\end{itemize}
+
+
+\subsubsection{Fundamental type sign}
+\label{sec:ifc-fundamental-type-sign}
+The sign of a fundamental type is expressed as a value of type \type{TypeSign} defined as follows:
+%
+\begin{typedef}{TypeSign}{}
+	enum class TypeSign : uint8_t {
+		Plain,
+		Signed,
+		Unsigned,
+	};
+\end{typedef}
+%
+with the following meaning:
+\begin{itemize}
+  \item \code{TypeSign::Plain}: the plain sign of the basis type
+  \item \code{TypeSign::Signed}: the signed variant of the basis type
+  \item \code{TypeSign::Unsigned}: the unsigned variant of the basis type
+\end{itemize}
+
+
+\subsection{\valueTag{TypeSort::Designated}}
+\label{sec:ifc:TypeSort:Designated}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Designated} represents an
+abstract reference to type denoted by a declaration name.  This is the typical use of a class name.
+The \field{index} field is an index into the designated type partition.
+Each entry in that partition is a structure with a single component: the \field{decl} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{decl}{DeclIndex} \\
+	}
+	\caption{Structure of a designated type}
+	\label{fig:ifc-designated-type-structure}
+\end{figure}
+%
+The \field{decl} field denotes the declaration of the type.
+
+\partition{type.designated}
+
+\subsection{\valueTag{TypeSort::Tor}}
+\label{sec:ifc:TypeSort:Tor}
+
+A \type{TypeIndex} value with \valueTag{TypeSort::Tor} represents an abstract reference to
+the type of a constructor declaration.  ISO C++ does not define the type of a constructor -- it even denies
+a constructor has a name.  However, for regularly and handling of the representation of 
+template declaration, it is simpler to assign types to constructors.
+The \field{index} field of that abstract reference is an index into the partition of tor types.
+Each entry in that partition is a structure with the following layout
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{source}{TypeIndex} \\
+		\DeclareMember{eh\_spec}{NoexceptSpecification} \\
+		\DeclareMember{convention}{CallingConvention} \\
+	}
+	\caption{Structure of a tor type}
+	\label{fig:ifc:TypeSort:Tor}
+\end{Structure}
+%
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{source} denotes the sequence of parameter types in the declaration of the corresponding constructor.
+	\item \field{eh\_spec} denotes the exception specification associated with the constructor declaration this type associates with.
+	\item \field{convention} denotes the calling convention associated with the constructor declaration.
+\end{itemize}
+
+\partition{type.tor}
+
+\subsection{\valueTag{TypeSort::Syntactic}}
+\label{sec:ifc:TypeSort:Syntactic}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Syntactic} represents
+an abstract reference to type expressed at the C++ source-level as a type-id.
+Typical examples include a template-id designating a specialization.
+The \field{index} field is an index into the syntactic type partition.
+Each entry in that partition is a structure wth a single component: the \field{expr} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{expr}{ExprIndex} \\
+	}
+	\caption{Structure of a syntactic type}
+	\label{fig:ifc-syntactic-type-structure}
+\end{figure}
+%
+The \field{expr} field denotes the C++ source-level type expression.
+
+\partition{type.syntactic}
+
+\subsection{\valueTag{TypeSort::Expansion}}
+\label{sec:ifc:TypeSort:Expansion}
+
+A \type{TypeIndex} abstract reference with tag \valueTag{TypeSort::Expansion} designates
+an expansion of a pack type.  The \field{index} field is an index into the expansion
+type partition.  Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{pack}{TypeIndex} \\
+		\DeclareMember{mode}{ExpansionMode} \\
+	}
+	\caption{Structure of an expansion type}
+	\label{fig:fic-expansion-type-structure}
+\end{figure}
+%
+The \field{pack} field designates the type form under expansion.
+The \field{mode} field denotes the mode of expansion.
+
+\partition{type.expansion}
+
+\subsubsection{Pack expansion mode}
+\label{sec:ifc-pack-expansion-mode}
+
+During pack expansion, a template parameter can be fully expanded, or only 
+partially expanded.  The mode is indicated by a value of type
+%
+\begin{typedef}{ExpansionMode}{}
+	enum class ExpansionMode : uint8_t {
+		Full, 
+		Partial
+	};
+\end{typedef}
+%
+
+
+\subsection{\valueTag{TypeSort::Pointer}}
+\label{sec:ifc:TypeSort:Pointer}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Pointer} represents
+an abstract reference to a pointer type.
+The \field{index} is an index into the pointer type partition.
+Each entry in that partition is a structure with one component: the \field{pointee} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{pointee}{TypeIndex} \\
+	}
+	\caption{Structure of a pointer type}
+	\label{fig:ifc-pointer-type-structure}
+\end{figure}
+%
+The \field{pointee} field denotes the type pointed-to: any valid C++ type.
+
+\partition{type.pointer}
+
+\subsection{\valueTag{TypeSort::PointerToMember}}
+\label{sec:ifc:TypeSort:PointerToMember}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::PointerToMember}
+represents an abstract reference to a C++ source-level pointer-to-nonstatic-data member
+type.
+The \field{index} field is an index into the pointer-to-member type partition.
+Each entry in that partition is a structure with two components: the \field{scope} field,
+and the \field{member} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{scope}{TypeIndex} \\
+		\DeclareMember{member}{TypeIndex} \\
+	}
+	\caption{Structure of a pointer-to-member type}
+	\label{fig:ifc-pointer-to-member-type-structure}
+\end{figure}
+%
+The \field{scope} field denotes the enclosing class type.
+The \field{member} field denotes the type of the member.
+
+\partition{type.pointer-to-member}
+
+
+\subsection{\valueTag{TypeSort::LvalueReference}}
+\label{sec:ifc:TypeSort:LvalueReference}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::LvalueReference} represents
+an abstract reference to a C++ classic reference type, e.g. \code{int&}.
+The \field{index} field is an index into the lvalue-reference type partition.
+Each entry in that partition is a structure with one component: the \field{referee} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{referee}{TypeIndex} \\
+	}
+	\caption{Structure of an lvalue-reference type}
+	\label{fig:ifc-lvalue-reference-type-structure}
+\end{figure}
+%
+The \field{referee} field denotes the type referred-to: it is any valid C++ type,
+including function type.
+
+\partition{type.lvalue-reference}
+
+
+\subsection{\valueTag{TypeSort::RvalueReference}}
+\label{sec:ifc:TypeSort:RvalueReference}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::RvalueReference} represents
+an abstract reference to a C++ rvalue-reference type, e.g. \code{int&&}.
+The \field{index} field is an index into the rvalue-reference type partition.
+Each entry in that partition is a structure with one component: the \field{referee} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{referee}{TypeIndex} \\
+	}
+	\caption{Structure of an rvalue-reference type}
+	\label{fig:ifc-rvalue-reference-type-structure}
+\end{figure}
+%
+The \field{referee} field denotes the type referred-to: it is any valid C++ type.
+
+\partition{type.rvalue-reference}
+
+\subsection{\valueTag{TypeSort::Function}}
+\label{sec:ifc:TypeSort:Function}
+
+A \type{TypeIndex} with tag \valueTag{TypeSort::Function} represents
+an abstract reference to a C++ source-level function type.
+The \field{index} field is an index into the function type partition.
+Each entry in that partition is a structure with the following components:
+a \field{target} field, a \field{source} field, an \field{eh\_spec} field,
+a \field{convention} field, a \field{traits} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width=15em]{
+		\DeclareMember{target}{TypeIndex} \\
+		\DeclareMember{source}{TypeIndex} \\
+		\DeclareMember{eh\_spec}{NoexceptSpecification} \\
+		\DeclareMember{convention}{CallingConvention} \\
+		\DeclareMember{traits}{FunctionTypeTraits} \\
+	}
+	\caption{Structure of a function type}
+	\label{fig:ifc-function-type-structure}
+\end{figure}
+%
+The \field{target} field denotes the return type of the function type.
+The \field{source} field denotes the parameter type list.  A null \field{source} value indicates no parameter type. If the function type has at most
+one parameter type, the \field{source} denotes that type. Otherwise, it is a tuple type made
+of all the parameter types.
+The \field{eh\_spec} denotes the C++ souce-level noexcept-specification.
+The \field{convention} field denotes the calling convention of the function type.
+The \field{traits} field denotes additional function type traits.
+
+\partition{type.function}
+
+\subsubsection{Function type traits}
+\label{sec:ifc-function-type-traits}
+
+Certain function types properties are expressed as value of bitmask type \type{FunctionTypeTraits} defined as:
+%
+\begin{typedef}{FunctionTypeTraits}{}
+	enum class FunctionTypeTraits : uint8_t {
+		None			= 0,
+		Const			= 1 << 0,
+		Volatile			= 1 << 1,
+		Lvalue			= 1 << 2,
+		Rvalue			= 1 << 3,
+	};
+\end{typedef}
+%
+with the following meaning
+\begin{itemize}
+	\item \code{FunctionTypeTraits::None}: the function type is that of a function that is not non-static member (either a non-menber function
+		or a static member function).
+	\item \code{FunctionTypeTraits::Const}: the function type is that of a function that is a non-static member function declared with a \code{const}
+		qualifier.
+	\item \code{FunctionTypeTraits::Volatile}: the function type is that of a function that is a non-static member function declared with a \code{volatile}
+		qualifier.
+	\item \code{FunctionTypeTraits::Lvalue}: the function type is that of a function that is a non-static member function declared with an lvalue (\code{\&})
+		qualifier.
+	\item \code{FunctionTypeTraits::Rvalue}: the function type is that of a function that is a non-static member function declared with an rvalue (\code{\&\&})
+		qualifier.
+\end{itemize}
+
+
+\subsubsection{Calling convention}
+\label{sec:ifc-calling-convention}
+
+Function calling conventions are expressed as values of type \type{CallingConvention} defined as:
+%
+\begin{typedef}{CallingConvention}{}
+	enum class CallingConvention : uint8_t {
+		Cdecl,
+		Fast,
+		Std,
+		This,
+		Clr,
+		Vector,
+		Eabi,
+	};
+\end{typedef}
+%
+with the following meaning
+\begin{itemize}
+	\item \code{CallingConvention::Cdecl}: the function is declared with \code{\_\_cdecl}.
+	\item \code{CallingConvention::Fast}: the function is declared with \code{\_\_fastcall}.
+	\item \code{CallingConvention::Std}: the function is declared with \code{\_\_stdcall}.
+	\item \code{CallingConvention::This}: the function is declared with \code{\_\_thiscall}.
+	\item \code{CallingConvention::Clr}: the function is declared with \code{\_\_clrcall}.
+	\item \code{CallingConvention::Vector}: the function is declared with \code{\_\_vectorcall}.
+	\item \code{CallingConvention::Eabi}: the function is declared with \code{\_\_eabi}.
+\end{itemize}
+
+
+\note{The calling convention currently details only MSVC.}
+
+\subsubsection{Noexcept specification}
+\label{sec:ifc-noexcept-specification}
+
+The noexcept-specification of a function is described by a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{words}{SentenceIndex} \\
+		\DeclareMember{sort}{NoexceptSort} \\
+	}
+	\caption{Structure of a noexcept-specification}
+	\label{fig:ifc-noexception-specification-structure}
+\end{figure}
+%
+
+The \field{words} field is meaningful only for function templates and complex \code{noexcept}-specification.
+The \field{sort} describes the sort of noexcept-specification. 
+
+\subsection{\valueTag{TypeSort::Method}}
+\label{sec:ifc:TypeSort:Method}
+
+A \type{TypeIndex} with tag \valueTag{TypeSort::Method} represents
+an abstract reference to a C++ source-level non-static member function type.
+The \field{index} field is an index into the method type partition.
+Each entry in that partition is a structure with the following components:
+a \field{target} field, a \field{source} field, a \field{scope} field, an \field{eh\_spec} field,
+a \field{convention} field, a \field{traits} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width=15em]{
+		\DeclareMember{target}{TypeIndex} \\
+		\DeclareMember{source}{TypeIndex} \\
+		\DeclareMember{scope}{TypeIndex} \\
+		\DeclareMember{eh\_spec}{NoexceptSpecification} \\
+		\DeclareMember{convention}{CallingConvention} \\
+		\DeclareMember{traits}{FunctionTypeTraits} \\
+	}
+	\caption{Structure of a method type}
+	\label{fig:ifc-method-type-structure}
+\end{figure}
+%
+The \field{target} field denotes the return type of the function type.
+The \field{source} field denotes the parameter type list.  The function type has at most
+one parameter type, the \field{source} denotes that type. Otherwise, it is a tuple type made
+of all the parameter types.
+The \field{scope} denotes the C++ source-level enclosing class type.
+The \field{eh\_spec} denotes the C++ souce-level noexcept-specification.
+The \field{convention} field denotes the calling convention of the function type.
+The \field{traits} field denotes additional function type traits.
+
+
+\partition{type.nonstatic-member-function}
+
+\subsection{\valueTag{TypeSort::Array}}
+\label{sec:ifc:TypeSort:Array}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Array} represents
+an abstract reference to a C++ source-level builtin array type.
+The \field{index} field is an index into the array type partition.
+Each entry in that partition is a structure with two components: a \field{element} field,
+and a \field{extent} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{element}{TypeIndex} \\
+		\DeclareMember{extent}{ExprIndex} \\
+	}
+	\caption{Structure of an array type}
+	\label{fig:ifc-array-type-structure}
+\end{figure}
+%
+The \field{element} denotes the element type of the array.
+The \field{extent} denotes the number of elements in the array type along its outer most dimension.
+
+\partition{type.array}
+
+
+\subsection{\valueTag{TypeSort::Typename}}
+\label{sec:ifc:TypeSort:Typename}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Typename} represents
+an abstract reference to a dependent type which at the C++ source-level is
+written as type expression.
+The \field{index} field is an index into the typename type partition.
+Each entry in that partition is a structure with a single component: the \field{path} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{path}{ExprIndex} \\
+	}
+	\caption{Structure of a typename type}
+	\label{fig:ifc-typename-type-structure}
+\end{figure}
+%
+The \field{path} field denotes the expression designating the dependent type.
+
+\partition{type.typename}
+
+\subsection{\valueTag{TypeSort::Qualified}}
+\label{sec:ifc:TypeSort:Qualified}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Qualified} represents
+an abstract reference to a C++ source-level cv-qualified type.
+The \field{index} field is an index into the qualified type partition.
+Each entrry in that partition is a structure with two components: the \field{unqualified} field,
+and the \field{qualifiers} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{unqualified}{TypeIndex} \\
+		\DeclareMember{qualifiers}{Qualifiers} \\
+	}
+	\caption{Structure of a qualified type}
+	\label{fig:ifc-qualified-type-structure}
+\end{figure}
+%
+The \field{unqualified} field denotes the type without the toplevel cv-qualifiers.
+The \field{qualifiers} field denotes the cv-qualifiers.
+
+\partition{type.qualified}
+
+\subsubsection{Type qualifiers}
+\label{sec:ifc-type-qualifiers}
+
+Standard type qualifiers are given values of type:
+\begin{typedef}{Qualifiers}{}
+	enum class Qualifier : uint8_t {
+		None		= 0,
+		Const		= 1 << 0,
+		Volatile		= 1 << 1,
+		Restrict		= 1 << 2,
+	};
+\end{typedef}
+with the following meaning:
+\begin{itemize}
+	\item \code{Qualifiers::None}: No type qualifier
+	\item \code{Qualifiers::Const}: the type is \code{const}-qualified
+	\item \code{Qualifiers::Volatile}: the type is \code{volatile}-qualified.
+	\item \code{Qualifiers::Restrict}: the type is \code{\_\_restrict}-qualified -- non-standard, but common extension.
+\end{itemize}
+
+
+\subsection{\valueTag{TypeSort::Base}}
+\label{sec:ifc:TypeSort:Base}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Base} represents an
+abstract reference to a use of a type as a base-class (in a class inheritance)
+at the C++ source-level.
+The \field{index} field is an index into the base type partition.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{shared}{bool} \\
+		\DeclareMember{pack\_expanded}{bool} \\
+	}
+	\caption{Structure of a base type}
+	\label{fig:ifc-base-type-structure}
+\end{figure}
+%
+The \field{type} field denotes the type base being used as base-class.
+The \field{access} field denotes the access specifier in the inheritance path.
+The \field{shared} field indicates whether the base class is virtual or not.
+The \field{pack\_expanded} field indicate where the base class is the result of pack expansion.
+
+\partition{type.base}
+
+\note{This representation is subject to change}
+
+
+\subsection{\valueTag{TypeSort::Decltype}}
+\label{sec:ifc:TypeSort:Decltype}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Decltype} represents
+an abstract reference to the C++ source-level application of \code{decltype} to
+an expression. Ideally, the operand should be represented by an \type{ExprIndex}
+value.  However, in the current implementation the operand is represented
+as an arbitrary sequence of tokens.
+The \field{index} field is an index into the decltype type partition.
+Each entry in that partition is a structure with a single component: the \field{words} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{expr}{SyntaxIndex} \\
+	}
+	\caption{Structure of an decltype type}
+	\label{fig:ifc-decltype-type-structure}
+\end{figure}
+%
+The \field{expr} field denotes the syntactic representation of the expression operand to \code{decltype}.
+
+\partition{type.decltype}
+
+\paragraph{Note:} The decltype representation will change in the future to change its operand representation to an expression three.
+
+\subsection{\valueTag{TypeSort::Placeholder}}
+\label{sec:ifc:TypeSort:Placeholder}
+
+A \type{TypeIndex} abstract reference with tag \valueTag{TypeSort::Placeholder}
+ designates a placeholder type.
+The \field{index} field is an index into the placeholder type partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{constraint}{ExprIndex} \\
+		\DeclareMember{basis}{TypeBasis} \\
+	}
+	\caption{Structure of a placeholder type}
+	\label{fig:ifc-placeholder-type-structure}
+\end{figure}
+%
+The \field{constraint} field designate the (generalized) predicate that the placeholder
+shall satisfy -- at the input source lvel.
+The \field{basis} field is a structure denoting the type basis
+(\secref{sec:ifc-fundamental-type-basis}) pattern expected for placeholder type,
+either \code{auto} or \code{decltype(auto)}.
+
+\partition{type.placeholder}
+
+\subsection{\valueTag{TypeSort::Tuple}}
+\label{sec:ifc:TypeSort:Tuple}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Tuple} represents
+an abstract reference to tuple type, i.e. finite sequence of types.
+The \field{index} field is an index into the tuple type partition.
+Each entry in that partition is a structrure with two components: a \field{start} field,
+and a \field{cardinality} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+	}
+	\caption{Structure of a tuple type}
+	\label{fig:ifc-tuple-type-structure}
+\end{figure}
+%
+The \field{start} field is an index into the type heap partition.  It designates the first element
+in the tuple.
+The \field{cardinality} field denotes the number of elements in the tuple.
+
+\partition{type.tuple}
+
+\subsection{\valueTag{TypeSort::Forall}}
+\label{sec:ifc:TypeSort:Forall}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Forall} designates a generalized $\forall$-type,
+as can could be ascribed to a template declaration, even though a template declaration does not have a type in ISO C++. 
+The \field{index} field is an index into the forall type partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{chart}{ChartIndex} \\
+		\DeclareMember{subject}{TypeIndex} \\
+	}
+	\caption{Structure of a forall type}
+	\label{fig:ifc-forall-type-structure}
+\end{figure}
+%
+The \field{chart} field designates the set of parameter lists in the template declaration.
+The \field{subject} field designated the type of the current instantiation.
+
+\partition{type.forall}
+
+\note{This generalized type is not yet used in current version of MSVC.  However, they will be used in future releases of MSVC.}
+
+
+\subsection{\valueTag{TypeSort::Unaligned}}
+\label{sec:ifc:TypeSort:Unaligned}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::Unaligned} represents
+an abstract reference to a type with \code{__unaligned} specifier.
+The \field{index} field is an index into the unaligned type partition.
+Each entry in that partition is a structure with a single component: the \field{type} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{type}{TypeIndex} \\
+	}
+	\caption{Structure of an unaligned type}
+	\label{fig:ifc-unaligned-type-structure}
+\end{figure}
+%
+
+\partition{type.unaligned}
+
+\paragraph{Note:} An \code{__unaligned} type is an MSVC extension, with no
+clearly defined semantics.  This representation should be expressed in a more
+regular framework of vendor-extension types.
+
+
+\subsection{\valueTag{TypeSort::SyntaxTree}}
+\label{sec:ifc:TypeSort:SyntaxTree}
+
+A \type{TypeIndex} value with tag \valueTag{TypeSort::SyntaxTree} represents an abstract 
+reference to a type designated by a raw syntax contruct (\secref{sec:ifc-syntax-tree-table}).
+The \field{index} field is an index into the syntax tree type partition.
+Each entry in that partition is a structure with a single component: the \field{syntax} field:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{syntax}{SyntaxIndex} \\
+	}
+	\caption{Structure of a syntax tree type}
+	\label{fig:ifc-syntax-tree-type-structure}
+\end{figure}
+%
+
+\partition{type.syntax-tree}
+
+

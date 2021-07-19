@@ -1,0 +1,177 @@
+\label{sec:ifc-traits}
+
+A trait is a property of an entity not directly stored in the data structure representing that entity.
+Traits are stored in associative table partitions.  Examples of traits include the deprecation 
+message associated (\secref{sec:ifc-deprecated-trait}) with a declaration,
+friend declarations (\secref{sec:ifc-friend-trait}), the set of specializations of a 
+template (\secref{sec:ifc-specialization-trait}), etc.
+ Each entry in a (parameterized) trait table is a pair structure of the following form
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{decl}{DeclIndex} \\
+		\DeclareMember{trait}{T} \\
+	}
+	\caption{Structure of \type{AssociatedTrait<T>}}
+	\label{fig:ifc-associated-trait-structure}
+\end{figure}
+%
+where the \field{decl} field is an abstract reference designating the entity, and the \field{trait} designates the property associated with the entity.
+The entries in a trait table are stored by increasing values of the \field{decl} field.
+
+\section{Deprecation texts}
+\label{sec:ifc-deprecated-trait}
+
+The type \type{T} of the \field{trait} associated with \field{decl} is \type{TextOffset}, designating
+the string literal of the deprecation message.
+
+\partition{trait.deprecated}
+
+\note{This representation is subject to change.}
+
+
+\section{Template specializations}
+\label{sec:ifc-specialization-trait}
+
+For each template \field{decl}, the set of declarations for corresponding partial or explicit specializations
+is stored as a sequence in the scope member partition, and the description of that sequence is given by the template specialization trait.
+
+
+The type \type{T} of the \field{trait} associated with \field{decl} is \type{Sequence} (\secref{sec:ifc-sequence})
+of \type{Declaration}s (\figref{fig:ifc-declaration-structure}),
+denothing the sequence of descriptions for each specialization of the template \field{decl}.  The
+value of the field \field{trait.start} is an index into the scope member partition 
+(\secref{sec:ifc-scope-member}), and the field \field{trait.cardinality} gives the number of \type{Declaration}s
+in that sequence.
+
+\partition{trait.specialization}
+
+\note{This representation is subject to change.}
+
+\section{Friendship of a class}
+\label{sec:ifc-friend-trait}
+
+For each declaration \field{decl} of a class type, the set of declared friends of that class type 
+is stored as a sequence in the scope member partition, and the description of that sequence is given by the friend trait.
+
+
+The type \type{T} of the \field{trait} associated with \field{decl} is \type{Sequence} (\secref{sec:ifc-sequence})
+of \type{Declaration}s (\figref{fig:ifc-declaration-structure}),
+denothing the sequence of descriptions for each declared friend of \field{decl}.  The
+value of the field \field{trait.start} is an index into the scope member partition 
+(\secref{sec:ifc-scope-member}), and the field \field{trait.cardinality} gives the number of \type{Declaration}s
+in that sequence.
+
+\partition{trait.friend}
+
+\note{This representation is subject to change.}
+
+\section{Function Definition}
+\label{sec:ifc-function-definition-trait}
+
+The trait of a definition of a constexpr function or constructor is represented by a structure of defined as follows
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{parameters}{ChartIndex} \\
+		\DeclareMember{initializers}{ExprIndex} \\
+		\DeclareMember{body}{StmtIndex} \\
+	}
+	\caption{Structure of function definition}
+	\label{fig:ifc-function-definition-structure}
+\end{figure}
+%
+The \field{parameters} field designates the chart of parameters (\secref{sec:ifc-charts}) of this function or constructor.
+The \field{initializers} field designates the set of member-initializers, if any, of the constexpr constructor.
+The \field{body} field designates the statement body (\secref{sec:ifc-statements}) of the function or constructor.
+
+\note{This structure is subject to change.}
+
+\partition{trait.mapping-expr}
+
+\section{Template Alias}
+\label{sec:ifc-template-alias-trait}
+
+MSVC, in its current form, uses syntax trees (\secref{sec:ifc-syntax-tree-table}) to represesent
+declarations of template aliases.  For each template alias declaration \field{decl}, the type \type{T}
+of the corresponding \field{trait} is \type{SyntaxIndex} (\figref{fig:ifc-syntax-index}).
+
+\partition{trait.alias-template}
+
+\note{This trait is subject of removal in future releases.}
+
+\section{Declared deduction guides}
+\label{sec:ifc:deduction-guides-trait}
+
+For each class template \field{decl} with declared deduction guides, 
+the type \type{T} of the corresponding \field{trait} is \type{DeclIndex} (\figref{fig:ifc-decl-index}).  The sort of \field{trait}
+is \valueTag{DeclSort::Tuple} (\sortref{Tuple}{DeclSort}) when the number of deduction guides is greater than one.
+
+
+\partition{trait.deduction-guides}
+
+\section{Trailing constraints}
+\label{sec:ifc:trailing-constraints}
+
+For each templated function declaration \field{decl} with trailing \grammar{requires-clause} ---
+hence having a \code{FunctionTraits::Constrained} (\secref{sec:ifc-function-traits}) --- the 
+associated constraint condition is stored 
+(in syntax tree form) in the trailing constraints trait partition.  The type \type{T} of \field{trait} is
+\type{SyntaxIndex} (\figref{fig:ifc-syntax-index}).
+
+\partition{trait.requires}
+
+\note{This structure is subject to change}.
+
+\section{Declaration attributes}
+\label{sec:ifc:decl-attributes}
+
+Each declaration \field{decl} with attributes not understood in the form of 
+\type{ObjectTraits} or \type{FunctionTraits} -- or more generally attributes of templated declarations --
+has an entry in the declaration attribute partition.  The type \type{T} of \field{trait} is 
+\type{AttrIndex} (\figref{fig:ifc-attr-index}).
+
+\partition{trait.attribute}
+
+\note{This representation is subject to change.}
+
+\section{MSVC vendor-specific traits}
+\label{sec:ifc-msvc-vendor-specific-trait}
+
+The MSVC compiler associates a certain set of vendor-specific traits to most declarations.  
+These vendor-specific traits are represented by the 32-bit bitmask type \type{MsvcTraits}
+idefined n \secref{sec:ifc-msvc-trait-bitset}.
+
+\partition{.msvc.trait.vendor-traits}
+
+
+\subsection{Trait for MSVC UUID}
+\label{sec:ifc-msvc-uuid-trait}
+
+The MSVC compiler allows source-level association of UUID with any non-local declaration. When that occurs,
+the associated MSVC vendor-specific trait has the \valueTag{MsvcTraits::Uuid} bit set.  The  UUID is a
+16-byte integer in the MSVC UUID trait table.
+
+\partition{.msvc.trait.uuid}
+
+\subsection{Function parameters in functions definitions}
+\label{sec:ifc-msvc-fun-parms}
+
+There is an infelicity in the current MSVC implementation where function parameter names are available only in defining function declarations.
+The corresponding parameter names, and associated default arguments, are stored in a trait associated with the declaration, see \figref{fig:ifc-associated-trait-structure}.
+The type of the \field{trait} field
+is \type{ChartIndex} (\secref{sec:ifc:ChartSort:Unilevel}) listing the sequence of parameter declarations -- name, type, and default argument (if any) -- in that definition.
+
+\partition{.msvc.trait.named-function-parameters}
+
+
+\subsection{Attributes on declarations}
+\label{sec:ifc-msvc-decl-attr-trait}
+
+The MSVC compiler records an attribute on a declaration in this trait table.
+
+\partition{.msvc.trait.decl-attrs}
+
+
+
+

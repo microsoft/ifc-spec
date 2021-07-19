@@ -1,0 +1,235 @@
+\label{sec:ifc-attrs}
+
+
+Attributess are denotated by attribute references of type \type{AttrIndex}. 
+Like all abstract references, an \type{AttrIndex} value is 32-bit wide with alignment $4$.
+\begin{figure}[htbp]
+  \centering
+  \absref{4}{AttrSort}
+  \caption{\type{AttrIndex}: Abstract reference of attribute}
+  \label{fig:ifc-attr-index}
+\end{figure}
+
+\begin{SortEnum}{AttrSort}
+    \enumerator{Nothing}
+    \enumerator{Basic}
+    \enumerator{Scoped}
+    \enumerator{Labeled}
+    \enumerator{Called}
+    \enumerator{Expanded}
+    \enumerator{Factored}
+    \enumerator{Elaborated}
+    \enumerator{Tuple}
+\end{SortEnum}
+
+When an input source file contains a C++ attribute (with \type{AttrIndex} value \var{a})
+on a declaration (with \type{DeclIndex} value \var{d}), an associative pair $(\var{d}, \var{a})$
+is entered into the \code{".msvc.trait.decl-attrs"} partition 
+(\secref{sec:ifc-msvc-decl-attr-trait}).
+
+\section{Attribute structures}
+\label{sec:ifc:AttrSort-structures}
+
+\subsection{\valueTag{AttrSort::Nothing}}
+\label{sec:ifc:AttrSort:Nothing}
+
+An \type{AttrIndex} value with tag \valueTag{AttrSort::Nothing} indicates an empty attribute
+at the source level, e.g. ``\code{[[]]}''.
+
+No partition is emitted for attributes of this sort.
+
+\subsection{\valueTag{AttrSort::Basic}}
+\label{sec:ifc:AttrSort:Basic}
+
+An \type{AttrIndex} value with tag \valueTag{AttrSort::Basic} denotes a word (\secref{sec:ifc-words}) used in an attribute,
+for example \code{answer} and \code{42} in ``\code{[[answer(42)]]}'' are basic attributes.
+The \field{index} field of that abstract reference is an index into the basic attributes partitions.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{word}{Word} \\
+    }
+    \caption{Structure of a basic attribute}
+    \label{fig:ifc:AttrSort:Basic}
+\end{figure}
+%
+The \field{word} field represents that word making up this basic attribute.
+
+\partition{attr.basic}
+
+
+\subsection{\valueTag{AttrSort::Scoped}}
+\label{sec:ifc:AttrSort:Scoped}
+
+An \type{AttrIndex} reference with tag \valueTag{AtrSort::Scoped} denotes a scoped attribute, that is a
+basic attribute followed by ``\code{::}'' and another basic attribute.
+For exampke, \code{gsl::suppress} in ``\code{[[gsl::suppress(type.1)]]}'' is a scoped attribute.
+The \field{index} field of that abstract reference is an index into the scoped attribute partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{scope}{Word} \\
+        \DeclareMember{member}{Word} \\
+    }
+    \caption{Structure of a scoped attribute}
+    \label{fig:ifc:AttrSort:Scoped}
+\end{figure}
+%
+The \field{scope} field reprensents the word appearing before the ``\code{::}'' token.
+The \field{member} field represents the word appearing after the ``\code{::}'' token.
+
+\partition{attr.scoped}
+
+\subsection{\valueTag{AttrSort::Labeled}}
+\label{sec:ifc:AttrSort:Labeled}
+
+An \type{AttrIndex} reference with tag \valueTag{AtrSort::labeled} denotes a labeled attribute of the form ``\grammar{key} \code{:} \grammar{value}''.  For example,
+while an attribute-like syntax ``\code{[[requires: x > 0]]}'' is not yet a standard C++ conformant, it has been proposed for use by contract conditions.  Furthermore, C++11 attributes in called 
+attributes can use labeled attributes to provide key-value pairs, as in ``\code{[[revert(commit: 0xdeadbeef, reason: "bonkers")]]}''.
+
+The \field{index} field of that abstract reference is an index into the labeled attribute partition.  Each entry in that partition is a structure
+with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{label}{Word} \\
+        \DeclareMember{attribute}{AttrIndex} \\
+    }
+    \caption{Structure of a labeled attribute}
+    \label{fig:ifc:AttrSort:Labeled}
+\end{figure}
+%
+The \field{label} field represents the word used as \grammar{key} in this attribute.
+The \field{attribute} field denotes the \grammar{value} in this attribute.
+
+\partition{attr.labeled}
+
+\subsection{\valueTag{AttrSort::Called}}
+\label{sec:ifc:AttrSort:Called}
+
+An \type{AttrIndex} reference with tag \valueTag{AttrSort::Called} denotes an attribute using a syntax similar to that of function call.  For example,
+``\code{[[deprecated("out of fad")]]}'' and ``\code{[[gsl::suppress(type.1)]]}'' are called attributes.
+
+The \field{index} field of that abstract reference is an index into the called attributes partition.  Each entry in
+that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{function}{AttrIndex} \\
+        \DeclareMember{arguments}{AttrIndex} \\
+    }
+    \caption{Structure of a called attribute}
+    \label{fig:ifc:AttrSort:Called}
+\end{figure}
+%
+The \field{function} field denotes the attribute appearing in function position, whereas the \field{arguments} denotes
+the sequence of attributes making up the supplied argument list.
+
+\partition{attr.called}
+
+\subsection{\valueTag{AttrSort::Expanded}}
+\label{sec:ifc:AttrSort:Expanded}
+
+An \type{AttrIndex} reference with tag \valueTag{AttrSort::Expanded} denotes an attribute using the ellipsis after an attribute, in a syntax similar to that of pack expansion.
+For example, ``\code{[[fun(args)...]]}'' is an expanded attribute.
+
+The \field{index} field of that abstract reference is an index into the expanded attributes partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{operand}{AttrIndex} \\
+    }
+    \caption{Structure of an expanded attribute}
+\end{figure}
+%
+The \field{operand} field denotes the attribute to be expanded.
+
+\partition{attr.expanded}
+
+\subsection{\valueTag{AttrSort::Factored}}
+\label{sec:ifc:AttrSort:Factored}
+
+An \type{AttrIndex} reference with tag \valueTag{AttrSort::Factored} denotes an abbreviation form of attribute
+sequence where each attribute is either a scoped attribute (\sortref{Scoped}{AttrSort}) 
+or a called attribute (\sortref{Called}{AttrSort}) where the attribute in function position 
+is a scoped attribute, and all mentioning the same scope word.  For example, 
+``\code{[[using build: opt(2), chk]]}'' is a factored attribute, and is a short-hand for 
+``\code{[[build::opt(2), build::chk]]}''.
+
+The \field{index} field of that abstract reference is an index into the factored attributes partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{factor}{Word} \\
+        \DeclareMember{terms}{AttrIndex} \\
+    }
+\end{figure}
+%
+The \field{factor} field represents the common scope word.  The field \field{terms} represents the 
+rest of the comm-separated list of attributes.
+
+\partition{attr.factored}
+
+\subsection{\valueTag{AttrSort::Elaborated}}
+\label{sec:ifc:AttrSort:Elaborated}
+
+An \type{AttrIndex} reference with tag \valueTag{AttrSort::Elaborated} denotes an attribute 
+where the input source-level tokens have been parsed and semantically analyzed, and the resulting
+expression embedded in the attribute structure.  This functionality supports various popular
+implementation-defined extensions, and also proposed contract-attribute syntaxes such as
+``\code{[[assert: condition]]}'' where \grammar{condition} is a Boolean expression stating an
+expectation at a given program point.
+
+The \field{index} field of that abstract reference is an index into the elaborated attribute partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{expression}{ExprIndex} \\
+    }
+    \caption{Structure of an elaborated attribute}
+    \label{fig:ifc:AttrSort:Elaborated}
+\end{figure}
+%
+The \field{expression} field denotes the result of the parsing and semantic analyzis of the 
+source-level words making up the attributes.  The input source level words are not retained.
+
+\partition{attr.elaborated}
+
+\subsection{\valueTag{AttrSort::Tuple}}
+\label{sec:ifc:AttrSort:Tuple}
+
+An \type{AttrIndex} reference with tag \valueTag{AttrSort::Tuple} denotes a sequence of comma-separated attributes.
+It is a general scheme to make a sequence of attributes appear as if it was just an attribute.  This representation
+brings simplicity, flexibility, and generality to the attribute data structures.
+
+The \field{index} field of that abstract reference is an index into the tuple attribute partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{start}{Index} \\
+        \DeclareMember{cardinality}{Cardinality} \\
+    }
+    \caption{Structure of a tuple attributes}
+    \label{fig:ifc:AttrSort:Tuple}
+\end{figure}
+The \field{start} designates the position of the first \type{AttrIndex} value in the 
+attribute heap (\secref{sec:ifc-attr-heap}) corresponding to the first abstract reference in the 
+tuple attribute.
+The \field{cardinality} represents the number of \type{AttrIndex} values in the tuple attribute.
+If this value is zero, then \field{start} is not meaningful.
+
+\partition{attr.tuple}
