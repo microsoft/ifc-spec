@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- This is a basic IFC graph viewer written against the IFC 0.31 specification. -->
+    <title>Icicle IFC</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+    <style>
+        rect {
+            stroke: #fff;
+        }
+
+        .title-container {
+            float: left;
+        }
+
+        #file-selector {
+            border: 5px dashed red;
+            width: 440px;
+            height: 272px;
+        }
+
+        #output {
+            padding-top: 5px;
+        }
+
+        .content-container {
+            float: left;
+        }
+
+        /* options */
+        #decl-color-selector {
+            height: 25px;
+            top: 4px;
+            position: relative;
+        }
+
+        #reset-decl-colors {
+            vertical-align: top;
+        }
+
+        #class-color-selector {
+            height: 25px;
+            top: 4px;
+            position: relative;
+        }
+
+        #reset-class-colors {
+            vertical-align: top;
+        }
+
+        #bad-filter-opacity-text {
+            color: red;
+        }
+
+        /* ifc explorer */
+        .explorer-element:hover {
+            cursor: pointer;
+        }
+
+        /* sidebar */
+        .wrapper {
+            display: flex;
+            align-items: stretch;
+        }
+
+        #sidebar {
+            min-width: 450px;
+            max-width: 450px;
+            transition: all 0.3s;
+        }
+
+        #sidebar a,
+        #sidebar a:hover,
+        #sidebar a:focus {
+            color: inherit;
+        }
+
+        #sidebar.active {
+            margin-left: 0px;
+        }
+
+        #sidebar .sidebar-header {
+            padding: 20px;
+        }
+
+        #sidebar ul.components {
+            padding: 20px 0;
+            border-bottom: 1px solid #47748b;
+        }
+
+        #sidebar ul p {
+            color: #fff;
+            padding: 10px;
+        }
+
+        #sidebar ul li a {
+            padding: 10px;
+            font-size: 1.1em;
+            display: block;
+        }
+
+        #sidebar ul li a:hover {
+            color: #7386D5;
+            background: #fff;
+        }
+
+        #sidebar ul li.active > a,
+        a[aria-expanded="true"] {
+            color: #fff;
+            background: #6d7fcc;
+        }
+
+        a[data-toggle="collapse"] {
+            position: relative;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+        <div class="content-container">
+            <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+                <i class="glyphicon glyphicon-align-left"></i>
+                <span>Toggle Decl Preview</span>
+            </button>
+            <button id="ifc-explorer-button" type="button" data-toggle="modal" data-target="#ifc-explorer" class="btn btn-info navbar-btn">
+                <i class="glyphicon glyphicon-align-left"></i>
+                <span>IFC Explorer</span>
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#options">
+                Options
+            </button>
+            <div class="modal fade" id="options" tabindex="-1" role="dialog" aria-labelledby="options-label" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="options-label">Options</h5>
+                    </div>
+                    <div class="modal-body" id="options-content">
+                        <label class="btn btn-secondary active">
+                            <input id="transpose-graph-toggle" type="checkbox"> Transpose
+                        </label>
+                        <label class="btn btn-secondary active">
+                            <input id="graph-fps-toggle" type="checkbox"> Graph draw FPS
+                        </label>
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Filtered opacity %</span>
+                            </div>
+                            <input id="filter-opacity-edit" type="text" class="form-control" />
+                        </div>
+                        <span id="bad-filter-opacity-text">Bad opacity value</span>
+                        <h5>DeclSort Colors</h5>
+                        <select id="decl-color-dropdown"></select>
+                        <input id="decl-color-selector" type="color" value="#000000" />
+                        <button id="reset-decl-colors" type="button" class="btn btn-secondary btn-sm">Reset to defaults</button>
+                        <h5>Class Colors</h5>
+                        <select id="class-color-dropdown"></select>
+                        <input id="class-color-selector" type="color" value="#000000" />
+                        <button id="reset-class-colors" type="button" class="btn btn-secondary btn-sm">Reset to defaults</button>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="modal fade" id="ifc-explorer" tabindex="-1" role="dialog" aria-labelledby="ifc-explorer-label" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ifc-explorer-label">IFC Explorer</h5>
+                    </div>
+                    <ul class="nav nav-tabs" id="ifc-explorer-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="ifc-explorer-decls-tab" data-toggle="tab" href="#ifc-explorer-decls" role="tab" aria-controls="ifc-explorer-decls" aria-selected="true">Decls</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="ifc-explorer-types-tab" data-toggle="tab" href="#ifc-explorer-types" role="tab" aria-controls="ifc-explorer-types" aria-selected="false">Types</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="ifc-explorer-exprs-tab" data-toggle="tab" href="#ifc-explorer-exprs" role="tab" aria-controls="ifc-explorer-exprs" aria-selected="false">Exprs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="ifc-explorer-ifc-header-tab" data-toggle="tab" href="#ifc-explorer-ifc-header" role="tab" aria-controls="ifc-explorer-ifc-header" aria-selected="false">IFC Header</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="ifc-explorer-toc-tab" data-toggle="tab" href="#ifc-explorer-toc" role="tab" aria-controls="ifc-explorer-toc" aria-selected="false">Table of Contents</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="ifc-explorer-tabs-content">
+                        <div class="tab-pane fade show active" id="ifc-explorer-decls" role="tabpanel" aria-labelledby="ifc-explorer-decls-tab">
+                            <div class="input-group input-group-sm">
+                                <select id="ifc-explorer-content-decls-sort-dropdown"></select>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Index</span>
+                                </div>
+                                <input id="ifc-explorer-content-decls-index-edit" type="text" class="form-control" />
+                                <button id="ifc-explorer-content-decls-load" type="button" class="btn btn-secondary">Load</button>
+                            </div>
+                            <div class="modal-body" id="ifc-explorer-content-decls"></div>
+                        </div>
+                        <div class="tab-pane fade" id="ifc-explorer-types" role="tabpanel" aria-labelledby="ifc-explorer-types-tab">
+                            <div class="input-group input-group-sm">
+                                <select id="ifc-explorer-content-types-sort-dropdown"></select>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Index</span>
+                                </div>
+                                <input id="ifc-explorer-content-types-index-edit" type="text" class="form-control" />
+                                <button id="ifc-explorer-content-types-load" type="button" class="btn btn-secondary">Load</button>
+                            </div>
+                            <div class="modal-body" id="ifc-explorer-content-types"></div>
+                        </div>
+                        <div class="tab-pane fade" id="ifc-explorer-exprs" role="tabpanel" aria-labelledby="ifc-explorer-exprs-tab">
+                            <div class="input-group input-group-sm">
+                                <select id="ifc-explorer-content-exprs-sort-dropdown"></select>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Index</span>
+                                </div>
+                                <input id="ifc-explorer-content-exprs-index-edit" type="text" class="form-control" />
+                                <button id="ifc-explorer-content-exprs-load" type="button" class="btn btn-secondary">Load</button>
+                            </div>
+                            <div class="modal-body" id="ifc-explorer-content-exprs"></div>
+                        </div>
+                        <div class="tab-pane fade" id="ifc-explorer-ifc-header" role="tabpanel" aria-labelledby="ifc-explorer-ifc-header-tab">
+                            <div class="modal-body" id="ifc-explorer-content-ifc-header"></div>
+                        </div>
+                        <div class="tab-pane fade" id="ifc-explorer-toc" role="tabpanel" aria-labelledby="ifc-explorer-toc-tab">
+                            <div class="modal-body" id="ifc-explorer-content-toc"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="title-container">
+            <h3 id="title">Drag-and-drop IFC</h3>
+            <div id="file-selector"></div>
+            <div id="output"></div>
+        </div>
+    </div>
+    <div class="wrapper">
+        <nav id="sidebar">
+            <button type="button" id="center-view" class="btn btn-info">
+                <span>Center View</span>
+            </button>
+            <div>Filter Names:</div>
+            <input id="name-filter" type="text" />
+            <div>Filter Types:</div>
+            <select id="sort-filter"></select>
+            <br>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z"/>
+                <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z"/>
+            </svg>
+            <br>
+            <label class="btn btn-secondary btn-sm active">
+                <input id="prop-filter-exported" type="checkbox"> Exported</input>
+            </label>
+            <label class="btn btn-secondary btn-sm active">
+                <input id="prop-filter-non-exported" type="checkbox"> Non-Exported</input>
+            </label>
+            <div class="sidebar-header">
+              <h3>Decl Preview</h3>
+            </div>
+            <div id="sidebar-content">
+                Select a decl.
+            </div>
+        </nav>
+        <div class="content-container">
+            <div id="breadcrumb"></div>
+            <div id="icicle"></div>
+        </div>
+    </div>
+
+    <!-- Third party -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <!-- Note: bootstrap.js must be loaded after JQuery as it depends on JQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+
+    <!-- Core -->
+    <script type='text/javascript' src='sgraph/decls.js'></script>
+    <script type='text/javascript' src='sgraph/exprs.js'></script>
+    <script type='text/javascript' src='sgraph/io.js'></script>
+    <script type='text/javascript' src='sgraph/literals.js'></script>
+    <script type='text/javascript' src='sgraph/operators.js'></script>
+    <script type='text/javascript' src='sgraph/resolve.js'></script>
+    <script type='text/javascript' src='sgraph/sgraph.js'></script>
+    <script type='text/javascript' src='sgraph/types.js'></script>
+
+    <!-- UI Helpers -->
+    <script type='text/javascript' src='ui/filter.js'></script>
+    <script type='text/javascript' src='ui/graph.js'></script>
+    <script type='text/javascript' src='ui/ifc-explorer.js'></script>
+    <script type='text/javascript' src='ui/options.js'></script>
+    <script type='text/javascript' src='ui/sidebar.js'></script>
+
+    <!-- Startup -->
+    <script type='text/javascript' src='globals.js'></script>
+    <script type='text/javascript' src='loader.js'></script>
+  </body>
+</html>
