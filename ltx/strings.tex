@@ -1,0 +1,12 @@
+\label{sec:ifc-string-table}
+
+Every IFC has a string table, a contiguous sequence of bytes.   A regular C++ identifier is stored in the string table as
+a NUL-terminated sequence of bytes.
+
+\section{Index type}
+\label{sec:ifc-textoffset-data-type}
+
+The type of the indices used to index into the  string table is defined as follows \newtype{TextOffset}{32}
+
+The representation of identifiers  referenced by \type{TextOffset} indices  uses UTF-8 encoding and are NUL-terminated. 
+ For string literals, see \secref{sec:ifc:ExprSort:String}.

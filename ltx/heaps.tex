@@ -1,0 +1,75 @@
+\label{sec:ifc-heaps}
+
+At various places, there is a need to describe a sequence of objects of a given (common) sort but of differing kinds.  
+For example, a namespace contains only declarations, but those declarations can be of different kinds; e.g. function declaration, variable declaration,
+template declaration, etc.  Those tables are represented as sequences of homogenous indices of one sort: a slice of a heap of indices.
+
+\section{Heap structures}
+\label{sec:ifc:heap-structures}
+
+\subsection{Declaration heap}
+\label{sec:ifc-decl-heap}
+
+The declarations heap is a partition consisting entirely of \type{DeclIndex} values.
+
+\partition{heap.decl}
+
+
+
+\subsection{Type heap}
+\label{sec:ifc-type-heap}
+
+The types heap is a partition consisting entirely of \type{TypeIndex} values.
+
+\partition{heap.type}
+
+
+\subsection{Statement heap}
+\label{sec:ifc-stmt-heap}
+
+The statement heap is a partition consisting entirely of \type{StmtIndex} values.
+
+\partition{heap.stmt}
+
+
+\subsection{Expression heap}
+\label{sec:ifc-expr-heap}
+
+The expression heap is a partition consisting entirely of \type{ExprIndex} values.
+
+\partition{heap.expr}
+
+
+\subsection{Syntax heap}
+\label{sec:ifc-syntax-heap}
+
+The syntax heap is a partition consisting entirely of \type{SyntaxIndex} values.
+
+\partition{heap.syn}
+
+\subsection{Form heap}
+\label{sec:ifc-form-heap}
+
+The preprocessing form heap is a partition consisting entirely of \type{FormIndex} values.
+
+\partition{heap.form}
+
+
+
+\subsection{Chart heap}
+\label{sec:ifc-chart-heap}
+
+The chart heap is a partition consisting entirely of \type{ChartIndex} values.
+
+\partition{heap.chart}
+
+\subsection{Attribute heap}
+\label{sec:ifc-attr-heap}
+
+
+The attribute heap is a partition consisting entirely of \type{AttrIndex} values.
+
+\partition{heap.attr}
+
+
+

@@ -1,0 +1,48 @@
+%% Written by Gabriel Dos Reis.
+%%
+%% This package provides commands for declaring a C-like object structure, with fields and types.
+%% Facilities are provided for querying type alignments, field offsets, etc.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{object-layout}[2020/01/30]
+
+%% We need support for basic arithemtic expressions.
+\RequirePackage{calc}
+
+%% Define the alignment of a type
+\newcommand{\defineTypeAlignment}[2]{   %
+    \newcounter{@gdr:type:align@#1}     %
+    \setcounter{@gdr:type:align@#1}{2}  %
+}
+
+%% Define the byte-size of a type, not counting alignment.
+\newcommand{\defineTypeBytesize}[2]{    %
+	\newcounter{@gdr:obj:bytes@#1}	    %
+	\setcounter{@gdr:obj:bytes@#1}{#2}  %
+}
+
+\newcounter{@gdr:tmp:num}
+
+\newcounter{@gdr:roundup:tmp}
+\newcommand{\@roundUp}[2]{                  %
+    \setcounter{@gdr:roundup:den}{#2}       %
+    \ifnum\value{@gdr:roundup:tmp}=0\setcounter{@gdr:roundup:tmp}{1}\fi
+    \setcounter{@gdr:roundup:result}{#1 / \value{@gdr:roundup:tmp}}
+}
+
+%% Define natural object type characteristics (e.g. alignment and sizeof of a type)
+\newcommand{\defineObjectTypeTraits}[3]{    %
+    \defineTypeAlignment{#1}{2}             %
+}
+
+%% Some common natural object type characteristics
+\defineObjectTypeTraits{i8}{1}{1}
+\defineObjectTypeTraits{u8}{1}{1}
+\defineObjectTypeTraits{i16}{2}{2}
+\defineObjectTypeTraits{u16}{2}{2}
+\defineObjectTypeTraits{i32}{4}{4}
+\defineObjectTypeTraits{u32}{4}{4}
+\defineObjectTypeTraits{i64}{4}{8}
+\defineObjectTypeTraits{u64}{4}{8}
+
+\endinput

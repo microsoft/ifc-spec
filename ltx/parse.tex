@@ -1,0 +1,1809 @@
+\label{sec:ifc-syntax-tree-table}
+
+The syntax tree part of the compiler is still a work in progress.  The MSVC compiler front-end is going through a long
+internal overhaul with a mixture of representations, none satisfactory.  The latest being so called ``parse trees'' that tries
+to capture the syntax in the input source code as written.  Clearly, that is bound to both complexity and instability.
+The front-end is moving away from ``parse trees'', to a more abstract representation of syntax fragments, but none of that work is complete
+in the MSVC releases yet.
+
+Each syntax fragment in the ``parse trees'' can be referred by an abstract reference of type \type{SyntaxTree} defined
+as follows
+\begin{figure}[H]
+	\centering
+	\absref{7}{SyntaxSort}
+	\caption{\code{SyntaxIndex}: Abstract reference of syntax fragment}
+	\label{fig:ifc-syntax-index}
+\end{figure}
+
+\begin{SortEnum}{SyntaxSort}
+	\enumerator{VendorExtension}
+	\enumerator{SimpleTypeSpecifier}
+	\enumerator{DecltypeSpecifier}
+	\enumerator{PlaceholderTypeSpecifier}
+	\enumerator{TypeSpecifierSeq}
+	\enumerator{DeclSpecifierSeq}
+	\enumerator{VirtualSpecifierSeq}
+	\enumerator{NoexceptSpecification}
+	\enumerator{ExplicitSpecifier}
+	\enumerator{EnumSpecifier}
+	\enumerator{EnumeratorDefinition}
+	\enumerator{ClassSpecifier}
+	\enumerator{MemberSpecification}
+	\enumerator{MemberDeclaration}
+	\enumerator{MemberDeclarator}
+	\enumerator{AccessSpecifier}
+	\enumerator{BaseSpecifierList}
+	\enumerator{BaseSpecifier}
+	\enumerator{TypeId}
+	\enumerator{TrailingReturnType}
+	\enumerator{Declarator}
+	\enumerator{PointerDeclarator}
+	\enumerator{ArrayDeclarator}
+	\enumerator{FunctionDeclarator}
+	\enumerator{ArrayOrFunctionDeclarator}
+	\enumerator{ParameterDeclarator}
+	\enumerator{InitDeclarator}
+	\enumerator{NewDeclarator}
+	\enumerator{SimpleDeclaration}
+	\enumerator{ExceptionDeclaration}
+	\enumerator{ConditionDeclaration}
+	\enumerator{StaticAssertDeclaration}
+	\enumerator{AliasDeclaration}
+	\enumerator{ConceptDefinition}
+	\enumerator{CompoundStatement}
+	\enumerator{ReturnStatement}
+	\enumerator{IfStatement}
+	\enumerator{WhileStatement}
+	\enumerator{DoWhileStatement}
+	\enumerator{ForStatement}
+	\enumerator{InitStatement}
+	\enumerator{RangeBasedForStatement}
+	\enumerator{ForRangeDeclaration}
+	\enumerator{LabeledStatement}
+	\enumerator{BreakStatement}
+	\enumerator{ContinueStatement}
+	\enumerator{SwitchStatement}
+	\enumerator{GotoStatement}
+	\enumerator{DeclarationStatement}
+	\enumerator{ExpressionStatement}
+	\enumerator{TryBlock}
+	\enumerator{Handler}
+	\enumerator{HandlerSeq}
+	\enumerator{FunctionTryBlock}
+	\enumerator{TypeIdListElement}
+	\enumerator{DynamicExceptionSpec}
+	\enumerator{StatementSeq}
+	\enumerator{FunctionBody}
+	\enumerator{Expression}
+	\enumerator{FunctionDefinition}
+	\enumerator{MemberFunctionDeclaration}
+	\enumerator{TemplateDeclaration}
+	\enumerator{RequiresClause}
+	\enumerator{SimpleRequirement}
+	\enumerator{TypeRequirement}
+	\enumerator{CompoundRequirement}
+	\enumerator{NestedRequirement}
+	\enumerator{RequirementBody}
+	\enumerator{TypeTemplateParameter}
+	\enumerator{TemplateTemplateParameter}
+	\enumerator{TypeTemplateArgument}
+	\enumerator{NonTypeTemplateArgument}
+	\enumerator{TemplateParameterList}
+	\enumerator{TemplateArgumentList}
+	\enumerator{TemplateId}
+	\enumerator{MemInitializer}
+	\enumerator{CtorInitializer}
+	\enumerator{LambdaIntroducer}
+	\enumerator{LambdaDeclarator}
+	\enumerator{CaptureDefault}
+	\enumerator{SimpleCapture}
+	\enumerator{InitCapture}
+	\enumerator{ThisCapture}
+	\enumerator{AttributedStatement}
+	\enumerator{AttributedDeclaration}
+	\enumerator{AttributeSpecifierSeq}
+	\enumerator{AttributeSpecifier}
+	\enumerator{AttributeUsingPrefix}
+	\enumerator{Attribute}
+	\enumerator{AttributeArgumentClause}
+	\enumerator{Alignas}
+	\enumerator{UsingDeclaration}
+	\enumerator{UsingDeclarator}
+	\enumerator{UsingDirective}
+	\enumerator{ArrayIndex}
+	\enumerator{SEHTry}
+	\enumerator{SEHExcept}
+	\enumerator{SEHFinally}
+	\enumerator{SEHLeave}
+	\enumerator{TypeTraitIntrinsic}
+	\enumerator{Tuple}
+	\enumerator{AsmStatement}
+	\enumerator{NamespaceAliasDefinition}
+	\enumerator{Super}
+	\enumerator{UnaryFoldExpression}
+	\enumerator{BinaryFoldExpression}
+	\enumerator{EmptyStatement}
+	\enumerator{StructuredBindingDeclaration}
+	\enumerator{StructuredBindingIdentifier}
+	\enumerator{UsingEnumDeclaration}
+\end{SortEnum}
+
+\note{
+	Syntax fragments are used only for the representation of the following syntactic constructs
+	\begin{itemize}
+		\item concept definition, or any constraint in dependent contexts
+		\item template alias
+		\item lambda in dependent contexts
+		\item exception specification in template alias
+		\item default argument for template parameters -- but not for default argument to functions or function templates.
+	\end{itemize}
+}
+
+\section{Auxiliary types}
+\label{sec:ifc:syntax-auxiliary-types}
+
+\subsection{\type{KeywordSyntax}}
+\label{sec:ifc:syntax-keyword-syntax}
+
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{value}{KeywordSort} \\
+	}
+	\caption{Structure of a keyword syntax}
+	\label{fig:ifc:syntax-keyword-syntax}
+\end{figure}
+%
+
+\subsubsection{\type{KeywordSort}}
+\label{sec:ifc:KeywordSort}
+
+\defineBitsize{KeywordSort}{8}
+
+\begin{SortEnum}{KeywordSort}
+	\enumerator{Nothing}
+	\enumerator{Class}
+	\enumerator{Struct}
+	\enumerator{Union}
+	\enumerator{Public}
+    \enumerator{Protected}
+	\enumerator{Private}
+	\enumerator{Default}
+	\enumerator{Delete}
+    \enumerator{Mutable}
+	\enumerator{Constexpr}
+	\enumerator{Consteval}
+	\enumerator{Typename}
+\end{SortEnum}
+
+\ifcdoc{Nothing}{KeywordSort} No source-level keyword.
+\ifcdoc{Class}{KeywordSort} Source-level keyword ``\code{class}''.
+\ifcdoc{Struct}{KeywordSort} Source-level keyword ``\code{struct}''.
+\ifcdoc{Union}{KeywordSort} Source-level keyword ``\code{union}''.
+\ifcdoc{Public}{KeywordSort} Source-level keyword ``\code{public}''.
+\ifcdoc{Protected}{KeywordSort} Source-level keyword ``\code{protected}''.
+\ifcdoc{Private}{KeywordSort} Source-level keyword ``\code{private}''.
+\ifcdoc{Default}{KeywordSort} Source-level keywprd ``\code{default}''.
+\ifcdoc{Delete}{KeywordSort} Source-level keyword ``\code{delete}''.
+\ifcdoc{Mutable}{KeywordSort} Source-level keyword ``\code{mutable}''.
+\ifcdoc{Constexpr}{KeywordSort} Source-level keywprd ``\code{constexpr}''.
+\ifcdoc{Consteval}{KeywordSort} Source-level keyword ``\code{consteval}''.
+\ifcdoc{Typename}{KeywordSort} Source-level keyword ``\code{typename}''.
+
+\section{Syntax tree structures}
+\label{sec:ifc:SyntaxSort-structures}
+
+\subsection{\valueTag{SyntaxSort::VendorExtension}}
+\label{sec:ifc:SyntaxSort:VendorExtension}
+
+\partition{syntax.vendor-extension}
+
+\subsection{\valueTag{SyntaxSort::SimpleTypeSpecifier}}
+\label{sec:ifc:SyntaxSort:SimpleTypeSpecifier}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a simple-type-specifier syntax}
+	\label{fig:ifc:SyntaxSort:SimpleTypeSpecifier}
+\end{figure}
+
+\partition{syntax.simple-type-specifier}
+
+\subsection{\valueTag{SyntaxSort::DecltypeSpecifier}}
+\label{sec:ifc:SyntaxSort:DecltypeSpecifier}
+
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{decltype\_keyword}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\caption{Structure of the decltype-specifier syntax-tree structure}
+	\label{fig:ifc:SyntaxSort:DecltypeSpecifier}
+\end{figure}
+
+\partition{syntax.decltype-specifier}
+
+\subsection{\valueTag{SyntaxSort::PlaceholderTypeSpecifier}}
+\label{sec:ifc:SyntaxSort:PlaceholderTypeSpecifier}
+
+A \type{SyntaxIndex} abstract reference with tag 
+\valueTag{SyntaxSort::PlaceholderTypeSpecifier}
+designates a placeholder type given by the grammatical element described below.
+The \field{index} field is an index into the grammatical placeholder type 
+partition.  Each entry in that partition is a structure with the following
+layout:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{type}{PlaceholderType} \\
+		\DeclareMember{keyword}{SourceLocation} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:PlaceholderTypeSpecifier}
+\end{figure}
+%
+The \field{type} field is a structure denoting the semantic placeholder type
+ (\type{PlaceholderType}) as described in \sortref{Placeholder}{TypeSort}.  The \field{keyword} field
+designates the source location of the syntax of the placeholder type
+(denoted by \code{auto} or \code{decltype(auto)}).  Finally the \field{locus} field
+denotes the source location of the entire syntax for the placeholder type;
+this source location may be different from that desinated by \field{keyword}
+if there are additional constraints (as indicated by the use of a concept type).
+
+\partition{syntax.placeholder-type-specifier}
+
+
+\subsection{\valueTag{SyntaxSort::TypeSpecifierSeq}}
+\label{sec:ifc:SyntaxSort:TypeSpecifierSeq}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{typename}{SyntaxIndex} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{qualifiers}{Qualifier} \\
+		\DeclareMember{unshashed}{bool} \\
+	}
+	\label{fig:ifc:SyntaxSort:TypeSpecifierSeq}
+\end{figure}
+
+\partition{syntax.type-specifier-seq}
+
+\subsection{\valueTag{SyntaxSort::DeclSpecifierSeq}}
+\label{sec:ifc:SyntaxSort:DeclSpecifierSeq}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{typename}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{storage\_class}{StorageClass} \\
+		\DeclareMember{declspec}{SentenceIndex} \\
+		\DeclareMember{explicit}{SyntaxIndex} \\
+		\DeclareMember{qualifiers}{Qualifier} \\
+	}
+	\label{fig:ifc:SyntaxSort:DeclSpecifierSeq}
+\end{figure}
+
+\partition{syntax.decl-specifier-seq}
+
+\subsection{\valueTag{SyntaxSort::VirtualSpecifierSeq}}
+\label{sec:ifc:SyntaxSort:VirtualSpecifierSeq}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{final}{SourceLocation} \\
+		\DeclareMember{override}{SourceLocation} \\
+		\DeclareMember{pure}{bool} \\
+	}
+	\label{fig:ifc:SyntaxSort:VirtualSpecifierSeq}
+\end{figure}
+
+\partition{syntax.virtual-specifier-seq}
+
+
+\subsection{\valueTag{SyntaxSort::NoexceptSpecification}}
+\label{sec:ifc:SyntaxSort:NoexceptSpecification}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{expr}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:NoexceptSpecification}
+\end{figure}
+
+\partition{syntax.noexcept-specification}
+
+
+\subsection{\valueTag{SyntaxSort::ExplicitSpecifier}}
+\label{sec:ifc:SyntaxSort:ExplicitSpecifier}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:ExplicitSpecifier}
+\end{figure}
+
+\partition{syntax.explicit-specifier}
+
+
+\subsection{\valueTag{SyntaxSort::EnumSpecifier}}
+\label{sec:ifc:SyntaxSort:EnumSpecifier}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{class\_key}{KeywordSyntax} \\
+		\DeclareMember{enumerators}{SyntaxIndex} \\
+		\DeclareMember{base}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{colon}{SourceLocation} \\
+		\DeclareMember{left\_brace}{SourceLocation} \\
+		\DeclareMember{right\_brace}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:EnumSpecifier}
+\end{figure}
+
+\partition{syntax.enum-specifier}
+
+\subsection{\valueTag{SyntaxSort::EnumeratorDefinition}}
+\label{sec:ifc:SyntaxSort:EnumeratorDefinition}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{equal}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:EnumeratorDefinition}
+\end{figure}
+
+\partition{syntax.enumerator-definition}
+
+
+\subsection{\valueTag{SyntaxSort::ClassSpecifier}}
+\label{sec:ifc:SyntaxSort:ClassSpecifier}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{class\_key}{KeywordSyntax} \\
+		\DeclareMember{bases}{SyntaxIndex} \\
+		\DeclareMember{members}{SyntaxIndex} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:ClassSpecifier}
+\end{figure}
+
+\partition{syntax.class-specifier}
+
+
+\subsection{\valueTag{SyntaxSort::MemberSpecification}}
+\label{sec:ifc:SyntaxSort:MemberSpecification}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{member\_declarations}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:MemberSpecification}
+\end{figure}
+
+\partition{syntax.member-specification}
+
+\subsection{\valueTag{SyntaxSort::MemberDeclaration}}
+\label{sec:ifc:SyntaxSort:MemberDeclaration}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{decl\_specifiers}{SyntaxIndex} \\
+		\DeclareMember{declarators}{SyntaxIndex} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:MemberDeclaration}
+\end{figure}
+
+\partition{syntax.member-declaration}
+
+
+\subsection{\valueTag{SyntaxSort::MemberDeclarator}}
+\label{sec:ifc:SyntaxSort:MemberDeclarator}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{declarator}{SyntaxIndex} \\
+		\DeclareMember{constraint}{SyntaxIndex} \\
+		\DeclareMember{bitwidth}{ExprIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{colon}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:MemberDeclarator}
+\end{figure}
+
+\partition{syntax.member-declarator}
+
+\subsection{\valueTag{SyntaxSort::AccessSpecifier}}
+\label{sec:ifc:SyntaxSort:AccessSpecifier}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{access}{KeywordSyntax} \\
+		\DeclareMember{colon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:AccessSpecifier}
+\end{figure}
+
+\partition{syntax.access-specifier}
+
+
+\subsection{\valueTag{SyntaxSort::BaseSpecifierList}}
+\label{sec:ifc:SyntaxSort:BaseSpecifierList}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{base\_specifiers}{SyntaxIndex} \\
+		\DeclareMember{colon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:BaseSpecifierList}
+\end{figure}
+
+\partition{syntax.base-specifier-list}
+
+
+\subsection{\valueTag{SyntaxSort::BaseSpecifier}}
+\label{sec:ifc:SyntaxSort:BaseSpecifier}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{designator}{ExprIndex} \\
+		\DeclareMember{access}{KeywordSyntax} \\
+		\DeclareMember{virtual}{SourceLocation} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{virtual}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:BaseSpecifier}
+\end{figure}
+
+\partition{syntax.base-specifier}
+
+
+\subsection{\valueTag{SyntaxSort::TypeId}}
+\label{sec:ifc:SyntaxSort:TypeId}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::TypeId} designates the source-level
+syntactic contruct \grammar{type-id} which is the syntax
+\grammar{type-specified-seq} optionally followed by \grammar{abstract-declarator}. 
+The \field{index} field of that abstract reference is an index into the syntax of type-id partition.
+Each entry of that partition is a structure with the following layout:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{type\_specifier}{SyntaxIndex} \\
+		\DeclareMember{abstract\_declarator}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:TypeId}
+\end{figure}
+%
+The \field{type\_specifier} field denotes the \grammar{type-specifier-seq} (\sortref{TypeSpecifierSeq}{SyntaxSort}).
+The \field{abstract\_declarator} field, if not null, denotes the \grammar{abstract-declarator} part (\sortref{Declarator}{SyntaxSort}).
+The \field{locus} designates the source location of the \grammar{type-id} construct.
+
+\partition{syntax.type-id}
+
+
+\subsection{\valueTag{SyntaxSort::TrailingReturnType}}
+\label{sec:ifc:SyntaxSort:TrailingReturnType}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::TrailingReturnType} denotes the syntax tree of a source-level \grammar{trailing-return-type} construct.
+The \field{index} field of that abstract reference is an index into the partition of trailing return type syntax tree.
+Each entry of that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{target}{SyntaxIndex} \\
+		\DeclareMember{arrow}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:TrailingReturnType}
+\end{figure}
+%
+The \field{target} field denotes the syntax tree of the type specified in \grammar{trailing-return-type}.
+The \field{arrow} field denotes the source location of the introducing arrow.
+
+
+\partition{syntax.trailing-return-type}
+
+
+\subsection{\valueTag{SyntaxSort::Declarator}}
+\label{sec:ifc:SyntaxSort:Declarator}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::Declarator} designates a source level syntactic construct that
+follows the grammar production \grammar{declarator} or \grammar{abstract-declarator}.
+The \field{index} field of that abstract references is an index into the partition of declarator syntax trees.
+Each entry of that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width=15em]{
+		\DeclareMember{pointer}{SyntaxIndex} \\
+		\DeclareMember{parenthesized}{SyntaxIndex} \\
+		\DeclareMember{array\_or\_function}{SyntaxIndex} \\
+		\DeclareMember{trailing\_target}{SyntaxIndex} \\
+		\DeclareMember{virtual\_specifiers}{SyntaxIndex} \\
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{qualifiers}{Qualifiers} \\
+		\DeclareMember{convention}{CallingConvrntion} \\
+		\DeclareMember{callable}{bool} \\
+	}
+	\label{fig:ifc:SyntaxSort:Declarator}
+\end{figure}
+%
+In many ways, many fields of this structure form a discriminated union, meaning that not all of them are simultaneously meaningful and their interpretation are supposed to be mutually exclusive.
+The \field{pointer} field, if non null, indicates that this is in fact a pointer-declarator (\sortref{PointerDeclarator}{SyntaxSort}).
+The \field{parenthesized} field, if non null, indicates that outer parenthesis are used as part of the declarator.
+The \field{array\_or\_function} field, if non null, denotes an array (\sortref{ArrayDeclarator}{SyntaxSort}) or function declarator (\sortref{FunctionDeclarator}{SyntaxSort}).
+The \field{trailing\_target}, if non null, denotes a trailing return type (\sortref{TrailingReturnType}{SyntaxSort}) in the declarator.
+The \field{virtual\_specifiers}, if non null, denotes the \grammar{virt-specifier-seq} grammatical element (\sortref{VirtualSpecifierSeq}{SyntaxSort}) in the source level construct.
+The \field{name} field, if non null, denotes the name (\grammar{id-expression}) introduced by the declarator.
+The \field{ellipsis} field, if non null, indicates that the expansion operatror \code{...} was used to introduce the \grammar{declarator-id}.
+The \field{locus} field denotes the source location of the declarator.
+The \field{qualifiers} field denotes the \grammar{cv-qualifier-seq} of the declarator.
+The \field{convention} field denotes the calling convention specifier in the declarator (if this is a function declarator).
+The \field{callable} field indicates that the declarator introduces a callable construct.
+
+
+\partition{syntax.declarator}
+
+
+\subsection{\valueTag{SyntaxSort::PointerDeclarator}}
+\label{sec:ifc:SyntaxSort:PointerDeclarator}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{whole}{SyntaxIndex} \\
+		\DeclareMember{next}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{sort}{PointerDeclaratorSort} \\
+		\DeclareMember{qualifiers}{Qualifier} \\
+		\DeclareMember{convention}{CallingConvention} \\
+		\DeclareMember{callable}{bool} \\
+	}
+	\label{fig:ifc:SyntaxSort:PointerDeclarator}
+\end{figure}
+
+\partition{syntax.pointer-declarator}
+
+\subsection{\valueTag{SyntaxSort::ArrayDeclarator}}
+\label{sec:ifc:SyntaxSort:ArrayDeclarator}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::ArrayDeclarator} denotes an array declarator syntax tree.
+The \field{index} field of that abstract reference is an index into the array declarator syntax tree partition.
+Each entry of that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{bound}{ExprIndex} \\
+		\DeclareMember{left\_bracket}{SourceLocation} \\
+		\DeclareMember{right\_bracket}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:ArrayDeclarator}
+\end{figure}
+%
+The \field{bound} field, if non null, denotes the bound of the array.
+The \field{left\_bracket} field denotes the source location of the open bracket.
+The \field{right\_bracket} field denotes the source location of the closing bracket.
+
+\partition{syntax.array-declarator}
+
+\subsection{\valueTag{SyntaxSort::FunctionDeclarator}}
+\label{sec:ifc:SyntaxSort:FunctionDeclarator}
+
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::FunctionDeclarator} denotes a function declarator syntax tree.
+The \field{index} field is an index into the function declarator syntax tree partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{parameters}{SyntaxIndex} \\
+		\DeclareMember{eh\_spec}{SyntaxIndex} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:FunctionDeclarator}
+\end{figure}
+%
+The \field{parameters} denotes the parameter list of the function declarator.
+The \field{eh\_spec} field, if non null, denotes the exception specification in the function declarator.
+The \field{left\_paren} field denotes the location of the opening parenthesis of this function declarator.
+The \field{right\_paren} field denotes the location of the closing parenthesis of this function declarator.
+
+\partition{syntax.function-declarator}
+
+\subsection{\valueTag{SyntaxSort::ArrayOrFunctionDeclarator}}
+\label{sec:ifc:SyntaxSort:ArrayOrFunctionDeclarator}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::ArrayOrFunctionDeclarator} denotes the tower of array or function declarator syntax trees.
+The \field{index} field is an index into the partition of array-or-function declarator syntax tree.
+Each entry of that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{declarator}{SyntaxIndex} \\
+		\DeclareMember{next}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:ArrayOrFunctionDeclarator}
+\end{figure}
+%
+The \field{declarator} field denotes the outer declarator, while the \field{next} field
+denotes the innner declarator.
+
+\partition{syntax.array-or-function-declarator}
+
+\subsection{\valueTag{SyntaxSort::ParameterDeclarator}}
+\label{sec:ifc:SyntaxSort:ParameterDeclarator}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{decl\_specifiers}{SyntaxIndex} \\
+		\DeclareMember{declarator}{SyntaxIndex} \\
+		\DeclareMember{default}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{sort}{ParameterSort} \\
+	}
+	\label{fig:ifc:SyntaxSort:ParameterDeclarator}
+\end{figure}
+
+\partition{syntax.parameter-declarator}
+
+
+\subsection{\valueTag{SyntaxSort::InitDeclarator}}
+\label{sec:ifc:SyntaxSort:InitDeclarator}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{declarator}{SyntaxIndex} \\
+		\DeclareMember{constraint}{SyntaxIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:InitDeclarator}
+\end{figure}
+
+\partition{syntax.init-declarator}
+
+\subsection{\valueTag{SyntaxSort::NewDeclarator}}
+\label{sec:ifc:SyntaxSort:NewDeclarator}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{declarator}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:NewDeclarator}
+\end{figure}
+
+\partition{syntax.new-declarator}
+
+\subsection{\valueTag{SyntaxSort::SimpleDeclaration}}
+\label{sec:ifc:SyntaxSort:SimpleDeclaration}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{decl\_specifiers}{SyntaxIndex} \\
+		\DeclareMember{declarators}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocartion} \\
+	}
+	\label{fig:ifc:SyntaxSort:SimpleDeclaration}
+\end{figure}
+
+\partition{syntax.simple-declaration}
+
+\subsection{\valueTag{SyntaxSort::ExceptionDeclaration}}
+\label{sec:ifc:SyntaxSort:ExceptionDeclaration}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{type\_specifiers}{SyntaxIndex} \\
+		\DeclareMember{declarator}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:ExceptionDeclaration}
+\end{figure}
+
+\partition{syntax.exception-declaration}
+
+\subsection{\valueTag{SyntaxSort::ConditionDeclaration}}
+\label{sec:ifc:SyntaxSort:ConditionDeclaration}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{decl\_specifier}{SyntaxIndex} \\
+		\DeclareMember{initializerion}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:ConditionDeclaration}
+\end{figure}
+
+\partition{syntax.condition-declaration}
+
+\subsection{\valueTag{SyntaxSort::StaticAssertDeclaration}}
+\label{sec:ifc:SyntaxSort:StaticAssertDeclaration}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{message}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	 }
+	 \label{fig:ifc:SyntaxSort:StaticAssertDeclaration}
+	\end{figure}
+
+\partition{syntax.static-assert-declaration}
+
+
+\subsection{\valueTag{SyntaxSort::AliasDeclaration}}
+\label{sec:ifc:SyntaxSort:AliasDeclaration}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{aliasee}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{equal}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:AliasDeclaration}
+\end{figure}
+
+\partition{syntax.alias-declaration}
+
+\subsection{\valueTag{SyntaxSort::ConceptDefinition}}
+\label{sec:ifc:SyntaxSort:ConceptDefinition}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{parameters}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{concept\_keyword}{SourceLocation} \\
+		\DeclareMember{equal}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:ConceptDefinition}
+\end{figure}
+
+\partition{syntax.concept-definition}
+
+
+\subsection{\valueTag{SyntaxSort::CompoundStatement}}
+\label{sec:ifc:SyntaxSort:CompoundStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{stmts}{SyntaxIndex} \\
+		\DeclareMember{left\_curly}{SourceLocation} \\
+		\DeclareMember{right\_curly}{SourceLocation} \\
+	}
+	\caption{Structure of a compound statement syntax tree}
+	\label{fig:ifc:SyntaxSort:CompoundStatement}
+\end{Structure}
+
+\partition{syntax.compound-statement}
+
+
+\subsection{\valueTag{SyntaxSort::ReturnStatement}}
+\label{sec:ifc:SyntaxSort:ReturnStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{sort}{ReturnSort} \\
+		\DeclareMember{return}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\caption{Structure of a return statement syntax tree}
+	\label{fig:ifc:SyntaxSort:ReturnStatement}
+\end{Structure}
+
+\partition{syntax.return-statement}
+
+\paragraph{\type{ReturnSort}}
+
+%
+\begin{typedef}{ReturnSort}{}
+	enum class ReturnSort : uint8_t {
+		Return,
+		Co_return,
+	 };
+\end{typedef}
+%
+
+
+\subsection{\valueTag{SyntaxSort::IfStatement}}
+\label{sec:ifc:SyntaxSort:IfStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{initialization}{SyntaxIndex} \\
+		\DeclareMember{condition}{SyntaxIndex} \\
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{consequence}{SyntaxIndex} \\
+		\DeclareMember{alternative}{SyntaxIndex} \\
+		\DeclareMember{if}{SourceLocation} \\
+		\DeclareMember{constexpr}{SourceLocation} \\
+		\DeclareMember{else}{SourceLocation} \\
+	}
+	\caption{Structure of an \grammar{if-statement} syntax tree}
+	\label{fig:ifc:SyntaxSort:IfStatement}
+\end{Structure}
+
+\partition{syntax.if-statement}
+
+
+\subsection{\valueTag{SyntaxSort::WhileStatement}}
+\label{sec:ifc:SyntaxSort:WhileStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{while}{SourceLocation} \\
+	}
+	\caption{Structure of an \grammar{while-statement} syntax tree}
+	\label{fig:ifc:SyntaxSort:WhileStatement}
+\end{Structure}
+
+\partition{syntax.while-statement}
+
+
+\subsection{\valueTag{SyntaxSort::DoWhileStatement}}
+\label{sec:ifc:SyntaxSort:DoWhileStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{body}{SynyaxIndex} \\
+		\DeclareMember{do}{SourceLocation} \\
+		\DeclareMember{while}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\caption{Structure of an \grammar{do-statement} syntax tree}
+	\label{fig:ifc:SyntaxSort:DoWhileStatement}
+\end{Structure}
+
+\partition{syntax.do-statement}
+
+
+\subsection{\valueTag{SyntaxSort::ForStatement}}
+\label{sec:ifc:SyntaxSort:ForStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{initialization}{SyntaxIndex} \\
+		\DeclareMember{condution}{ExprIndex} \\
+		\DeclareMember{continuation}{ExprIndex} \\
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{for}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\caption{Structure of an \grammar{for-statement} syntax tree}
+	\label{fig:ifc:SyntaxSort:ForStatement}
+\end{Structure}
+
+\partition{syntax.for-statement}
+
+
+\subsection{\valueTag{SyntaxSort::InitStatement}}
+\label{sec:ifc:SyntaxSort:InitStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{init}{SyntaxIndex} \\
+	}
+	\caption{Structure of an \grammar{init-statement} syntax tree}
+	\label{fig:ifc:SyntaxSort:InitStatement}
+\end{Structure}
+
+\partition{syntax.init-statement}
+
+
+\subsection{\valueTag{SyntaxSort::RangeBasedForStatement}}
+\label{sec:ifc:SyntaxSort:RangeBasedForStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{init}{SyntaxIndex} \\
+		\DeclareMember{decl}{SyntaxIndex} \\
+		\DeclareMember{initializer}{SyntaxIndex} \\
+		\DeclareMember{body}{SynyaxIndex} \\
+		\DeclareMember{for}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+		\DeclareMember{colon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:RangeBasedForStatement}
+\end{Structure}
+
+\partition{syntax.range-based-for-statement}
+
+
+\subsection{\valueTag{SyntaxSort::ForRangeDeclaration}}
+\label{sec:ifc:SyntaxSort:ForRangeDeclaration}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{specifiers}{SyntaxIndex} \\
+		\DeclareMember{declarator}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:ForRangeDeclaration}
+\end{Structure}
+
+\partition{syntax.for-range-declaration}
+
+
+\subsection{\valueTag{SyntaxSort::LabeledStatement}}
+\label{sec:ifc:SyntaxSort:LabeledStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentencedIndex} \\
+		\DeclareMember{label}{ExprIndex} \\
+		\DeclareMember{stmt}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{sort}{LabelSort} \\
+	}
+\end{Structure}
+
+\partition{syntax.labeled-statement}
+
+\paragraph{\type{LabelSort}}
+
+\begin{typedef}{LabelSort}{}
+	enum class LabelSort : uint8_t {
+		Unknown,
+		Case,
+		Default,
+		Label
+	 };
+\end{typedef}
+%
+
+
+\subsection{\valueTag{SyntaxSort::BreakStatement}}
+\label{sec:ifc:SyntaxSort:BreakStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{break}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:BreakStatement}
+\end{Structure}
+
+\partition{syntax.break-statement}
+
+
+\subsection{\valueTag{SyntaxSort::ContinueStatement}}
+\label{sec:ifc:SyntaxSort:ContinueStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{continue}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:ContinueStatement}
+\end{Structure}
+
+\partition{syntax.continue-statement}
+
+
+\subsection{\valueTag{SyntaxSort::SwitchStatement}}
+\label{sec:ifc:SyntaxSort:SwitchStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{init}{SyntaxIndex} \\
+		\DeclareMember{condition}{SyntaxIndex} \\
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{switch}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:SwitchStatement}
+\end{Structure}
+
+\partition{syntax.switch-statement}
+
+\subsection{\valueTag{SyntaxSort::GotoStatement}}
+\label{sec:ifc:SyntaxSort:GotoStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{target}{TextOffset} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{label}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:GotoStatement}
+\end{Structure}
+
+\partition{syntax.goto-statement}
+
+\subsection{\valueTag{SyntaxSort::DeclarationStatement}}
+\label{sec:ifc:SyntaxSort:DeclarationStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{decl}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:DeclarationStatement}
+\end{Structure}
+
+\partition{syntax.declaration-statement}
+
+\subsection{\valueTag{SyntaxSort::ExpressionStatement}}
+\label{sec:ifc:SyntaxSort:ExpressionStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:ExpressionStatement}
+\end{Structure}
+
+\partition{syntax.expression-statement}
+
+
+\subsection{\valueTag{SyntaxSort::TryBlock}}
+\label{sec:ifc:SyntaxSort:TryBlock}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{handlers}{SyntaxIndex} \\
+		\DeclareMember{try}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:TryBlock}
+\end{Structure}
+
+\partition{syntax.try-block}
+
+
+\subsection{\valueTag{SyntaxSort::Handler}}
+\label{sec:ifc:SyntaxSort:Handler}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{exception}{SyntaxIndex} \\
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{catch}{SourceLocaion} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:Handler}
+\end{Structure}
+
+\partition{syntax.handler}
+
+
+\subsection{\valueTag{SyntaxSort::HandlerSeq}}
+\label{sec:ifc:SyntaxSort:HandlerSeq}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{handlers}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:HandlerSeq}
+\end{Structure}
+
+\partition{syntax.handler-seq}
+
+
+\subsection{\valueTag{SyntaxSort::FunctionTryBlock}}
+\label{sec:ifc:SyntaxSort:FunctionTryBlock}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{handlers}{SyntaxIndex} \\
+		\DeclareMember{initializers}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:FunctionTryBlock}
+\end{Structure}
+
+\partition{syntax.function-try-block}
+
+
+\subsection{\valueTag{SyntaxSort::TypeIdListElement}}
+\label{sec:ifc:SyntaxSort:TypeIdListElement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{type\_id}{SyntaxIndex} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:TypeIdListElement}
+\end{Structure}
+
+\partition{syntax.type-id-list-element}
+
+
+\subsection{\valueTag{SyntaxSort::DynamicExceptionSpec}}
+\label{sec:ifc:SyntaxSort:DynamicExceptionSpec}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{type\_list}{SyntaxIndex} \\
+		\DeclareMember{throw}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:DynamicExceptionSpec}
+\end{Structure}
+
+\partition{syntax.dynamic-exception-spec}
+
+
+\subsection{\valueTag{SyntaxSort::StatementSeq}}
+\label{sec:ifc:SyntaxSort:StatementSeq}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{stmts}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:StatementSeq}
+\end{Structure}
+
+\partition{syntax.statement-seq}
+
+
+\subsection{\valueTag{SyntaxSort::FunctionBody}}
+\label{sec:ifc:SyntaxSort:FunctionBody}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{stmts}{SyntaxIndex} \\
+		\DeclareMember{try\_block}{SyntaxIndex} \\
+		\DeclareMember{initializers}{SyntaxIndex} \\
+		\DeclareMember{generate}{KeywordSyntax} \\
+		\DeclareMember{assign}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:FunctionBody}
+\end{Structure}
+
+\partition{syntax.function-body}
+
+
+\subsection{\valueTag{SyntaxSort::Expression}}
+\label{sec:ifc:SyntaxSort:Expression}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::Expression} designates an expression
+(\secref{sec:ifc-exprs}), typically a non-dependent expression, within a parse tree.  The index of that
+value designates an entry in the expression syntax partition.  Each entry of that partition has the following
+layout:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{expression}{ExprIndex} \\
+	}
+	\caption{Structure of an expression as a parse tree}
+	\label{fig:ifc:SyntaxSort:Expression}
+\end{figure}
+%
+The \field{expression} field designates the representation of this expression.
+
+\partition{syntax.expression}
+
+
+\subsection{\valueTag{SyntaxSort::FunctionDefinition}}
+\label{sec:ifc:SyntaxSort:FunctionDefinition}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{stmts}{SyntaxIndex} \\
+		\DeclareMember{try\_block}{SyntaxIndex} \\
+		\DeclareMember{initializers}{SyntaxIndex} \\
+		\DeclareMember{synthesis}{KeywordSyntax} \\
+		\DeclareMember{assign}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:FunctionDefinition}
+\end{Structure}
+
+\partition{syntax.function-definition}
+
+
+\subsection{\valueTag{SyntaxSort::MemberFunctionDeclaration}}
+\label{sec:ifc:SyntaxSort:MemberFunctionDeclaration}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{definition}{SyntaxIndex} \\
+	}
+	\label{fig:ifc:SyntaxSort:MemberFunctionDeclaration}
+\end{Structure}
+
+\partition{syntax.member-function-declaration}
+
+
+\subsection{\valueTag{SyntaxSort::TemplateDeclaration}}
+\label{sec:ifc:SyntaxSort:TemplateDeclaration}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{parameters}{SyntaxIndex} \\
+		\DeclareMember{subject}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of a template declaration syntax tree}
+	\label{fig:ifc:SyntaxSort:TemplateDeclaration}
+\end{Structure}
+%
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{parameters} denotes the \grammar{template-parameter} list of this template declaration.
+	\item \field{subject} denotes the declaration being parameterized by the template parameters.
+	\item \field{locus} denotes the source location of this declaration.
+\end{itemize}
+
+\partition{syntax.template-declaration}
+
+
+\subsection{\valueTag{SyntaxSort::RequiresClause}}
+\label{sec:ifc:SyntaxSort:RequiresClause}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:RequiresClause}
+\end{Structure}
+
+\partition{syntax.requires-clause}
+
+
+\subsection{\valueTag{SyntaxSort::SimpleRequirement}}
+\label{sec:ifc:SyntaxSort:SimpleRequirement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocaion} \\
+	}
+	\label{fig:ifc:SyntaxSort:SimpleRequirement}
+\end{Structure}
+
+\partition{syntax.simple-requirement}
+
+
+\subsection{\valueTag{SyntaxSort::TypeRequirement}}
+\label{sec:ifc:SyntaxSort:TypeRequirement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{type}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:TypeRequirement}
+\end{Structure}
+
+\partition{syntax.type-requirement}
+
+
+\subsection{\valueTag{SyntaxSort::CompoundRequirement}}
+\label{sec:ifc:SyntaxSort:CompoundRequirement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{constraint}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{right\_curly}{SourceLocation} \\
+		\DeclareMember{noexcept}{SourceLocaion} \\
+	}
+	\label{fig:ifc:SyntaxSort:CompoundRequirement}
+\end{Structure}
+
+\partition{syntax.compound-requirement}
+
+
+\subsection{\valueTag{SyntaxSort::NestedRequirement}}
+\label{sec:ifc:SyntaxSort:NestedRequirement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:NestedRequirement}
+\end{Structure}
+
+\partition{syntax.nested-requirement}
+
+
+\subsection{\valueTag{SyntaxSort::RequirementBody}}
+\label{sec:ifc:SyntaxSort:RequirementBody}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{requirements}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{right\_curly}{SourceLocation} \\
+	}
+	\label{fig:ifc:SyntaxSort:RequirementBody}
+\end{Structure}
+
+\partition{syntax.requirement-body}
+
+
+\subsection{\valueTag{SyntaxSort::TypeTemplateParameter}}
+\label{sec:ifc:SyntaxSort:TypeTemplateParameter}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{constraint}{SyntaxIndex} \\
+		\DeclareMember{argument}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+	}
+	\caption{Structure of a type \grammar{template-parameter} syntax tree}
+	\label{fig:ifc:SyntaxSort:TypeTemplateParameter}
+\end{Structure}
+%
+The meaning of the fields is as follows:
+\begin{itemize}
+	\item \field{name} denotes the name introduced by this declaration of type \grammar{template-parameter}.
+	\item \field{constraint} denotes any optional type constraint on this parameter.
+	\item \field{argument} denotes the corresponding default argument (if any).
+	\item \field{locus} denotes the source location of this declaration.
+	\item \field{ellipsis}, if non null, denotes the source location of \code{...} indicating a parameter pack.
+\end{itemize}
+
+\partition{syntax.type-template-parameter}
+
+
+\subsection{\valueTag{SyntaxSort::TemplateTemplateParameter}}
+\label{sec:ifc:SyntaxSort:TemplateTemplateParameter}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{TextOffset} \\
+		\DeclareMember{argument}{SyntaxIndex} \\
+		\DeclareMember{parameters}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+		\DeclareMember{key}{KeywordSyntax} \\
+	}
+	\caption{Structure of a template \grammar{template-parameter} syntax tree}
+	\label{fig:ifc:SyntaxSort:TemplateTemplateParameter}
+\end{Structure}
+%
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{name} denotes the name introduced by this template \grammar{template-parameter} declaration.
+	\item \field{argument}, if non null, denotes the corresponding default argument (if any).
+	\item \field{parameters} denotes the parameter list associated with this template \grammar{template-parameter} declaration.
+	\item \field{locus} denotes the source location of this declaration.
+	\item \field{ellipsis}, if non null, denotes the source location of \code{...} indicating a parameter pack.
+	\item \field{comma}, if non null, denotes the source location of the separating comma from the next \grammar{template-parameter} declaration.
+	\item \field{key} denotes the keyword (either \code{typename} or \code{class}) used to declare this template \grammar{template-parameter}.
+\end{itemize}
+
+\partition{syntax.template-template-parameter}
+
+\subsection{\valueTag{SyntaxSort::TypeTemplateArgument}}
+\label{sec:ifc:SyntaxSort:TypeTemplateArgument}
+
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{argument}{ExprIndex} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\caption{Structure of a type \grammar{template-argument}}
+	\label{fig:ifc:SyntaxSort:TypeTemplateArgument}
+\end{Structure}
+%
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{argument} denotes the type \grammar{template-argument}.
+	\item \field{ellipsis}, if non null, denotes the source location of \code{...} if this template argument is actually an expansion.
+	\item \field{comma}, if non null, denotes the source location of the comma separating from the next template argument.
+\end{itemize}
+
+\partition{syntax.type-template-argument}
+
+\subsection{\valueTag{SyntaxSort::NonTypeTemplateArgument}}
+\label{sec:ifc:SyntaxSort:NonTypeTemplateArgument}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{argument}{SyntaxIndex} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\caption{Structure of a non-type \grammar{template-argument} syntax tree}
+	\label{fig:ifc:SyntaxSort:NonTypeTemplateArgument}
+\end{Structure}
+%
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{argument} is an expression that denotes the non-type \grammar{template-argument}.
+	\item \field{ellipsis}, if non null, denotes the source location of \code{...} if this template argument is actually an expansion.
+	\item \field{comma}, if non null, denotes the source location of the comma separating from the next template argument.
+\end{itemize}
+
+\partition{syntax.non-type-template-argument}
+
+
+\subsection{\valueTag{SyntaxSort::TemplateParameterList}}
+\label{sec:ifc:SyntaxSort:TemplateParameterList}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{parameters}{SyntaxIndex} \\
+		\DeclareMember{clause}{SyntaxIndex} \\
+		\DeclareMember{left\_angle}{SourceLocation} \\
+		\DeclareMember{right\_angle}{SourceLocation} \\
+	}
+	\caption{Structure of a template parameter list syntax tree}
+	\label{fig:ifc:SyntaxSort:TemplateParameterList}
+\end{Structure}
+%
+The meaning of the fields is as follows:
+\begin{itemize}
+	\item \field{parameters} denotes the comma-separated sequence of \grammar{template-parameter} declarations.
+	\item \field{left\_angle} denotes the source location of the opening \code{<} delimiter.
+	\item \field{right\_angle} denotes the source location of the closing \code{>} delimiter.
+\end{itemize}
+
+\partition{syntax.template-parameter-list}
+
+
+\subsection{\valueTag{SyntaxSort::TemplateArgumentList}}
+\label{sec:ifc:SyntaxSort:TemplateArgumentList}
+
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{arguments}{SyntaxIndex} \\
+		\DeclareMember{left\_angle}{SourceLocation} \\
+		\DeclareMember{right\_angle}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{template-argument-list} syntax tree}
+	\label{fig:ifc:SyntaxSort:TemplateArgumentList}
+\end{Structure}
+%
+The meaning of the fields is as follows:
+\begin{itemize}
+	\item \field{arguments} denotes the comma-separated sequence of template arguments.
+	\item \field{left\_angle} denotes the source location of the opening \code{<} delimiter.
+	\item \field{right\_angle} denotes the source location of the closing \code{>} delimiter.
+\end{itemize}
+
+\partition{syntax.template-argument-list}
+
+
+\subsection{\valueTag{SyntaxSort::TemplateId}}
+\label{sec:ifc:SyntaxSort:TemplateId}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{SyntaxIndex} \\
+		\DeclareMember{symbol}{ExprIndex} \\
+		\DeclareMember{arguments}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{template}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{template-id} syntax tree}
+	\label{fig:ifc:SyntaxSort:TemplateId}
+\end{Structure}
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{name}, when not null, designates the \grammar{template-name} used in the \grammar{template-id} term.  This is the case when the template is not known through a declaration.
+	\item \field{symbol}, when not null, is an expression that denotes the declaration of the primary template that the \grammar{template-name} designates.
+	\item \field{arguments} denotes the angle bracket-enclosed comma-separated sequence of template arguments.
+	\item \field{locus} denotes the source location of this syntax tree.
+	\item \field{template}, when not null, indicates the source location of the \code{template} keyword if used in forming the \grammar{template-id} (typically as part of a \grammar{qualified-id}).
+\end{itemize}
+
+\partition{syntax.template-id}
+
+
+\subsection{\valueTag{SyntaxSort::MemInitializer}}
+\label{sec:ifc:SyntaxSort:MemInitializer}
+
+\partition{syntax.mem-initializer}
+
+
+\subsection{\valueTag{SyntaxSort::CtorInitializer}}
+\label{sec:ifc:SyntaxSort:CtorInitializer}
+
+\partition{syntax.ctor-initializer}
+		
+		
+\subsection{\valueTag{SyntaxSort::LambdaIntroducer}}
+\label{sec:ifc:SyntaxSort:LambdaIntroducer}
+
+\partition{syntax.lambda-introducer}
+
+\subsection{\valueTag{SyntaxSort::LambdaDeclarator}}
+\label{sec:ifc:SyntaxSort:LambdaDeclarator}
+
+\partition{syntax.lambda-declarator}
+
+\subsection{\valueTag{SyntaxSort::CaptureDefault}}
+\label{sec:ifc:SyntaxSort:CaptureDefault}
+
+\partition{syntax.capture-default}
+
+\subsection{\valueTag{SyntaxSort::SimpleCapture}}
+\label{sec:ifc:SyntaxSort:SimpleCapture}
+
+\partition{syntax.simple-capture}
+
+\subsection{\valueTag{SyntaxSort::InitCapture}}
+\label{sec:ifc:SyntaxSort:InitCapture}
+
+\partition{syntax.init-capture}
+
+\subsection{\valueTag{SyntaxSort::ThisCapture}}
+\label{sec:ifc:SyntaxSort:ThisCapture}
+
+\partition{syntax.this-capture}
+
+\subsection{\valueTag{SyntaxSort::AttributedStatement}}
+\label{sec:ifc:SyntaxSort:AttributedStatement}
+
+\partition{syntax.attributed-statement}
+
+\subsection{\valueTag{SyntaxSort::AttributedDeclaration}}
+\label{sec:ifc:SyntaxSort:AttributedDeclaration}
+
+\partition{syntax.attributed-declaration}
+
+\subsection{\valueTag{SyntaxSort::AttributeSpecifierSeq}}
+\label{sec:ifc:SyntaxSort:AttributeSpecifierSeq}
+
+\partition{syntax.attribute-specifier-seq}
+
+
+\subsection{\valueTag{SyntaxSort::AttributeSpecifier}}
+\label{sec:ifc:SyntaxSort:AttributeSpecifier}
+
+\partition{syntax.attribute-specifier}
+
+\subsection{\valueTag{SyntaxSort::AttributeUsingPrefix}}
+\label{sec:ifc:SyntaxSort:AttributeUsingPrefix}
+
+
+\partition{syntax.attribute-using-prefix}
+
+\subsection{\valueTag{SyntaxSort::Attribute}}
+\label{sec:ifc:SyntaxSort:Attribute}
+
+\partition{syntax.attribute}
+
+
+\subsection{\valueTag{SyntaxSort::AttributeArgumentClause}}
+\label{sec:ifc:SyntaxSort:AttributeArgumentClause}
+
+\partition{syntax.attribute-argument-clause}
+
+\subsection{\valueTag{SyntaxSort::Alignas}}
+\label{sec:ifc:SyntaxSort:Alignas}
+
+\partition{syntax.alignas}
+
+
+\subsection{\valueTag{SyntaxSort::UsingDeclaration}}
+\label{sec:ifc:SyntaxSort:UsingDeclaration}
+
+\partition{syntax.using-declaration}
+
+
+\subsection{\valueTag{SyntaxSort::UsingDeclarator}}
+\label{sec:ifc:SyntaxSort:UsingDeclarator}
+
+\partition{syntax.using-declarator}
+
+
+\subsection{\valueTag{SyntaxSort::UsingDirective}}
+\label{sec:ifc:SyntaxSort:UsingDirective}
+
+\partition{syntax.using-directive}
+
+
+\subsection{\valueTag{SyntaxSort::ArrayIndex}}
+\label{sec:ifc:SyntaxSort:ArrayIndex}
+
+\partition{syntax.array-index}
+
+\subsection{\valueTag{SyntaxSort::SEHTry}}
+\label{sec:ifc:SyntaxSort:SEHTry}
+
+\partition{syntax.seh-try}
+
+\subsection{\valueTag{SyntaxSort::SEHExcept}}
+\label{sec:ifc:SyntaxSort:SEHExcept}
+
+\partition{syntax.seh-except}
+
+\subsection{\valueTag{SyntaxSort::SEHFinally}}
+\label{sec:ifc:SyntaxSort:SEHFinally}
+
+\partition{syntax.seh-finally}
+
+\subsection{\valueTag{SyntaxSort::SEHLeave}}
+\label{sec:ifc:SyntaxSort:SEHLeave}
+
+\partition{syntax.seh-leave}
+
+\subsection{\valueTag{SyntaxSort::TypeTraitIntrinsic}}
+\label{sec:ifc:SyntaxSort:TypeTraitIntrinsic}
+
+\partition{syntax.type-trait-intrinsic}
+
+
+\subsection{\valueTag{SyntaxSort::Tuple}}
+\label{sec:ifc:SyntaxSort:Tuple}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::Tuple} represents a reference
+to sequence or more abstract indices to syntax trees. 
+The \field{index} field is index into the tuple syntax tree partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+	}
+	\caption{Structure of a tuple syntax tree}
+	\label{fig:ifc-tuple-syntax-tree-structure}
+\end{figure}
+%
+with the following meanings for the fields:
+\begin{itemize}
+	\item field{start} is an index into the syntax tree heap partition. It points to the first syntax tree abstract reference in the tuple.
+	\item \field{cardinality} denotes the number of syntax tree abstract references in the tuple.
+\end{itemize}
+
+\partition{syntax.tuple}
+	
+	
+\subsection{\valueTag{SyntaxSort::AsmStatement}}
+\label{sec:ifc:SyntaxSort:AsmStatement}
+
+\partition{syntax.asm-statement}
+
+\subsection{\valueTag{SyntaxSort::NamespaceAliasDefinition}}
+\label{sec:ifc:SyntaxSort:NamespaceAliasDefinition}
+
+\partition{syntax.namespace-alias-definition}
+
+\subsection{\valueTag{SyntaxSort::Super}}
+\label{sec:ifc:SyntaxSort:Super}
+
+\partition{syntax.super}
+
+\subsection{\valueTag{SyntaxSort::UnaryFoldExpression}}
+\label{sec:ifc:SyntaxSort:UnaryFoldExpression}
+
+\partition{syntax.unary-fold-expression}
+
+
+\subsection{\valueTag{SyntaxSort::BinaryFoldExpression}}
+\label{sec:ifc:SyntaxSort:BinaryFoldExpression}
+
+\partition{syntax.binary-fold-expression}
+
+
+\subsection{\valueTag{SyntaxSort::EmptyStatement}}
+\label{sec:ifc:SyntaxSort:EmptyStatement}
+
+\partition{syntax.empty-statement}
+		
+\subsection{\valueTag{SyntaxSort::StructuredBindingDeclaration}}
+\label{sec:ifc:SyntaxSort:StructuredBindingDeclaration}
+
+\partition{syntax.structured-binding-declaration}
+		
+\subsection{\valueTag{SyntaxSort::StructuredBindingIdentifier}}
+\label{sec:ifc:SyntaxSort:StructuredBindingIdentifier}
+
+\partition{syntax.structured-binding-identifier}
+
+\subsection{\valueTag{SyntaxSort::UsingEnumDeclaration}}
+\label{sec:ifc:SyntaxSort:UsingEnumDeclaration}
+
+\partition{syntax.using-enum-declaration}
+
+
+
+
+

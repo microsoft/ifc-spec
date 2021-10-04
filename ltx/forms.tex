@@ -1,0 +1,554 @@
+\label{sec:ifc-preprocessing}
+
+
+The header unit specification requires a C++ translator to save the preprocessing
+ state as active at the end of processing a header source file, and reifying that 
+ state upon import declaration.  The MSVC toolset now requires the selection 
+ of conformant preprocessor mode (\code{/Zc:preprocessor}) when processing header units, 
+ either at the header unit construction time or at import time.
+
+\section{Macro definitions}
+\label{sec:ifc-macro-defs}
+
+C++ preprocessor macro definitions are indicated by macro abstract references.
+This document uses \type{MacroIndex} as a typed abstract reference
+to designate a macro definition.  Like all abstract references, it is a $32$-bit value
+\begin{figure}[htbp]
+    \centering
+    \absref{1}{MacroSort}
+    \caption{\type{MacroIndex}: Abstract reference of macro definition}
+    \label{fig:ifc-macro-index}
+\end{figure}
+
+\begin{SortEnum}{MacroSort}
+  \enumerator{ObjectLike}
+  \enumerator{FunctionLike}
+\end{SortEnum}
+
+\subsection{\valueTag{MacroSort::ObjectLike}}
+\label{sec:ifc:MacroSort:ObjectLike}
+
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{name}{TextOffset} \\
+        \DeclareMember{body}{FormIndex} \\
+    }
+    \caption{Structure of an object-like macro definition}
+    \label{fig:ifc-object-like-macro-structure}
+\end{figure}
+
+The field \field{name} designates the name of the macro, and the field \field{body} designates its replacement list.
+
+\partition{macro.object-like}
+
+
+\subsection{\valueTag{MacroSort::FunctionLike}}
+\label{sec:ifc:MacroSort:FunctionLike}
+
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{name}{TextOffset} \\
+        \DeclareMember{parameters}{FormIndex} \\
+        \DeclareMember{body}{FormIndex} \\
+        \DeclareMember{arity}{u31} \\
+        \DeclareMember{variadic}{u1} \\
+    }
+    \caption{Structure of a function-like macro definition}
+    \label{fig:ifc-function-like-macro-structure}
+\end{figure}
+
+The field \field{name} designates the name of the macro.  The field \field{parameters}, when not null,
+designate the parameter parameter list.  The field \field{boy} designates the replacement list of the macro.
+The field \field{arity} designates the number of named parameter in the parameter list --- this field is in
+some sense redundant with the \field{parameters} field.  The field \field{variadic} indicates whether
+this macro is variadic.
+
+\partition{macro.function-like}
+
+
+\section{Preprocessing forms}
+\label{sec:ifc-pp-forms}
+
+During the processing of input source files from translation phases 1 through 4, 
+syntactic elements (\grammar{preprocessing-token}s) 
+are grouped into \emph{preprocessing forms},
+denoted by abstract references of type \type{FormIndex} with the following layout:
+%
+\begin{figure}[htbp]
+  \centering
+	\absref{4}{FormSort}
+  \caption{\type{FormIndex}: Abstract reference of preprocessing forms}
+  \label{fig:ifc-form-index}
+\end{figure}
+%
+
+\begin{SortEnum}{FormSort}
+  \enumerator{Identifier}
+  \enumerator{Number}
+  \enumerator{Character}
+  \enumerator{String}
+  \enumerator{Operator}
+  \enumerator{Keyword}
+  \enumerator{Whitespace}
+  \enumerator{Parameter}
+  \enumerator{Stringize}
+  \enumerator{Catenate}
+  \enumerator{Pragma}
+  \enumerator{Header}
+  \enumerator{Parenthesized}
+  \enumerator{Tuple}
+  \enumerator{Junk}
+\end{SortEnum}
+
+\subsection{Form structures}
+\label{sec:ifc-form-structures}
+
+\subsubsection{\valueTag{FormSort::Identifier}}
+\label{sec:ifc:FormSort:Identifier}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Identifier} designates
+the representation of a \grammar{preprocessing-token} that 
+is an \grammar{identifier}.  The \field{index} field is an index into
+the preprocessing identifier form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{TextOffset} \\
+  }
+  \caption{Structure of an identifier form}
+  \label{fig:ifc-identifier-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this 
+\grammar{identifier}.  The
+field \field{spelling} designates the sequence of characters making up that 
+\grammar{identifier}. 
+
+\partition{pp.ident}
+
+\subsubsection{\valueTag{FormSort::Number}}
+\label{sec:ifc:FormSort:Number}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Number} designates
+the representation of a \grammar{preprocessing-token} that 
+is a \grammar{pp-number}.  The \field{index} field is an index into
+the preprocessing number form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{TextOffset} \\
+  }
+  \caption{Structure of a number form}
+  \label{fig:ifc-number-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the sequence of characters making up that 
+\grammar{pp-number}. 
+
+
+\partition{pp.num}
+
+\subsubsection{\valueTag{FormSort::Character}}
+\label{sec:ifc:FormSort:Character}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Character} designates
+the representation of a \grammar{preprocessing-token} that 
+is a \grammar{character-literal} or \grammar{user-defined-character-literal}.
+The \field{index} field is an index into
+the preprocessing character form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{TextOffset} \\
+  }
+  \caption{Structure of a character form}
+  \label{fig:ifc-character-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the sequence of characters making up that 
+\grammar{character-literal} or \grammar{user-defined-character-literal}. 
+
+\partition{pp.char}
+
+\subsubsection{\valueTag{FormSort::String}}
+\label{sec:ifc:FormSort:String}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::String} designates
+the representation of a \grammar{preprocessing-token} that 
+is a \grammar{string-literal} or \grammar{user-defined-string-literal}.
+The \field{index} field is an index into
+the preprocessing string form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{TextOffset} \\
+  }
+  \caption{Structure of a string form}
+  \label{fig:ifc-string-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the sequence of characters making up that 
+\grammar{string-literal} or \grammar{user-defined-string-literal}. 
+
+\partition{pp.string}
+
+\subsubsection{\valueTag{FormSort::Operator}}
+\label{sec:ifc:FormSort:Operator}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Operator} designates
+the representation of a \grammar{preprocessing-token} that 
+is a \grammar{preprocessing-op-or-punc}.
+The \field{index} field is an index into
+the preprocessing operator form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{TextOffset} \\
+    \DeclareMember{operator}{FormOperator} \\
+  }
+  \caption{Structure of an operator form}
+  \label{fig:ifc-operator-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the sequence of characters making up that 
+\grammar{preprocessing-op-or-punc}.  The field \field{operator} designates the
+soure-level preprocessing interpretation of that form. 
+
+\partition{pp.op}
+
+\subsubsection{\valueTag{FormSort::Keyword}}
+\label{sec:ifc:FormSort:Keyword}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Keyword} designates
+the representation of a \grammar{preprocessing-token} that 
+is \grammar{import-keyword}, or \grammar{module-keyword}, 
+or \grammar{export-keyword}.
+The \field{index} field is an index into
+the preprocessing keyword form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{TextOffset} \\
+  }
+  \caption{Structure of a keyword form}
+  \label{fig:ifc-keyword-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the sequence of characters making up that 
+keyword: \grammar{import-keyword}, or \grammar{module-keyword}, or
+\grammar{export-keyword}.  Note that other standard C++ source-level keywords do
+not existing during the preprocessing phases.
+
+\partition{pp.key}
+
+\subsubsection{\valueTag{FormSort::Whitespace}}
+\label{sec:ifc:FormSort:Whitespace}
+
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+  }
+  \caption{Structure of a whitespace form}
+  \label{fig:ifc-whitespace-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the sequence of characters making up that 
+whitespace.
+
+\note{The current version of the MSVC toolset does not emit whitespace forms}
+
+\partition{pp.space}
+
+\subsubsection{\valueTag{FormSort::Parameter}}
+\label{sec:ifc:FormSort:Parameter}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Parameter} designates
+the representation of a macro paramater.
+The \field{index} field is an index into
+the preprocessing parameter form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{TextOffset} \\
+  }
+  \caption{Structure of a parameter form}
+  \label{fig:ifc-parameter-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the sequence of characters making up that 
+parameter name.
+
+\partition{pp.param}
+
+\subsubsection{\valueTag{FormSort::Stringize}}
+\label{sec:ifc:FormSort:Stringize}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Stringize} designates
+the representation of the application of the stringizing operator (\code{\#}) to
+a preprocessing form.
+The \field{index} field is an index into
+the preprocessing stringizing form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{operand}{FormIndex} \\
+  }
+  \caption{Structure of a stringizing form}
+  \label{fig:ifc-stringize-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{operand} designates the form that is operand to the 
+stringizing operator.
+
+\partition{pp.to-string}
+
+\subsubsection{\valueTag{FormSort::Catenate}}
+\label{sec:ifc:FormSort:Catenate}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Catenate} designates
+the representation of the application of the token catenation operator
+ (\code{\#\#}) to two preprocessing forms.
+The \field{index} field is an index into
+the preprocessing catenation form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{first}{FormIndex} \\
+    \DeclareMember{second}{FormIndex} \\
+  }
+  \caption{Structure of a catenation form}
+  \label{fig:ifc-catenate-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+fields \field{first} and \field{second} designate the operands to the 
+catenation operator \code{\#\#}.
+
+\partition{pp.catenate}
+
+\subsubsection{\valueTag{FormSort::Pragma}}
+\label{sec:ifc:FormSort:Pragma}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Pragma} designates the
+representation of the application of the standard \code{_Pragma} operator or
+the MSVC extension \code{__pragma} to a preprocessing form.
+The \field{index} field is an index into
+the preprocessing pragma form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{operand}{FormIndex} \\
+  }
+  \caption{Structure of a pragma form}
+  \label{fig:ifc-pragma-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{operand} designates the form that is argument to the pragma operator.
+If the operand's tag is \valueTag{FormSort::Tuple} then the pragma is actually
+the MSVC extension \code{__pragma}, otherwise the tag must be 
+\valueTag{FormSort::String} indicating the standard \code{_Pragma} operator.
+
+\partition{pp.pragma}
+
+\subsubsection{\valueTag{FormSort::Header}}
+\label{sec:ifc:FormSort:Header}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Header} designates
+the representation of a \grammar{preprocessing-token} that 
+is a \grammar{header-name}.
+The \field{index} field is an index into
+the preprocessing header-name form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{Textoffset} \\
+  }
+  \caption{Structure of a header form}
+  \label{fig:ifc-header-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the spelling of the header-name 
+that is argument to an \code{\#include} or \code{import} directive.
+
+\partition{pp.header}
+
+\note{The current MSVC toolset release does not emit this form.}
+
+\subsubsection{\valueTag{FormSort::Parenthesized}}
+\label{sec:ifc:FormSort:Parenthesized}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Parenthesized} designates
+the representation of a preprocessing form enclosed in a matching pair 
+of parentheses.
+The \field{index} field is an index into
+the preprocessing parenthesized form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{operand}{FormIndex} \\
+  }
+  \caption{Structure of a parenthesized form}
+  \label{fig:ifc-parenthesized-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{operand} designates the form that is enclosed in the matching 
+parenthesis.
+
+\partition{pp.paren}
+
+
+\subsubsection{\valueTag{FormSort::Tuple}}
+\label{sec:ifc:FormSort:Tuple}
+
+A \type{FormIndex} value with tag \valueTag{FormSort::Tuple} designates the
+representation of a sequence of preprocessing forms.
+The \field{index} field is an index into
+the preprocessing tuple form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{start}{Index} \\
+    \DeclareMember{cardinality}{Cardinality} \\
+  }
+  \caption{Structure of a tuple form}
+  \label{fig:ifc-tuple-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{start} designates the position of the \type{FormIndex} value
+in the form heap partition that starts the sequence.
+The field \field{cardinality} designates the number of \type{FormIndex} values
+in the sequence.
+
+\partition{pp.tuple}
+
+\subsubsection{\valueTag{FormSort::Junk}}
+\label{sec:ifc:FormSort:Junk}
+
+A \type{FormIndex} value  with tag \valueTag{FormSort::Junk} designates the 
+representation of an invalid \grammar{preprocessing-token}.
+The \field{index} field is an index into
+the preprocessing junk form partition.  Each structure in that partition
+has the following layout
+%
+\begin{figure}[H]
+  \centering
+  \structure{
+    \DeclareMember{locus}{SourceLocation} \\
+    \DeclareMember{spelling}{Textoffset} \\
+  }
+  \caption{Structure of a junk form}
+  \label{fig:ifc-junk-form}
+\end{figure}
+
+The field \field{locus} designates the source location of this form.  The
+field \field{spelling} designates the sequence of characters making up
+this non-\grammar{preprocessing-token}
+
+\partition{pp.junk}
+
+\note{The current MSVC toolset does not produce this forms since an IFC is produced
+only for a successful translation}
+
+\section{Preprocessing operators}
+\label{sec:ifc-preprocessing-operators}
+
+Preprocessing form operators (\grammar{preprocessing-op-or-punc}) are
+represented as $16$-bit values with the following layout
+%
+\begin{figure}[H]
+	\centering
+	  \begin{BasicAbstractReferenceLayout}{16}
+		  \bitfield{3}{\field{sort}}
+				\bitfield{13}{\field{value}}
+		  \bitFormatTextAt{2}{2}
+		   \bitSeparate{3}
+		  \bitFormatTextAt{3}{3}
+	  \end{BasicAbstractReferenceLayout} 
+	  \caption{\type{Operator}: Structure of preprocessing form operator}
+	  \label{fig:ifc-preprocessing-operator}
+\end{figure}
+%
+The field \field{sort} is a $3$-bit value of type \clipType{WorSort}{3}
+(\secref{sec:ifc:word-structures}), holding either \valueTag{WordSort::Punctuator}
+(\secref{sec:ifc:WordSort:Punctuator}) 
+or \valueTag{WordSort::Operator} (\secref{sec:ifc:WordSort:Operator}).
+The field \field{value} is a $13$-bit value the interpretation of which 
+is \field{sort}-dependent: its type is \clipType{SourcePunctuator}{13} 
+(\figref{fig:ifc-SourcePunctuator-def})
+if \field{sort} is \valueTag{WordSort::Punctuator}; 
+otherwise its type is
+\clipType{SourceOperator}{13} (\figref{fig:ifc-SourceOperator-def}) 
+if \field{sort} is \valueTag{WordSort::Operator}.
+
+\section{Pragmas}
+\label{sec:ifc-pragma-form}
+
+
+Pragmas are indicated by abstract pragma references.  This document
+uses \type{PragmaIndex} to designate a typed abstract reference to a
+pragma.  Like all abstract references, it is a 32-bit value
+\begin{figure}[htbp]
+  \centering
+  \absref{1}{PragmaSort}
+  \caption{\type{PragmaIndex}: Abstract reference of pragmas}
+  \label{fig:ifc-pragma-index}
+\end{figure}
+
+\begin{SortEnum}{PragmaSort}
+	\enumerator{VendorExtension}
+\end{SortEnum}

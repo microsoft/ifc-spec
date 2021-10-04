@@ -1,0 +1,69 @@
+\label{sec:ifc-tu}
+
+Any C++ translation unit can be compiled into an IFC structure.  A translation unit so represented can be referenced by abstract reference
+of type \type{UnitIndex}.  
+%
+\begin{figure}[htbp]
+	\centering
+	\absref{3}{UnitSort}
+	\caption{\code{UnitIndex}: Abstract reference of a declaration}
+	\label{fig:ifc-unit-index}
+\end{figure}
+
+\begin{SortEnum}{UnitSort}
+	\enumerator{Source}
+	\enumerator{Primary}
+	\enumerator{Partition}
+	\enumerator{Header}
+	\enumerator{ExportedTU}
+\end{SortEnum}
+
+with meaning as explained in the sections below.  The \field{index} value has a tag-dependent interpretation as defined below.
+
+\section{Translation unit structures}
+\label{sec:ifc:tu-structures}
+
+\subsection{\valueTag{UnitSort::Source}}
+\label{sec:ifc:UnitSort:Source}
+A \type{UnitIndex} value with this tag designates a translation unit defined by a general C++ source file.
+
+The \field{index} value is undefined and has no meaning.
+
+
+\subsection{\valueTag{UnitSort::Primary}}
+\label{sec:ifc:UnitSort:Primary}
+
+A \type{UnitIndex} value with this tag designates a primary module interface.
+
+The \field{index} is to be interpreted as a \type{TextOffset} value (\secref{sec:ifc-textoffset-data-type}), 
+which is an offset into the string table (\secref{sec:ifc-string-table}).  
+The string at that offset is the name of the module (\secref{sec:ifc-modules}) for which this translation unit is a primary module interface.
+
+
+\subsection{\valueTag{UnitSort::Partition}}
+\label{sec:ifc:UnitSort:Partition}
+
+A \type{UnitIndex} value with this tag designates a partition module unit.
+
+The \field{index} is to be interpreted as a \type{TextOffset} value that designates the name of the module partition.  
+The string of that name is \texttt{M:P}, obtained as the concatenation of the name \texttt{M} of the parent module, 
+the colon character (\texttt{:}), and the relative name \texttt{P} of the partition.
+
+\subsection{\valueTag{UnitSort::Header}}
+\label{sec:ifc:UnitSort:Header}
+
+A \type{UnitIndex} value with this tag designates a C++ header unit.  The \field{index} value is undefined and has no meaning.
+
+
+\subsection{\valueTag{UnitSort::ExportedTU}}
+\label{sec:ifc:UnitSort:ExportedTU}
+
+A \type{UnitIndex} value with this tag designates a translation unit compiled by the MSVC compiler with the compiler flags
+\texttt{/module:export} and \texttt{/module:name}.  Such a translation is processed as if every toplevel declaration was
+prefixed with the keyword \texttt{export}.  This is an MSVC extension.
+
+The \field{index} is to be interpreted as a \type{TextOffset} value that designates the name specified via the compiler
+switch \texttt{/module:name}.
+
+\note{An IFC unit of this sort is deprecated and scheduled for removal from MSVC.}
+

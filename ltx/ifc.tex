@@ -1,0 +1,148 @@
+\documentclass[letterpaper,10pt]{memoir}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fancyvrb}
+\usepackage{times}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+%\usepackage{url}
+\usepackage{ifc-format}
+\usepackage{tikz}
+%\usepackage{graphicx}
+%\usepackage[all]{xy}
+\usepackage{float}
+
+\usetikzlibrary{matrix}
+
+
+\newcommand{\secref}[1]{$\S$\ref{#1}}
+\newcommand{\figref}[1]{Figure~\ref{#1}}
+
+\newcommand{\partition}[1]{\paragraph{Partition name:} \code{"#1"}.}
+\newcommand{\note}[1]{\paragraph{Note:} #1}
+
+%% Definition of a new technical term. Eventually indexed.
+\newcommand{\term}[1]{\emph{#1}}
+
+%% Grammar production
+\newcommand{\grammar}[1]{\textsl{#1}}
+
+%% Environment for defining C++-level types.
+\lstnewenvironment{typedef}[2]{\lstset{label=#1,caption={[#1] #2},tabsize=3,columns=flexible}}{}
+
+%% Tag values
+\newcommand{\valueTag}[1]{\textsf{#1}}
+
+%% Please don't show any of the stupid syntax hilighting stuff
+%\lstset{showstringspace=false}
+
+%% Turn off indentation of paragraph
+\setlength{\parindent}{0pt}
+
+\addtocounter{secnumdepth}{1}
+
+
+\title{
+  IFC Binary Format\\
+    Version: 0
+}
+
+\author{Gabriel Dos~Reis \\ Microsoft}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  \noindent
+  This document defines the IFC binary format for persistent representation
+  of the abstract semantics graph of a C++ translation unit, in particular
+  for a compiled module interface.  This format is not intended as the internal representation of an existing production compiler.
+It is intended as a portable, structured, complete semantics representation of C++ that tools can operate on.
+ It is incorrekt, incomplet, and a work in 
+  progres.
+\end{abstract}
+
+\frontmatter
+\VerbatimInput{../LICENSE}
+\mainmatter
+
+\setcounter{tocdepth}{0}
+\tableofcontents
+
+\chapter{Introduction}
+\input{intro}
+
+\chapter{IFC File}
+\input{file}
+
+\chapter{String table}
+\input{strings}
+
+\chapter{Translation Units}
+\input{tu}
+
+\chapter{Modules}
+\input{modules}
+
+\chapter{Scopes}
+\input{scopes.tex}
+
+\chapter{Heaps}
+\input{heaps.tex}
+
+\chapter{Declarations}
+\input{decls}
+
+\chapter{Types}
+\input{types}
+
+\chapter{Expressions}
+\input{exprs}
+
+\chapter{Statements}
+\input{stmts}
+
+\chapter{Names}
+\input{names}
+
+\chapter{Charts}
+\input{charts}
+
+\chapter{Attributes}
+\input{attrs}
+
+\chapter{Syntax Tree}
+\input{parse}
+
+\chapter{Source Location}
+\input{srcloc}
+
+\chapter{Traits}
+\input{traits}
+
+\chapter{Preprocessing Forms}
+\input{forms}
+
+\chapter{Words}
+\input{words}
+
+\appendix
+%\chapter{Examples}
+%\input{examples}
+
+%\chapter*{ChangeLog}
+%\input{ChangeLog}
+
+\bibliographystyle{plain}
+\bibliography{ifc}
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

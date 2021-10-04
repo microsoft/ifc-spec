@@ -1,0 +1,47 @@
+\label{sec:ifc-modules}
+
+Any translation unit can import any module.  Additionally, a module interface can re-export an imported module.
+
+\section{Module description structures}
+\label{sec:ifc:module-structures}
+
+\subsection{Module reference}
+\label{sec:ifc--module-reference}
+
+All used modules (whether imported or exported) are represented as module references of type defined as follows
+%
+\begin{figure}[h]
+	\centering
+	\structure{
+		\DeclareMember{owner}{TextOffset} \\
+		\DeclareMember{partition}{TextOffset} \\
+	}
+	\caption{Structure of a \type{ModuleReference}}
+	\label{fig:ifc-module-reference-structure}
+\end{figure}
+%
+
+The fields of a module references have the following meanings:
+\begin{itemize}
+	\item[owner] This value designates the name of the module.  A null name indicated the global module.
+
+	\item[partition] This value designates the partition of the owning module.  When the partition name is null, the reference is to
+	the primary module interface, otherwise it designates the partition of the owning module.  When the owner is the global module
+	then the partition designates the source file representing that partition of the global module.
+\end{itemize}
+
+
+\subsection{Imported modules}
+\label{sec:ifc-imported-module}
+
+References to all imported modules (which are not also exported) are stored in the imported modules partition.
+
+\partition{module.imported}
+
+
+\subsection{Exported modules}
+\label{sec:ifc-exported-module}
+
+References to all exported modules are stored in the exported modules partition.
+
+\partition{module.exported}

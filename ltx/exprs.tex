@@ -1,0 +1,2529 @@
+ n \label{sec:ifc-exprs}
+
+Expressions are indicated by abstract expression references.
+They are values of type \type{ExprIndex}, with 32-bit precision and the
+following layout
+\begin{figure}[htbp]
+  \centering
+	\absref{6}{ExprSort}
+  \caption{\type{ExprIndex}: Abstract reference of expression}
+  \label{fig:ifc-expr-index}
+\end{figure}
+%
+
+\begin{SortEnum}{ExprSort}
+	\enumerator{VendorExtension}
+	\enumerator{Empty}
+	\enumerator{Literal}
+	\enumerator{Lambda}
+	\enumerator{Type}
+	\enumerator{NamedDecl}
+	\enumerator{UnresolvedId}
+	\enumerator{TemplateId}
+	\enumerator{UnqualifiedId}
+	\enumerator{SimpleIdentifier}
+	\enumerator{Pointer}
+	\enumerator{QualifiedName}
+	\enumerator{Path}
+	\enumerator{Read}
+	\enumerator{Monad}
+	\enumerator{Dyad}
+	\enumerator{Triad}
+	\enumerator{String}
+	\enumerator{Temporary}
+	\enumerator{Call}
+	\enumerator{MemberInitializer}
+	\enumerator{MemberAccess}
+	\enumerator{InheritancePath}
+	\enumerator{InitializerList}
+	\enumerator{Cast}
+	\enumerator{Condition}
+	\enumerator{ExpressionList}
+	\enumerator{SizeofType}
+	\enumerator{Alignof}
+	\enumerator{New}
+	\enumerator{Delete}
+	\enumerator{Typeid}
+	\enumerator{DestructorCall}
+	\enumerator{SyntaxTree}
+	\enumerator{FunctionString}
+	\enumerator{CompoundString}
+	\enumerator{StringSequence}
+	\enumerator{Initializer}
+	\enumerator{Requires}
+	\enumerator{UnaryFold}
+	\enumerator{BinaryFold}
+	\enumerator{HierarchyConversion}
+	\enumerator{ProductTypeValue}
+	\enumerator{SumTypeValue}
+	\enumerator{SubobjectValue}
+	\enumerator{ArrayValue}
+	\enumerator{DynamicDispatch}
+	\enumerator{VirtualFunctionConversion}
+	\enumerator{Placeholder}
+	\enumerator{Expansion}
+	\enumerator{Generic}
+	\enumerator{Tuple}
+	\enumerator{Nullptr}
+	\enumerator{This}
+	\enumerator{TemplateReference}
+	\enumerator{PushState}
+	\enumerator{TypeTraitIntrinsic}
+	\enumerator{DesignatedInitializer}
+	\enumerator{PackedTemplateArguments}
+	\enumerator{Tokens}
+	\enumerator{AssignInitializer}
+\end{SortEnum}
+
+
+\section{Expression structures}
+\label{sec:ifc-expression-structures}
+
+\subsection{\valueTag{ExprSort::VendorExtension}}
+\label{sec:ifc:ExprSort:VendorExtension}
+
+\partition{expr.vendor-extension}
+
+\subsection{\valueTag{ExprtSort::Empty}}
+\label{sec:ifc:ExprSort:Empty}
+
+In certain circumstances, expressions are expected but missing, e.g. an empty-pack in a template-argument list.
+An \type{ExprIndex} value with tag \valueTag{ExprSort::Empty} represents a reference to an empty expression.
+The \field{index} field is an index into the empty expression partition.
+Each entry in that partition has two components: a \field{type} field and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+	}
+	\caption{Structure of an empty expression}
+	\label{fig:ifc-empty-expression-structure}
+\end{figure}
+%
+The \field{type} field is a reference to the type of the expresssion.
+The \field{locus} field is a reference to the source location.
+
+\partition{expr.empty}
+
+\subsection{\valueTag{ExprSort::Literal}}
+\label{sec:ifc:ExprSort:Literal}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Literal} represents a reference to a literal.
+The \field{index} field is an index into the literal expression partition.
+Each entry in that partition has three components: a \field{type} field, a \field{value} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{value}{LitIndex} \\
+	}
+	\caption{Structure of a literal expression}
+	\label{fig:ifc-literal-expr-structure}
+\end{figure}
+%
+The \field{type} field represents the type of the expression.
+The \field{value} field represents the value of the expression.
+The \field{locus} represents the source location of the expression.
+
+\partition{expr.literal}
+
+\subsubsection{Literal Values}
+\label{sec:ifc-literal-values}
+
+Literal values are represented by abstract references of type \type{LitIndex}, with the following layout
+%
+\begin{figure}[htbp]
+  \centering
+	\absref{2}{LiteralSort}
+  \caption{\type{LitIndex}: Abstract reference of literal constants}
+  \label{fig:ifc-lit-index}
+\end{figure}
+%
+
+The possible values of the \field{tag} field are described by the type \type{LiteralSort} defined as follows
+\begin{typedef}{LiteralSort}{}
+	enum class LiteralSort : uint8_t {
+		Immediate,
+		Integer,
+		FloatingPoint,
+	};
+\end{typedef}
+
+The meaning of these tags is as follows:
+\begin{itemize}
+	\item \valueTag{LiteralSort::Immediate}: The \field{value} field of the abstract reference directly holds a 32-bit unsigned integer value.
+	\item \valueTag{LiteralSort::Integer}: The \field{value} field is an index into the \code{"const.i64"} partition.  The value at that entry is a 64-bit unsigned integer value.
+	\item \valueTag{LiteralSort::FloatingPoint}: The \field{value} field is an index into the \code{"const.f64"} partition. 
+	 The value at that entry is a 64-bit floating point value, in IEEE 754 little endian format.
+\end{itemize}
+
+
+\subsection{\valueTag{ExprSort::Lambda}}
+\label{sec:ifc:ExprSort:Lambda}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::Lambda} designates a lambda expression in syntactic form (\secref{sec:ifc-syntax-tree-table}).
+The \field{index} field of that abstract reference is an index into the lambda expression partition.
+Each entry of that partition is a structure with the following structure:
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{introducer}{SyntaxIndex} \\
+		\DeclareMember{template\_parameters}{SyntaxIndex} \\
+		\DeclareMember{declarator}{SyntaxIndex} \\
+		\DeclareMember{constraint}{SyntaxIndex} \\
+		\DeclareMember{body}{SyntaxIndex} \\
+	}
+	\caption{Structure of a lambda expression}
+	\label{fig:ifc-lambda-structure}
+\end{figure}
+%
+
+The \field{introducer} field designates the syntactic element for the lambda introducer.
+The \field{template\_parameters} field designates the syntactic element for any possible template parameter list.
+The \field{declarator} field designates the syntactic element for the declarator part of the lambda expression.
+The \field{constraint} field designates the syntactic element for the requires-clause, if any.
+Finally, the \field{body} field denotes the syntactic element for the body of the lambda expression. 
+
+\partition{expr.lambda}
+
+\note{This representation is subject to change}
+
+
+
+\subsection{\valueTag{ExprSort::Type}}
+\label{sec:ifc:ExprSort:Type}
+
+Certain C++ source-level contexts permit both value expressions and type expressions.
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Type} represents a reference to a type expression.
+The \field{index} field is an index into the type expression partition.
+Each enty in that partition has two components: a \field{type} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{denotation}{TypeIndex} \\
+	}
+	\caption{Structure of a literal expression}
+	\label{fig:ifc-type-expr-structure}
+\end{figure}
+%
+The \field{denotation} field is a reference to the type designated by this expression structure.
+The \field{locus} field is the source location.
+The \field{type} field designates the sort of type, typically \code{TypeBasis::Typename}.
+
+\partition{expr.type}
+
+
+\subsection{\valueTag{ExprSort::NamedDecl}}
+\label{sec:ifc:ExprSort:NamedDecl}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::NamedDecl} denotes the use of a name of a declaration as an expression.
+The \field{index} field is an index into the named declaration expression partition.
+Each entry in that partition has three components: a \field{type} field, a \field{resolution} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{resolution}{DeclIndex} \\
+	}
+	\caption{Structure of use of named declaration expression}
+	\label{fig:ifc-named-decl-expression-structure}
+\end{figure}
+%
+The \field{type} field denotes the type of the expression.
+The \field{resolution} field denotes the declaration the name resolved to, e.g. as indicated by the appropriate language rules.
+The \field{locus} denotes the source location.
+
+\partition{expr.decl}
+
+
+\subsection{\valueTag{ExprtSort::UnresolvedId}}
+\label{sec:ifc:ExprSort:UnresolvedId}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::UnresolveId} represents a C++ source-level dependent name, or an unresolve name.
+The \field{index} field is an index into the unresolved name expression partition.
+Each entry in that partition has two components: a \field{name} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{name}{NameIndex} \\
+	}
+	\caption{Structure of an unresolved name expression}
+	\label{fig:ifc-unresolved-name-expression-structure}
+\end{figure}
+%
+The \field{name} field denotes the name.
+The \field{locus} field denotes the source location.
+
+\partition{expr.unresolved}
+
+\note{This structure is subject to removal in future releases.}
+
+
+\subsection{\valueTag{ExprSort::TemplateId}}
+\label{sec:ifc:ExprSort:TemplateId}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::TemplateId} represents a reference to a template-id.
+The \field{index} field is an index into the template-id expression partition.
+Each entry in that partition is a structure with three components: a \field{primary} field, an \field{arguments} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{primary}{ExprIndex} \\
+		\DeclareMember{arguments}{ExprIndex} \\
+	}
+	\caption{Structure of a template-id expression}
+	\label{fig:ifc-template-id-expression-structure}
+\end{figure}
+%
+The \field{primary} field denotes the primary template.
+The \field{arguments} field denotes the template-argument list.
+If that list is empty or is a singleton, \field{arguments} denotes that template-argument directly.
+Otherwise, it denotes a tuple expression.
+The \field{locus} denotes the source location.
+
+\partition{expr.template-id}
+
+
+\subsection{\valueTag{ExprSort::UnqualifiedId}}
+\label{sec:ifc:ExprSort:UnqualifiedId}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::UnqualifiedId}
+ denotes the C++ grammar term \grammar{unqualified-id} or a component of \grammar{qualified-id} expression (\sortref{QualifiedName}{ExprSort}),
+ some of which might
+not be bound to any declaration, or might be assumed to name a template by fiat (when preceded by the \code{template} keyword).
+The \field{index} field is an index into the identifier expression partition.  Each entry in that partition
+is a structure with the following layout:
+%
+\begin{figure}[H]
+	\centering
+	\structure [text width = 15em]{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{name}{NameIndex} \\
+		\DeclareMember{resolution}{ExprIndex} \\
+		\DeclareMember{template\_keyword}{SourceLocation} \\
+	}
+	\caption{Structure of an identifier used to form an expression}
+	\label{fig:ifc-identifier-expr-structure}
+\end{figure}
+%
+The \field{name} denotes the name of that component in the \grammar{qualified-id} expression.
+The \field{resolution} denotes the (possible set of) declaration the name refers to, if any.
+The \field{template\_keyword}, if valid, designate the source location position of the \code{template} keyword.
+The \field{locus} denotes the source location of this expression.
+
+\partition{expr.unqualified-id}
+
+\note{This structure is subject to change in future releases.}
+
+
+\subsection{\valueTag{ExprSort::SimpleIdentifier}}
+\label{sec:ifc:ExprSort:SimpleIdentifier}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::SimpleIdentifier} denotes the use of a simple name 
+in a templated code.  Typically, these identifiers are used as label names.  The \field{index} field is an index
+into the simple identifier partition.  Each entry in that partition is a structure with the following layout:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{name}{NameIndex} \\
+	}
+	\caption{Structue of a simple-identifier expression}
+	\label{fig:ifc-simple-identifier-structure}
+\end{figure}
+%
+The \field{locus} field denotes the location of this expression.  The \field{type}, if not null, denotes the
+type of the expression.  The \field{name} field desinates the simple identifier.
+
+\partition{expr.simple-identifier}
+
+\note{This structure is subject to removal in future releases. }
+
+
+\subsection{\valueTag{ExprSort::Pointer}}
+\label{sec:ifc:ExprSort:Pointer}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::Pointer} designates the use of \code{*} in a 
+\grammar{ptr-declarator} as part of the a \grammar{declarator}.  It is \emph{not} an expression.
+The \field{index} field of that abstract reference designates an entry with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\label{fig:ifc-pointer-expr-structure}
+\end{figure}
+%
+The \field{locus} designates the source location of the \code{*} in the input source code.
+
+\partition{expr.pointer}
+
+\note{This sort best belongs to the syntax tree hierarchy and has no bearing to expressions.  
+It is scheduled for removal in future releases of MSVC.}
+
+\subsection{\valueTag{ExprSort::QualifiedName}}
+\label{sec:ifc:ExprSort:QualifiedName}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::QualifiedName} designates a representation of 
+C++ input source level grammar term \grammar{qualified-id}, typically in templated code that is not
+yet sfully semantically analyzed.  The \field{index} field of that abstract reference is an index into
+the qualified name partition.  Each entry of that partition has the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{elements}{ExprIndex} \\
+		\DeclareMember{typename\_keyword}{SourceLocation} \\
+	}
+	\caption{Structure of a qualified name expression}
+	\label{fig:ifc-qualified-name-structure}
+\end{figure}
+%
+The \field{elements} field designates the sequence of unqualified names (\sortref{UnqualifiedId}{ExprSort})
+ in the source level construct.  The \field{template\_keyword}, if not null, designates the present of
+ the \code{typename} keyword in the soure level to indicate to the parser that the qualified name names a type.
+
+\partition{expr.qualified-name}
+
+\note{This structure is subject to change in future releases.}
+
+\subsection{\valueTag{ExprSort::Path}}
+\label{sec:ifc:ExprSort:Path}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Path} represents
+a reference to a qualified-id expression. 
+The \field{index} field is an index into the path expression partition.
+Each entry in that partition has three components: a \field{scope} field, a \field{member} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{scope}{ExprIndex} \\
+		\DeclareMember{member}{ExprIndex} \\
+	}
+	\caption{Structure of a path expression}
+	\label{fig:ifc-path-expression-structure}
+\end{figure}
+%
+The \field{scope} field denotes the qualifiying part of the expression.
+The \field{member} field denotes the referenced member of the \field{scope}.
+The \field{locus} field denotes the source location.
+
+\partition{expr.path}
+
+
+\subsection{\valueTag{ExprSort::Read}}
+\label{sec:ifc:ExprSort:Read}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Read} represents
+a reference to an expression that reads from a given memory location.
+It is also used to represents so-called lvalue-to-rvalue conversions.
+The \field{index} field is an index into the read expression partition.
+Each enty in that partition has three components: a \field{type} field, an \field{address} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{address}{ExprIndex} \\
+		\DeclareMember{sort}{ReadConversionSort} \\
+	}
+	\caption{Structure of a read expression}
+	\label{fig:ifc-read-expression-structure}
+\end{figure}
+%
+The \field{type} field denotes the type of the expression.
+The \field{address} field denotes the memory location.
+The \field{locus} denotes the source location.
+The \field{sort} denotes the sort of conversion performed by this expression.
+
+\partition{expr.read}
+
+\note{This structure is subject to change in future releases.}
+
+\subsubsection{\type{ReadConversionSort}}
+An expression that reads from a memory location can also perform an implicit conversion either on the operand,
+or on the result of the read.  The sort of conversion performed is indicated by a value type \type{ReadConversionSort} defined as
+\begin{typedef}{ReadConversionSort}{}
+	enum class ReadConversionSort : uint8_t {
+		Identity,
+		Indirection,
+		Dereference,
+		LvalueToRvalue,
+		IntegralConversion,
+	};
+\end{typedef}
+with the following semantics
+\begin{itemize}
+	\item \valueTag{ReadConversionSort::Identity}: No special interpretation or conversion applied.
+	\item \valueTag{ReadConversionSort::Indirection}: This is an indirection via a pointer, or via the name of an entity treated as a pointer.
+	\item \valueTag{ReadConversionSort::Dereference}: The operand is a reference, and the result of the read is the address of the entity referred to.
+	\item \valueTag{ReadConversionSort::LvalueToRvalue}: This expression represents an lvalue-to-rvalue conversion
+	\item \valueTag{ReadConversionSort::IntegralConversion}: The result of the read operation is followed by an integral conversion.
+\end{itemize}
+
+
+\subsection{\valueTag{ExprtSort::Monad}}
+\label{sec:ifc:ExprSort:Monad}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) monadic operator to argument.
+The \field{index} field is an index into the monadic expression partition.
+Each entry in that parrition has four components: a \field{type} field, a \field{opcat} field, an \field{argument} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{argument}{ExprIndex} \\
+		\DeclareMember{operator}{MonadicOperator} \\
+	}
+	\caption{Structure of a monadic expression}
+	\label{fig:ifc-monadic-expression-structure}
+\end{figure}
+%
+The \field{operator} field denotes the conceptual monadic operation, usually as written in the input C++ source code, \secref{sec:ifc:OperatorSort:Monadic}.
+The \field{type} field denotes the type of the expression.
+The \field{argument} field denotes the argument to the operator.
+The \field{locus} denotes the source location.
+
+\partition{expr.monad}
+
+
+\subsection{\valueTag{ExprSort::Dyad}}
+\label{sec:ifc:ExprSort:Dyad}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) dyadic operator (\secref{sec:ifc:OperatorSort:Dyadic}) to arguments.
+The \field{index} field is an index into the dyadic expression partition.
+Each entry in that parrition has four components: a \field{type} field, a \field{opcat} field, an \field{arguments} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{arguments}{ExprIndex[2]} \\
+		\DeclareMember{operator}{DyadicOperator} \\
+	}
+	\caption{Structure of a dyadic expression}
+	\label{fig:ifc-dyadic-expression-structure}
+\end{figure}
+%
+The \field{operator} field denotes the conceptual dyadic operation (usually as written in the input C++ source code).
+The \field{type} field denotes the type of the expression.
+The \field{arguments} field denotes the two arguments to the operator.
+The \field{locus} denotes the source location.
+
+\partition{expr.dyad}
+
+\subsection{\valueTag{ExprSort::Triad}}
+\label{sec:ifc:ExprSort:Triad}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) triadic operator (\secref{sec:ifc:OperatorSort:Triadic}) to arguments.
+The \field{index} field is an index into the triadic expression partition.
+Each entry in that parrition has four components: a \field{type} field, a \field{opcat} field, an \field{arguments} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{arguments}{ExprIndex[3]} \\
+		\DeclareMember{operator}{TriadicOperator} \\
+	}
+	\caption{Structure of a triadic expression}
+	\label{fig:ifc-triadic-expression-structure}
+\end{figure}
+%
+The \field{opcat} field denotes the conceptual triadic operation (usually as written in the input C++ source code).
+The \field{type} field denotes the type of the expression.
+The \field{arguments} field denotes the three arguments to the operator.
+The \field{locus} denotes the source location.
+
+\partition{expr.triad}
+
+
+\subsection{\valueTag{ExprSort::String}}
+\label{sec:ifc:ExprSort:String}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::String} represents a reference to a string literal
+expression.  The \field{index} field is an index into the string literal partition (not to be confused with the string table).
+Each entry of that partition is a structure with the following components: a \field{string\_index} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{string\_index}{StringIndex} \\
+	}
+	\caption{Structure of a string literal expression}
+	\label{fig:ifc-string-literal-expression-structure}
+\end{figure}
+%
+The \field{string\_index} field is an index into the partition of the representations of string literals.
+The \field{locus} denotes the source location.
+
+ The interpretation of each
+string in that table is given by the abstract reference, a \type{StringIndex}, used to index into
+the string table.  A \type{StringIndex} value, like any abstract reference, is a 32-bit value:
+\begin{figure}[H]
+  \centering
+	\absref{4}{StringSort}
+  \caption{\type{StringIndex}: Abstract reference of string constant}
+  \label{fig:ifc-string-index}
+\end{figure}
+
+In its current implementation, the tag of the \type{StringIndex} is given by the following declaration
+\begin{lstlisting}
+  enum class StringSort : uint8_t {
+     Ordinary,
+     UTF8,
+     Char16,
+     Char32,
+     Wide,
+  };
+\end{lstlisting}
+
+The string table is always present, and non-empty.  It is an array of bytes, the content of which is interpreted according to the abstract reference used to index it.
+The first entry is the NUL byte, therefore a \type{StringIndex} with 0 \field{tag} and 0 \field{index} represents the empty string.
+
+\partition{expr.strings}
+
+\subsubsection{\valueTag{StringSort::Ordinary}}
+A \type{StringIndex} with tag \valueTag{StringSort::Ordinary}  represents an ordinary, narrow NUL-terminated string constant.
+The \field{value} field is an index into the string table, pointing to the first byte of the string.
+
+
+\subsubsection{\valueTag{StringSort::UTF8}}
+A \type{StringIndex} with tag \valueTag{StringSort::UTF8}  represents a UTF-8 narrow NUL-terminated string constant. 
+In terms of C++ source-level construct, it represents a string constant with \code{u8} prefix.
+The \field{value} field is an index into the string table, pointing to the first byte of the string.
+
+\subsubsection{\valueTag{StringSort::Char16}}
+A \type{StringIndex} with tag \valueTag{StringSort::Char16}  represents a \code{char16_t} string constant with \code{u} prefix.
+The \field{value} field is an index into the string table, pointing to the first byte of the string.
+
+
+\subsubsection{\valueTag{StringSort::Char32}}
+A \type{StringIndex} with tag \valueTag{StringSort::Char32}  represents a \code{char32_t} string constant with \code{u} prefix.
+The \field{value} field is an index into the string table, pointing to the first byte of the string.
+
+
+\subsubsection{\valueTag{StringSort::Wide}}
+
+A \type{StringIndex} with tag \valueTag{StringSort::Wide}  represents wide string constant with only the \code{L} prefix.
+The \field{value} field is an index into the string table, pointing to the first byte of the string.
+
+
+\subsubsection{String literal structure}
+Each entry of the partition for string literal representation is a structure with the following components:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{start}{TextOffset} \\
+		\DeclareMember{length}{Cardinality} \\
+		\DeclareMember{suffix}{TextOffset} \\
+	}
+	\caption{Structure of a string literal}
+	\label{fig:ifc-string-literal-structure}
+\end{figure}
+%
+The \field{start} field is an index into the string table, representing the start of the string.
+The \field{length} field denotes the number of bytes taken up by the string, not counting suffix, if any.
+The \field{suffix} field is an index into the string table denoting the suffix, if any, of the string literal.
+
+\partition{const.str}
+
+\subsection{\valueTag{ExprSort::Temporary}}
+\label{sec:ifc:ExprSort:Temporary}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Temporary} represents a
+reference to a C++ source-level expression designating a temporary object.
+The \field{index} field is an index into the temporary expression partition.
+Each entry in that partition is a structure with the following components: a \field{type} field, an \field{id} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{id}{UniqueID} \\
+	}
+	\caption{Structure of a temporary object expression}
+	\label{fig:ifc-temporary-expression-structure}
+\end{figure}
+%
+The \field{type} field denotes the type of the expression.
+The \field{id} field denotes a unique identification of the temporary object.
+Its value is of type \newtype{UniqueID}{32}
+The \field{locus} field denotes the source location.
+
+\partition{expr.temporary}
+
+\subsection{\valueTag{ExprSort::Call}}
+\label{sec:ifc:ExprSort:Call}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Call} represents
+a reference to a call expression.
+The \field{index} field is an index into the call expression partition.
+Each entry in that partition is a structure with five components: a \field{type} field, an \field{operation} field, an \field{arguments} field,
+a \field{locus} field, and an \field{opcat} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{operation}{ExprIndex} \\
+		\DeclareMember{arguments}{ExprIndex} \\
+	}
+	\caption{Structure of a call expression}
+	\label{fig:ifc-call-expression-structure}
+\end{figure}
+%
+The \field{type} field denotes the type of the expression.  Usually, it the return type of the function.
+The \field{operation} field denotes the expression being invoked.
+The \field{arguments} field denotes the list of arguments to supplied. It that list is empty or a singleton, \field{arguments} directly denotes that expression.
+Otherwise it denotes a type expression.
+The \field{locus} field denotes the source location.
+
+\partition{expr.call}
+
+\subsection{\valueTag{ExprSort::MemberInitializer}}
+\label{sec:ifc:ExprSort:MemberInitializer}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::MemberInitializer} designates the initialization of 
+a base-class subobject, or a non-static data member, or a call to a delagated constructor.  The \field{index}
+field of that abstract reference is an index into the member initializer partition.  Each entry in that
+partition has the following layout 
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{member}{DeclIndex} \\
+		\DeclareMember{base}{TypeIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+	}
+	\caption{Structure of a member-initializer expression}
+	\label{fig:ifc-member-initializer-expression-structure}
+\end{figure}
+%
+The \field{locus} field designates the source location of the member initialization.
+The \field{type} field denotes the type of the initialization.
+The \field{member} field, if not null, designates the non-static data member being initialized.
+The \field{base} field, if not null, designates the initialization of a base-class subobject.
+Both fields \field{member} and \field{base} cannot be simulateneously non-null.
+However, they can be simulateneously null; in that case, the expression is used
+to represent a call to a delegated constructor.
+The \field{initializer} field denotes the expression perfoming the initialization.
+
+
+\partition{expr.member-initializer}
+
+\note{This structure is subject to change in future releases.}
+
+\subsection{\valueTag{ExprSort::MemberAccess}}
+\label{sec:ifc:ExprSort:MemberAccess}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::MemberAccess} designates
+an access to a non-static data member of an object.  The access is expressed in terms of 
+base address (of the object) and an offset (in bytes) to the member.
+The \field{index} field of the abstract reference is an index into the member access partition.
+Each entry of that partition has the following layout:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{offset}{ExprIndex} \\
+		\DeclareMember{enclosing}{TypeIndex} \\
+		\DeclareMember{name}{TextOffset} \\
+	}
+	\caption{Structure of a member access expression}
+	\label{fig:ifc:ExprSort:MemberAccess}
+\end{figure}
+%
+The \field{locus} field designates the source location of this expression.
+The \field{type} field denotes the type of the member access expression.
+The \field{offset} is an expression designating the byte offset of the non-static data member
+from the starting address of its enclosing object.
+The member being accessed 
+is indirectly described by its \field{enclosing} class type, and its \field{name}.
+
+\partition{expr.member-access}
+
+\note{This representation is subject to change in future releases.}
+
+\subsection{\valueTag{ExprSort::InheritancePath}}
+\label{sec:ifc:ExprSort:InheritancePath}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::InheritancePath} designates an expression ``path'' to a base-class subobject.
+The \field{index} field of that abstract reference is an index into the inheritance path partition.
+Each entry of that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{path}{ExprIndex} \\
+	}
+	\caption{Structure of an inheritance path expression}
+	\label{fig:ifc-inheritance-path-expression-structure}
+\end{figure}
+%
+The \field{locus} field designates the source location of this expression.
+The \field{type} field denotes the type of the expression.
+the \field{path} is a sequence of expressions designating each base-class component of the path.
+
+\partition{expr.inheritance-path}
+
+\subsection{\valueTag{ExprSort::InitializerList}}
+\label{sec:ifc:ExprSort:InitializerList}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::InitializerList} designates a brace-enclosed comma-separated 
+sequence of expressions.
+The \field{index} field is an index into the partition of initiliazer list expressions.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{elements}{ExprIndex} \\
+	}
+	\caption{Structure of an initializer-list expression}
+	\label{fig:ifc-initializer-list-structure}
+\end{figure}
+%
+The \field{elements} field denotes the sequence of expressions enclosed in the brace delimiters.
+
+\partition{expr.initializer-list}
+
+
+
+\subsection{\valueTag{ExprSort::Cast}}
+\label{sec:ifc:ExprSort:Cast}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::Cast} designates a conversion operation.
+The conversion may be explicit (in the input source code) and implicit (as required by semantics analyzis).
+The \field{index} field of this abstract reference  is a position into the partition of cast expressions.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{source}{ExprIndex} \\
+		\DeclareMember{target}{Index} \\
+		\DeclareMember{operator}{DyadicOperator} \\
+	}
+	\caption{Structure of a cast expression}
+	\label{fig:ifc:ExprSort:Cast}
+\end{figure}
+%
+The \field{source} field denotes the operand expression, whereas the \field{target} field denotes
+the type to convert that expression to.  The \field{operator} designates the sort of conversion operation
+to perform.
+
+\partition{expr.cast}
+
+
+\subsection{\valueTag{ExprSort::Condition}}
+\label{sec:ifc:ExprSort:Condition}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::Condition} designates a syntactic 
+representation of an expression used as guarding predicate of an \code{if}-statement in a templated code.
+The \field{index} field of this abstract reference is a position designating an entry of the
+partition of syntactic condition expressions.  Each such an entry is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{expr}{ExprIndex} \\
+	}
+	\caption{Structure of a condition expression}
+	\label{fig:ifc:ExprSort:Condition}
+\end{figure}
+%
+The \field{expr} field denotes the expression wrapped in this condition structure.
+
+\partition{expr.condition}
+
+\note{This structure is scheduled for removal in future releases.}
+
+
+\subsection{\valueTag{ExprSort::ExpressionList}}
+\label{sec:ifc:ExprSort:ExpressionList}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::ExpressionList} designates a syntactic representation
+of a comma-separated sequence of expressions enclosed in a pair of matching delimiters, in a templated code.
+The \field{index} field of this abstract reference is a position designating an entry of the partition of
+syntactic expression-list expressions.  Each such entry is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{left}{SourceLocation} \\
+		\DeclareMember{right}{SourceLocation} \\
+		\DeclareMember{contents}{ExprIndex} \\
+		\DeclareMember{delimiter}{DelimiterSort} \\
+	}
+	\caption{Structure of an expression list}
+	\label{fig:ifc:ExprSort:ExpressionList}
+\end{figure}
+%
+The \field{left} field represents the source location of the opening delimiter, whereas the \field{right}
+field represents the source location of the closing delimiter.
+The \field{delimiter} field is of type
+\begin{typedef}{DelimiterSort}{}
+	enum class DelimiterSort : uint8_t {
+		Unknown = 0,
+		Brace = 1,
+		Parenthesis = 2,
+	};
+\end{typedef}
+and denotes the sort of delimiter:
+\begin{itemize}
+	\item \valueTag{DelimiterSort::Brace} for matching brace delimiters
+	\item \valueTag{DelimiterSort::Parenthesis} for matching parenthesis delimiters
+\end{itemize}
+
+\partition{expr.expression-list}
+
+\note{This structure is scheduled for removal in future releases.}
+
+
+\subsection{\valueTag{ExprSort::SizeofType}}
+\label{sec:ifc:ExprSort:SizeofType}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::SizeofType} designates a syntactic representation
+of a \code{sizeof}-expression where the operand is a type.
+The \field{index} field of this abstract reference is a position designating an entry of the partition
+of syntactic \code{sizeof}-expressions.  Each such entry is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{operand}{TypeIndex} \\
+	}
+	\caption{Structure of \code{sizeof} expression}
+	\label{fig:ifc:ExprSort:SizeofType}
+\end{figure}
+%
+The \field{operand} field designates the type operand to the \code{sizeof} operator in that expression.
+The \field{type} field designates the type of the entire \code{sizeof}-expression.
+
+\partition{expr.sizeof-type}
+
+\note{This structure is subject to removal in future releases.}
+
+
+\subsection{\valueTag{ExprSort::Alignof}}
+\label{sec:ifc:ExprSort:Alignof}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::Alignof} designates a syntactic representation
+of a \code{alignof}-expression.
+The \field{index} field of this abstract reference is a position designating an entry of the partition
+of syntactic \code{alignof}-expressions.  Each such entry is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{operand}{TypeIndex} \\
+	}
+	\caption{Structure of \code{alignof} expression}
+	\label{fig:ifc:ExprSort:Alignof}
+\end{figure}
+
+The \field{operand} field designates the operand to the \code{alignof} operator in that expression.
+The \field{type} field designates the type of the entire \code{alignof}-expression.
+
+\partition{expr.alignof}
+
+\note{This representation is subject to change.}
+
+
+\subsection{\valueTag{ExprSort::New}}
+\label{sec:ifc:ExprSort:New}
+
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{double\_colon}{SourceLocation} \\
+		\DeclareMember{new\_keyword}{SourceLocation} \\
+		\DeclareMember{allocated\_type}{TypeIndex} \\
+		\DeclareMember{placement}{ExprIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+	}
+\end{figure}
+
+The field \field{double\_colon} designates the location of the global scope operator \code{::}, if present.
+The field \field{new\_keyword} designates the location of the \code{new} keyword operator.
+The field \field{allocated\_type} designates the source-level syntax of the type allocated in the new expression.
+The field \field{placement} designates the placement, if there is any.
+The field \field{initialzier} designates the initializer, if any.
+
+\partition{expr.new}
+
+
+\subsection{\valueTag{ExprSort::Delete}}
+\label{sec:ifc:ExprSort:Delete}
+
+n \type{ExprIndex} value with tag \valueTag{ExprSort::Delete} represents an abstract 
+reference to the non-array form of a \grammar{delete-expression}.  The \field{index} field 
+denotes the position of entry into the delete expression partition.  Each entry of
+that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 14em]{
+		\DeclareMember{double\_colon}{SourceLocation} \\
+		\DeclareMember{delete\_keyword}{SourceLocation} \\
+		\DeclareMember{address}{ExprIndex} \\
+	}
+\end{figure}
+%
+with these meanings of the fields:
+\begin{itemize}
+	\item \field{double\_colon} denotes the source location of \code{::}, if present at the source level, indicating request for the global allocation function.
+	\item \field{delete\_keyword} denotes the location of the \code{delete} keyword in the input source file.
+	\item \field{address} denotes the operand (pointer) to be deleted.
+\end{itemize}
+
+\partition{expr.delete}
+\note{This structure is subject to change.}
+
+
+\subsection{\valueTag{ExprSort::Typeid}}
+\label{sec:ifc:ExprSort:Typeid}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{operand}{TypeIndex} \\
+	}
+	\caption{Structure of a \code{typeid} expression}
+	\label{fig:ifc-typeid-structure}
+\end{figure}
+
+The field \field{operand} designates the type operand to the \code{typeid}-expression.
+The field \field{type} designates the type of the entire expression.
+
+\partition{expr.typeid}
+
+
+\subsection{\valueTag{ExprSort::DestructorCall}}
+\label{sec:ifc:ExprSort:DestructorCall}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::DestructorCall} represents an abstract reference to 
+a (pseudo-)destructor call.  The \field{index} field denotes a position of the corresponding entry in the destructor call partition.
+Each entry of that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{object}{ExprIndex} \\
+		\DeclareMember{decltype\_specifier}{SyntaxIndex} \\
+		\DeclareMember{cleanup}{DestructorSort} \\
+	}
+	\caption{Structure of a destructor call}
+	\label{fig:ifc-destructor-call-structure}
+\end{figure}
+%
+with these meanings of the fields:
+\begin{itemize}
+	\item \field{locus} denotes the source location of this expression
+	\item \field{type} denotes the type of this expression
+	\item \field{object}, if non-null, denotes the object for which the destructor is called
+	\item \field{decltype\_specifier}, if non-null, denotes the type providing the destructor function
+	\item \field{cleanup} denotes the sort of destructor, the interpretation of which is determined by this table 
+	\begin{itemize}
+		\item $0$: the sort of destructor is unknown.  This should never occur in a valid IFC file.
+		\item $1$: a standard C++ destructor.
+		\item $2$: a CLI/.NET finalizer.
+	\end{itemize}
+\end{itemize}
+and \newtype{DestructorSort}{8}
+
+\partition{expr.destructor-call}
+
+\note{This structure is subject to removal in future releases.}
+
+
+\subsection{\valueTag{ExprSort::SyntaxTree}}
+\label{sec:ifc:ExprSort:SyntaxTree}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{syntax}{SyntaxIndex} \\
+	}
+	\caption{Structure of a syntactic expression}
+	\label{fig:ifc-syntax-expr-structure}
+\end{figure}
+
+\partition{expr.syntax-tree}
+
+
+\subsection{\valueTag{ExprSort::FunctionString}}
+\label{sec:ifc:ExprSort:FunctionString}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{macro}{TextOffset} \\
+	}
+	\caption{Structure of a function string expression}
+	\label{fig:ifc-function-string-structure}
+\end{figure}
+
+\partition{expr.function-string}
+
+
+\subsection{\valueTag{ExprSort::CompoundString}}
+\label{sec:ifc:ExprSort:CompoundString}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{prefix}{TextOffset} \\
+		\DeclareMember{string}{ExprIndex} \\
+	}
+	\caption{Structure of a compound string expression}
+	\label{fig:ifc-compound-string-structure}
+\end{figure}
+
+\partition{expr.compound-string}
+
+
+\subsection{\valueTag{ExprSort::StringSequence}}
+\label{sec:ifc:ExprSort:StringSequence}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{strings}{ExprIndex} \\
+	}
+	\caption{Structure of a string sequence expression}
+	\label{fig:ifc-string-sequence-structure}
+\end{figure}
+
+\partition{expr.string-sequence}
+
+
+\subsection{\valueTag{ExprSort::Initializer}}
+\label{sec:ifc:ExprSort:Initializer}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{sort}{InitializerSort} \\
+	}
+	\caption{Structure of an initialzer expression}
+	\label{fig:ifc-initializer-structure}
+\end{figure}
+with \newtype{InitializerSort}{8}
+
+The values of type \type{InitializerSort} are
+\begin{SortEnum}{InitializerSort}
+	\enumerator{Unknown}
+	\enumerator{Direct}
+	\enumerator{Copy}
+\end{SortEnum}
+
+\ifcdoc{Unknown}{InitializerSort}
+No initializer expression of this sort shall be produced.  This value serves purely as a sentinel purpose.
+
+\ifcdoc{Direct}{InitializerSort}
+An initializer of this sort represents elaboration of a direct-initialization at the C++ input source level.
+
+\ifcdoc{Copy}{InitializerSort}
+An initializer of this sort represents an elaboration of a copy-initialization at the C++ input source level.
+
+\partition{expr.initializer}
+
+
+\subsection{\valueTag{ExprSort::Requires}}
+\label{sec:ifc:ExprSort:Requires}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{parameters}{SyntaxIndex} \\
+		\DeclareMember{body}{SyntaxtIndex} \\
+	}
+	\caption{Structure of a \code{requires} clause}
+	\label{fig:requires-clause-structure}
+\end{figure}
+
+\partition{expr.requires}
+
+
+\subsection{\valueTag{ExprSort::UnaryFold}}
+\label{sec:ifc:ExprSort:UnaryFold}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{operation}{DyadicOperator} \\
+		\DeclareMember{associativity}{Associativity} \\
+	}
+	\caption{Structure of a unary fold expression}
+	\label{fig:ifc-unary-fold-structure}
+\end{figure}
+
+with \newtype{Associativity}{8}
+
+\partition{expr.unary-fold}
+
+
+\subsection{\valueTag{ExprSort::BinaryFoid}}
+\label{sec:ifc:ExprSort:BinaryFold}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{left}{ExprIndex} \\
+		\DeclareMember{right}{ExprIndex} \\
+		\DeclareMember{operation}{DyadicOperator} \\
+		\DeclareMember{associativity}{Associativity} \\
+	}
+	\caption{Structure of a binary fold expression}
+	\label{fig:ifc-binary-fold-structure}
+\end{figure}
+
+\partition{expr.binary-fold}
+
+
+\subsection{\valueTag{ExprSort::HierarchyConversion}}
+\label{sec:ifc:ExprSort:HierarchyConversion}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::HierarchyConversion} represents an expression that performs a class hierarchy conversion, i.e. class hierarchy navigation.
+The \field{index} field is an index into the hierarchy conversion partition.  Each entry in that partition is a structure with the following fields
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{source}{ExprIndex} \\
+		\DeclareMember{target}{TypeIndex} \\
+		\DeclareMember{inheritance}{ExprIndex} \\
+		\DeclareMember{override}{ExprIndex} \\
+		\DeclareMember{operator}{DyadicOperator} \\
+	}
+	\caption{Structure of a hierarchy conversion expression}
+	\label{fig:ifc-hierarchy-conversion-expression-structure}
+\end{figure}
+%
+
+The \field{type} field designates the type of the overall expression.
+The field \field{source} designates the operand expression.
+The field \field{locus} designates the location of the expression.
+
+\partition{expr.hierarchy-conversion}
+
+
+\subsection{\valueTag{ExprSort::ProductTypeValue}}
+\label{sec:ifc:ExprSort:ProductTypeValue}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::ProductTypeValue} designates an object of class type, usually produced as part of a compile-time evaluation.
+The \field{index} field of that abstract reference is an index into the product type value partition.  Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{class}{DeclIndex} \\
+		\DeclareMember{members}{ExprIndex} \\
+		\DeclareMember{base\_subobjects}{ExprIndex} \\
+	}
+	\caption{Structure of a product value expression}
+	\label{fig:ifc-product-value-structure}
+\end{figure}
+%
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{locus} denotes the source location of this expression.
+	\item \field{type} denotes the type of this expression.
+	\item \field{class} denotes the declaration of the class type of the object designated by this expression.
+	\item \field{members} denotes the sequence of direct non-baseclass subobjects of the object.
+	\item \field{base\_subobjects} denotes the sequence of baseclasse subobjects of the object.
+\end{itemize}
+
+\partition{expr.product-type-value}
+
+\note{This structure is subject to change in future releases}
+
+\subsection{\valueTag{ExprSort::SumTypeValue}}
+\label{sec:ifc:ExprSort:SumTypeValue}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::SumTypeValue} designates an object of a union type, usually produced as part of a compile-time evaluation.
+The \field{index} field of that abstract reference is an index into the sum type value partition.  Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{variant}{DeclIndex} \\
+		\DeclareMember{discriminant}{ActiveMember} \\
+		\DeclareMember{value}{ExprIndex} \\
+	}
+	\caption{Structure of a sum type value expression}
+	\label{fig:ifc:ExprSort:SumTypeValue}
+\end{figure}
+%
+with \newtype{ActiveMember}{32}.  The active member numbers the non-static data member in the union, starting from $0$.
+
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{locus} denotes the source location of this expression.
+	\item \field{type} denotes the type of this expression.
+	\item \field{variant} denotes the declaration of the union class type of the object designated by this expression.
+	\item \field{disciminant} denotes the index of the active member of the union object
+	\item \field{value} denotes the value of the active member.
+\end{itemize}
+
+\partition{expr.sum-type-value}
+
+\note{This structure is subject to change in future releases}
+
+
+\subsection{\valueTag{ExprSort::SubobjectValue}}
+\label{sec:ifc:ExprSort:SubobjectValue}
+
+\partition{expr.class-subobject-value}
+
+\note{This structure is scheduled for removal in future releases}
+
+
+\subsection{\valueTag{ExprSort::ArrayValue}}
+\label{sec:ifc:ExprSort:ArrayValue}
+
+An \type{ExprIndex} value with tag \valueTag{ExprSort::ArrayValue} designates an object of an array type, usually produced as part of a compile-time evaluation.
+The \field{index} field of that abstract reference is an index into the array value partition.  Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{elements}{ExprIndex} \\
+		\DeclareMember{element\_type}{TypeIndex} \\
+	}
+	\caption{Structure of an array value expression}
+	\label{fig:ifc:ExprSort:ArrayValue}
+\end{figure}
+%
+The meaning of the fields is as follows
+\begin{itemize}
+	\item \field{locus} denotes the source location of this expression.
+	\item \field{type} denotes the type of this expression.
+	\item \field{elements} denotes the sequence of subobjects of the array.
+	\item \field{element\_type} denotes the (common) type of the array element.
+\end{itemize}
+
+\partition{expr.array-value}
+
+\subsection{\valueTag{ExprSort::DynamicDispatch}}
+\label{sec:ifc:ExprSort:DynamicDispatch}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{pivot}{ExprIndex} \\
+	}
+	\caption{Structure of a dynamic dispatch expression}
+	\label{fig:ifc-dynamic-dispatch-structure}
+\end{figure}
+
+\partition{expr.dynamic-dispatch}
+
+
+\subsection{\valueTag{ExprSort::VirtualFunctionConversion}}
+\label{sec:ifc:ExprSort:VirtualFunctionConversion}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{function}{DeclIndex} \\
+	}
+	\caption{Structure of a virtual function conversion}
+	\label{fig:ifc-virtual-function-conversion-structure}
+\end{figure}
+
+\partition{expr.virtual-function-conversion}
+
+
+\subsection{\valueTag{ExprSort::Placeholder}}
+\label{sec:ifc:ExprSort:Placeholder}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+	}
+	\caption{Structure of a placeholder expression}
+	\label{fig:ifc-placeholder-expr-structure}
+\end{figure}
+
+\partition{expr.placeholder}
+
+\subsection{\valueTag{ExprSort::Expansion}}
+\label{sec:ifc:ExprSort:Expansion}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{operand}{ExprIndex} \\
+	}
+	\caption{Structure of an expansion expression}
+	\label{fig:ifc-expansion-expr-structure}
+\end{figure}
+
+\partition{expr.expansion}
+
+
+\subsection{\valueTag{ExprSort::Generic}}
+\label{sec:ifc:ExprSort:Generic}
+
+\begin{figure}[H]
+	\centering
+	TBD
+	\caption{Structure of a generic expression selection}
+	\label{fig:ifc-generic-expr-structure}
+\end{figure}
+
+\partition{expr.generic}
+
+
+\subsection{\valueTag{ExprSort::Tuple}}
+\label{sec:ifc:ExprSort:Tuple}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Tuple} represents a reference
+to sequence or more abstract indices to expressions.  This is useful for representing expression lists,
+including template argument lists.
+The \field{index} field is index into the tuple expression partition.
+Each entry in that partition has three components: a \field{start} field, a \field{cardinality} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+	}
+	\caption{Structure of a tuple expression}
+	\label{fig:ifc-tuple-expression-structure}
+\end{figure}
+%
+The \field{start} field is an index into the expression heap partition. It points to the first expression abstract reference in the tuple.
+The \field{cardinality} field denotes the number of expression abstract references in the tuple.
+The \field{locus} field denotes the source location of the expression.
+
+\partition{expr.tuple}
+
+
+\subsection{\valueTag{ExprSort::Nullptr}}
+\label{sec:ifc:ExprSort:Nullptr}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+	}
+	\caption{Structure of a \code{nullptr} expression}
+	\label{fig:ifc-nullptr-expr-structure}
+\end{figure}
+
+\partition{expr.nullptr}
+
+\subsection{\valueTag{ExprSort::This}}
+\label{sec:ifc:ExprSort:This}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+	}
+	\caption{Structure of a \code{this} expression}
+	\label{fig:ifc-this-expr-structure}
+\end{figure}
+
+\partition{expr.this}
+
+
+\subsection{\valueTag{ExprSort::TemplateReference}}
+\label{sec:ifc:ExprSort:TemplateReference}
+
+A reference to a member of a template
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{member\_name}{NameIndex} \\
+		\DeclareMember{member\_locus}{SourceLocation} \\
+		\DeclareMember{scope}{TypeIndex} \\
+		\DeclareMember{arguments}{ExprIndex} \\
+	}
+	\caption{Structure of a template member expression}
+	\label{fig:ifc-member-template-expression-structure}
+\end{figure}
+%
+
+The \field{member\_name} field designates the nane of the member; the \field{member\_locus} designates the source location where the member is declared.
+The \field{scope} field designates the enclosing scope of the member.  The \field{arguments} designates the set of template arguments to
+this member.
+The field \field{locus} is the source location where the expression appears.
+
+\partition{expr.template-reference}
+
+\note{This structure is subject to removal in future releases.}
+
+\subsection{\valueTag{ExprSort::PushState}}
+\label{sec:ifc:ExprSort:PushState}
+ A EH push-state expression (constructor call + matching destructor call)
+
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{ctor\_call}{ExprIndex} \\
+		\DeclareMember{dtor\_call}{ExprIndex} \\
+		\DeclareMember{flags}{EHFlags} \\
+	}
+	\caption{Structure of a push state expression}
+	\label{fig:ifc-push-state-expression-structure}
+\end{figure}
+%
+The \field{flags} field is of type \newtype{EHFlags}{16}.
+
+\partition{expr.push-state}
+
+
+\subsection{\valueTag{ExprSort::TypeTraitIntrinsic}}
+\label{sec:ifc:ExprSort:TypeTraitIntrinsic}
+
+A use of a type trait intrinsic
+
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{arguments}{TypeIndex} \\
+		\DeclareMember{intrinsic}{Operator} \\
+	}
+	\caption{Structure of an intrinsic type-trait expression}
+	\label{fig:ifc-type-trait-expression-structure}
+\end{figure}
+
+\partition{expr.type-trait}
+
+
+\subsection{\valueTag{ExprSort::DesignatedInitializer}}
+\label{sec:ifc:ExprSort:DesignatedInitializer}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{member}{TextOffset} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+	}
+	\caption{Structure of a designated initializer}
+	\label{fig:ifc-designated-initializer-structure}
+\end{figure}
+
+\partition{expr.designated-init}
+
+\subsection{\valueTag{ExprSort::PackedTemplateArguments}}
+\label{sec:ifc:ExprSort:PackedTemplateArguments}
+
+A \type{ExprIndex} value with tag \valueTag{ExprIndex::PackedTemplateArguments} represents an
+abstract reference to a template argument list for a template parameter pack.  The 
+\field{index} field of that abstract reference is an index into the packed template-argument
+list partition.  Each entry in that partition is a structure with the following layout:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{arguments}{ExpexIndex} \\
+	}
+\end{figure}
+%
+with the these meanings of the fields:
+\begin{itemize}
+	\item \field{locus} designates the source location of the expression
+	\item \field{type} designates the type of the expression -- currently null
+	\item \field{arguments} designate the actual argument, or sequence of template-arguments.
+\end{itemize}
+
+\partition{expr.packed-template-arguments}
+
+\note{This representation is subject to change.}
+
+
+
+%% \section{\valueTag{ExprSort::Brace}}
+%% A \type{ExprIndex} with tag \valueTag{ExprSort::Brace} represents a reference to a brace-enclosed expression.
+%% The \field{value} field is an index into the brace expression partition.
+%% Each entry in that partition is a structure with three components: a \field{type} field, a \field{enclosed} field, and a \field{locus} field.
+%% %
+%% \begin{figure}[h]
+%%	\centering
+%%	\begin{tikzpicture}
+%%	\matrix[matrix of nodes,
+%%			row sep=-\pgflinewidth,
+%%			nodes={rectangle,draw,anchor=west,text width=12em}]
+%%	{
+%%		\DeclareMember{type}{TypeIndex} \\
+%%		\DeclareMember{enclosed}{Expr} \\
+%%		\DeclareMember{locus}{SourceLocation} \\
+%%	};
+%%	\end{tikzpicture}
+%%	\caption{Structure of a brace expression}
+%%	\label{fig:ifc-brace-expression-structure}
+%%\end{figure}
+%%%
+%% The \field{type} field denotes the type of the expression.
+%% The \field{enclosed} field denoted the expression surrounded by the braces.
+%% The \field{locus} field denotes the source location.
+
+
+\subsection{\valueTag{ExprSort::Tokens}}
+\label{sec:ifc:ExprSort:Tokens}
+
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Tokens} represents an arbitrary token sequence (yet to be parsed) denoting an expression. 
+The \field{index} field is an index into to the token sequence expression partition.
+Each entry of that partition is a structure witht the following components: a \field{tokens} field, and a \field{locus} field.
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{words}{SentenceIndex} \\
+	}
+	\caption{Structure of a token sequence expression}
+	\label{fig:ifc-token-sequence-expression-structure}
+\end{figure}
+%
+The \field{words} field is an index into the sentence partition (\secref{sec:ifc-token-streams}).
+The \field{locus} field denotes the source location.
+
+\partition{expr.tokens}
+
+\paragraph{Note:} This kind of representation of expression is discouraged and will be removed in future version of this document.
+
+
+
+\subsection{\valueTag{ExprSort::AssignInitializer}}
+\label{sec:ifc:ExprSort:AssignInitializer}
+
+\partition{expr.assign-initializer}
+
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{equal}{SourceLocation} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+	}
+\end{figure}
+
+
+\section{Operators}
+\label{sec:ifc-operators}
+
+Elaboration of C++ expressions involves semantic operators which are classified
+by sort. Semantic operators are $16$-bit precision values with the following
+layout:
+%
+\begin{figure}[H]
+	\centering
+	  \begin{BasicAbstractReferenceLayout}{16}
+		  \bitfield{4}{\field{sort}}
+				\bitfield{12}{\field{index}}
+		  \bitFormatTextAt{3}{3}
+		   \bitSeparate{4}
+		  \bitFormatTextAt{4}{4}
+	  \end{BasicAbstractReferenceLayout} 
+	  \caption{\type{Operator}: Structure of semantic operator}
+	  \label{fig:ifc-semantic-operator}
+\end{figure}
+%
+
+The field \field{sort}, of type \type{OperatorSort}, designates the semantic category
+of the operator.  The field \field{index} is a $12$-bit value the 
+interpretation of which is \field{sort}-dependent as indicated in the 
+subsections below.
+
+The type \type{OperatorSort} is a set of $4$-bit values enumerated as follows.
+\begin{Enumeration}{OperatorSort}
+	\enumerator{Niladic}
+	\enumerator{Monadic}
+	\enumerator{Dyadic}
+	\enumerator{Triadic}
+	
+	\setcounter{enumi}{13}
+	\enumerator{Storage}
+	\enumerator{Variadic}
+\end{Enumeration}
+
+\subsection{Niladic operators}
+\label{sec:ifc:OperatorSort:Niladic}
+
+A sort value \valueTag{OperatorSort::Niladic} indicates a niladic operator -- 
+an operator accepting no argument.  The
+value of the \field{index} is to be interpreted as a value of type 
+\type{NiladicOperator}, which is a set of $13$-bit values enumerated as follows.
+%
+\begin{Enumeration}{NiladicOperator}
+	\enumerator{Unknown}
+	\enumerator{Phantom}
+	\enumerator{Constant}
+	\enumerator{Nil}
+
+	\setcounter{enumi}{1023}
+	\enumerator{Msvc}
+	\enumerator{MsvcConstantObject}
+	\enumerator{MsvcLambda}
+\end{Enumeration}
+
+\ifcSortSection{Unknown}{NiladicOperator}
+An invalid niladic operator, sometimes stands for an undefined value.
+
+\ifcSortSection{Phantom}{NiladicOperator}
+A missing expression in the input source level, e.g. as the array bound the type \code{int[]}.
+
+\ifcSortSection{Constant}{NiladicOperator}
+A scalar constant, or string literal, or a class type object constant expression.
+
+\ifcSortSection{Nil}{NiladicOperator}
+Representation of the source level semantic equivalent of \code{void()}.
+
+\ifcSortSection{Msvc}{NiladicOperator} 
+This is a marker, not an actual operator. Niladic operators with 
+value greater that this are MSVC extensions.
+
+\ifcSortSection{MsvcConstantObject}{NiladicOperator}
+An MSVC extension for representing class type object constants.
+Semantically, this is the same as \sortref{Constant}{NiladicOperator}.
+
+\note{This representation is scheduled for removal in future MSVC releases.}
+
+\ifcSortSection{MsvcLambda}{NiladicOperator}
+An MSVC extension to represent a lambda constant.
+Semantically, this is the same as \sortref{Constant}{NiladicOperator}.
+
+\note{This representation is scheduled for removal in future MSVC releases.}
+
+
+\subsection{Monadic operators}
+\label{sec:ifc:OperatorSort:Monadic}
+
+A sort value \valueTag{OperatorSort::Monadic} indicates a monadic operator -- 
+an operator accepting one argument.  The
+value of the \field{index} is to be interpreted as a value of type 
+\type{MonadicOperator}, which is a set of $13$-bit values enumerated as follows.
+%
+\begin{Enumeration}{MonadicOperator}
+	\enumerator{Unknown}
+	\enumerator{Plus}
+	\enumerator{Negate}
+	\enumerator{Deref}
+	\enumerator{Address}
+	\enumerator{Complement}
+	\enumerator{Not}
+	\enumerator{PreIncrement}
+	\enumerator{PreDecrement}
+	\enumerator{PostIncrement}
+	\enumerator{PostDecrement}
+	\enumerator{Truncate}
+	\enumerator{Ceil}
+	\enumerator{Floor}
+	\enumerator{Paren}
+	\enumerator{Brace}
+	\enumerator{Alignas}
+	\enumerator{Alignof}
+	\enumerator{Sizeof}
+	\enumerator{Cardinality}
+	\enumerator{Typeid}
+	\enumerator{Noexcept}
+	\enumerator{Requires}
+	\enumerator{CoReturn}
+	\enumerator{Await}
+	\enumerator{Yield}
+	\enumerator{Throw}
+	\enumerator{New}
+	\enumerator{Delete}
+	\enumerator{DeleteArray}
+	\enumerator{Expand}
+	\enumerator{Read}
+	\enumerator{Materialize}
+	\enumerator{PseudoDtorCall}
+
+	\setcounter{enumi}{1023}
+	\enumerator{Msvc}
+	\enumerator{MsvcAssume}
+	\enumerator{MsvcAlignof}
+	\enumerator{MsvcUuidof}
+	\enumerator{MsvcIsClass}
+	\enumerator{MsvcIsUnion}
+	\enumerator{MsvcIsEnum}
+	\enumerator{MsvcIsPolymorphic}
+	\enumerator{MsvcIsEmpty}
+	\enumerator{MsvcIsTriviallyCopyConstructible}
+	\enumerator{MsvcIsTriviallyCopyAssignable}
+	\enumerator{MsvcIsTriviallyDestructible}
+	\enumerator{MsvcHasVirtualDestructor}
+	\enumerator{MsvcIsNothrowCopyConstructible}
+	\enumerator{MsvcIsNothrowCopyAssignable}
+	\enumerator{MsvcIsPod}
+	\enumerator{MsvcIsAbstract}
+	\enumerator{MsvcIsTrivial}
+	\enumerator{MsvcIsTriviallyCopyable}
+	\enumerator{MsvcIsStandardLayout}
+	\enumerator{MsvcIsLiteralType}
+	\enumerator{MsvcIsTriviallyMoveConstructible}
+	\enumerator{MsvcHasTrivialMoveAssign}
+	\enumerator{MsvcIsTriviallyMoveAssignable}
+	\enumerator{MsvcIsNothrowMoveAssignable}
+	\enumerator{MsvcUnderlyingType}
+	\enumerator{MsvcIsDestructible}
+	\enumerator{MsvcIsNothrowDestructible}
+	\enumerator{MsvcHasUniqueObjectRepresentations}
+	\enumerator{MsvcIsAggregate}
+	\enumerator{MsvcBuiltinAddressOf}
+	\enumerator{MsvcIsRefClass}
+	\enumerator{MsvcIsValueClass}
+	\enumerator{MsvcIsSimpleValueClass}
+	\enumerator{MsvcIsInterfaceClass}
+	\enumerator{MsvcIsDelegate}
+	\enumerator{MsvcIsFinal}
+	\enumerator{MsvcIsSealed}
+	\enumerator{MsvcHasFinalizer}
+	\enumerator{MsvcHasCopy}
+	\enumerator{MsvcHasAssign}
+	\enumerator{MsvcHasUserDestructor}
+
+	\setcounter{enumi}{4063}
+	\enumerator{MsvcConfusion}
+	\enumerator{MsvcConfusedExpand}
+	\enumerator{MsvcConfusedDependentSizeof}
+\end{Enumeration}
+
+\ifcSortSection{Unknown}{MonadicOperator} 
+An invalid monadic operator.  This value should never be generated.
+
+\ifcSortSection{Plus}{MonadicOperator}
+Source-level prefix ``\code{+}'' operator.
+
+\ifcSortSection{Negate}{MonadicOperator} 
+Source-level prefix ``\code{-}'' operator. 
+
+\ifcSortSection{Deref}{MonadicOperator}
+Source-level (pointer) dereference ``\code{*}'' operator.
+
+\ifcSortSection{Address}{MonadicOperator}
+Source-level address-of ``\code{\&}'' operator.
+
+\ifcSortSection{Complement}{MonadicOperator}
+Source-level bit complement ``\code{\~}'' operator.
+
+\ifcSortSection{Not}{MonadicOperator}
+Source-level logical prefix ``\code{\!}'' (i.e. ``\code{not}'') operator.
+
+\ifcSortSection{PreIncrement}{MonadicOperator} 
+Source-level prefix ``\code{++}'' operator.
+
+\ifcSortSection{PreDecrement}{MonadicOperator}
+Source-level prefix ``\code{--}'' operator.
+
+\ifcSortSection{PostIncrement}{MonadicOperator} 
+Source-level postfix ``\code{++}'' operator.
+
+\ifcSortSection{PostDecrement}{MonadicOperator}
+Source-level postfix ``\code{--}'' operator.
+
+\ifcSortSection{Truncate}{MonadicOperator} C++ abstract machine operator.
+
+\ifcSortSection{Ceil}{MonadicOperator} C++ abstract machine operator.
+
+\ifcSortSection{Floor}{MonadicOperator} C++ abstract machine operator.
+
+\ifcSortSection{Paren}{MonadicOperator} Source-level parenthesis-enclosing operator.
+
+\ifcSortSection{Brace}{MonadicOperator} Source-level brace-enclosing operator.
+
+\ifcSortSection{Alignas}{MonadicOperator} Source-level ``\code{alignas}'' operator.
+\ifcSortSection{Alignof}{MonadicOperator} Source-level ``\code{alignof}'' operator.
+\ifcSortSection{Sizeof}{MonadicOperator} Source-level ``\code{sizeof}'' operator.
+\ifcSortSection{Cardinality}{MonadicOperator} Source-level ``\code{sizeof...}'' operator.
+\ifcSortSection{Typeid}{MonadicOperator} Source-level ``\code{typeid}'' operator.
+\ifcSortSection{Noexcept}{MonadicOperator} Source-level ``\code{noexpcet}'' operator.
+\ifcSortSection{Requires}{MonadicOperator} Source-level ``\code{requires}'' operator.
+\ifcSortSection{CoReturn}{MonadicOperator} Source-level ``\code{co_return}'' operator.
+\ifcSortSection{Await}{MonadicOperator} Source-level ``\code{co_await}'' operator.
+\ifcSortSection{Yield}{MonadicOperator} Source-level ``\code{co_yield}'' operator.
+\ifcSortSection{Throw}{MonadicOperator} Source-level ``\code{throw}'' operator.
+\ifcSortSection{New}{MonadicOperator} Source-level ``\code{new}'' operator.
+\ifcSortSection{Delete}{MonadicOperator} Source-level ``\code{delete}'' operator.
+\ifcSortSection{DeleteArray}{MonadicOperator} Source-level ``\code{delete[]}'' operator.
+\ifcSortSection{Expand}{MonadicOperator} Source-level pack-expansion operator.
+\ifcSortSection{Read}{MonadicOperator} C++ abstract machine lvalue-to-rvalue conversion operator.
+\ifcSortSection{Materialize}{MonadicOperator} C++ abstract machine class temporary materialization operator.
+\ifcSortSection{PseudoDtorCall}{MonadicOperator} Pseudo-destructor call operator.
+
+\ifcSortSection{Msvc}{MonadicOperator} This is a marker, not an actual operator. Monadic operators with 
+value greater that this are MSVC extensions.
+
+\ifcSortSection{MsvcAssume}{MonadicOperator} 
+Source-level ``\code{__assume}'' operator (\sortref{MsvcAssume}{SourceKeyword}).
+
+\ifcSortSection{MsvcAlignof}{MonadicOperator}
+ Source-level ``\code{__builtin_alignof}'' operator (\sortref{MsvcAlignof}{SourceKeyword}).
+
+\ifcSortSection{MsvcUuidof}{MonadicOperator}
+ Source-level ``\code{__uuidof}'' operator (\sortref{MsvcUuidof}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsClass}{MonadicOperator}
+ Source-level ``\code{__is_class}'' operator (\sortref{MsvcIsClass}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsUnion}{MonadicOperator}
+ Source-level ``\code{__is_union}'' operator (\sortref{MsvcIsUnion}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsEnum}{MonadicOperator}
+ Source-level ``\code{__is_enum}'' operator (\sortref{MsvcIsEnum}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsPolymorphic}{MonadicOperator}
+ Source-level ``\code{__is_polymorphic}'' operator (\sortref{MsvcIsPolymorphic}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsEmpty}{MonadicOperator}
+ Source-level ``\code{__is_empty}'' operator (\sortref{MsvcIsEmpty}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsTriviallyCopyConstructible}{MonadicOperator}
+ Source-level ``\code{__is_trivially_copy_constructible}'' operator (\sortref{MsvcIsTriviallyCopyConstructible}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsTriviallyCopyAssignable}{MonadicOperator}
+Source-level ``\code{__is_trivially_copy_constructible}'' operator (\sortref{MsvcIsTriviallyCopyAssignable}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsTriviallyDestructible}{MonadicOperator}
+Source-level ``\code{__is_trivially_destructible}'' operator (\sortref{MsvcIsTriviallyDestructible}{SourceKeyword}).
+
+\ifcSortSection{MsvcHasVirtualDestructor}{MonadicOperator}
+Source-level ``\code{__has_virtual_destructor}'' operator (\sortref{MsvcHasVirtualDestructor}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsNothrowCopyConstructible}{MonadicOperator}
+Source-level ``\code{__is_nothrow_copy_constructible}'' operator (\sortref{MsvcIsNothrowCopyConstructible}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsNothrowCopyAssignable}{MonadicOperator}
+Source-level ``\code{__is_nothrow_copy_assignable}'' operator (\sortref{MsvcIsNothrowCopyAssignable}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsPod}{MonadicOperator}
+Source-level ``\code{__is_pod}'' operator (\sortref{MsvcIsPod}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsAbstract}{MonadicOperator}
+Source-level ``\code{__is_abstract}'' operator (\sortref{MsvcIsAbstract}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsTrivial}{MonadicOperator}
+Source-level ``\code{__is_trivial}'' operator (\sortref{MsvcIsTrivial}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsTriviallyCopyable}{MonadicOperator}
+Source-level ``\code{__is_trivially_copyable}'' operator (\sortref{MsvcIsTriviallyCopyable}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsStandardLayout}{MonadicOperator}
+Source-level ``\code{__is_standard_layout}'' operator (\sortref{MsvcIsStandardLayout}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsLiteralType}{MonadicOperator}
+Source-level ``\code{__is_literal_type}'' operator (\sortref{MsvcIsLiteralType}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsTriviallyMoveConstructible}{MonadicOperator}
+Source-level ``\code{__is_trivially_move_constructible}'' operator (\sortref{MsvcIsTriviallyMoveConstructible}{SourceKeyword}).
+
+\ifcSortSection{MsvcHasTrivialMoveAssign}{MonadicOperator}
+Source-level ``\code{__has_trivial_move_assign}'' operator (\sortref{MsvcHasTrivialMoveAssign}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsTriviallyMoveAssignable}{MonadicOperator}
+Source-level ``\code{__is_trivially_move_assignable}'' operator (\sortref{MsvcIsTriviallyMoveAssignable}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsNothrowMoveAssignable}{MonadicOperator}
+Source-level ``\code{__is_nothrow_move_assignable}'' operator (\sortref{MsvcIsNothrowMoveAssignable}{SourceKeyword}).
+
+\ifcSortSection{MsvcUnderlyingType}{MonadicOperator}
+Source-level ``\code{__underlying_type}'' operator (\sortref{MsvcUnderlyingType}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsDestructible}{MonadicOperator}
+Source-level ``\code{__is_destructible}'' operator (\sortref{MsvcIsDestructible}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsNothrowDestructible}{MonadicOperator}
+Source-level ``\code{__is_nothrow_destructible}'' operator (\sortref{MsvcIsNothrowDestructible}{SourceKeyword}).
+
+\ifcSortSection{MsvcHasUniqueObjectRepresentations}{MonadicOperator}
+Source-level ``\code{__has_unique_object_representations}'' operator (\sortref{MsvcHasUniqueObjectRepresentations}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsAggregate}{MonadicOperator}
+Source-level ``\code{__is_aggregate}'' operator (\sortref{MsvcIsAggregate}{SourceKeyword}).
+
+\ifcSortSection{MsvcBuiltinAddressOf}{MonadicOperator}
+Source-level ``\code{__builtin_addressof}'' operator (\sortref{MsvcBuiltinAddressOf}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsRefClass}{MonadicOperator}
+Source-level ``\code{__is_ref_class}'' operator (\sortref{MsvcIsRefClass}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsValueClass}{MonadicOperator}
+Source-level ``\code{__is_value_class}'' operator (\sortref{MsvcIsValueClass}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsSimpleValueClass}{MonadicOperator}
+Source-level ``\code{__is_simple_value_class}'' operator (\sortref{MsvcIsSimpleValueClass}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsInterfaceClass}{MonadicOperator}
+Source-level ``\code{__is_interface_class}'' operator (\sortref{MsvcIsInterfaceClass}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsDelegate}{MonadicOperator}
+Source-level ``\code{__is_delegate}'' operator (\sortref{MsvcIsDelegate}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsFinal}{MonadicOperator}
+Source-level ``\code{__is_final}'' operator (\sortref{MsvcIsFinal}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsSealed}{MonadicOperator}
+Source-level ``\code{__is_sealed}'' operator (\sortref{MsvcIsSealed}{SourceKeyword}).
+
+\ifcSortSection{MsvcHasFinalizer}{MonadicOperator}
+Source-level ``\code{__has_finalizer}'' operator (\sortref{MsvcHasFinalizer}{SourceKeyword}).
+
+\ifcSortSection{MsvcHasCopy}{MonadicOperator}
+Source-level ``\code{__has_copy}'' operator (\sortref{MsvcHasCopy}{SourceKeyword}).
+
+\ifcSortSection{MsvcHasAssign}{MonadicOperator}
+Source-level ``\code{__has_assign}'' operator (\sortref{MsvcHasAssign}{SourceKeyword}).
+
+\ifcSortSection{MsvcHasUserDestructor}{MonadicOperator}
+Source-level ``\code{__has_user_destructor}'' operator (\sortref{MsvcHasUserDestructor}{SourceKeyword}).
+
+
+\ifcSortSection{MsvcConfusion}{MonadicOperator}
+This is not a real operator, rather a sentinel value.  Monadic operator values greater than this
+have alternate representations, and signify some infelicities in the MSVC parser.  They are
+scheduled to be removed in future releases.
+
+\ifcSortSection{MsvcConfusedExpand}{MonadicOperator}
+Source-level pack expansion ``\code{...}'' operator.
+
+\ifcSortSection{MsvcConfusedDependentSizeof}{MonadicOperator}
+Source-level \code{sizeof} operator, used in an expression where the operand is dependent.
+
+
+\subsection{Dyadic operators}
+\label{sec:ifc:OperatorSort:Dyadic}
+
+A sort value \valueTag{OperatorSort::Dyadic} indicates a dyadic operator -- 
+an operator accepting two arguments.  The
+value of the \field{index} is to be interpreted as a value of type 
+\type{DyadicOperator}, which is a set of $13$-bit values enumerated as follows.
+%
+\begin{Enumeration}{DyadicOperator}
+	\enumerator{Unknown}
+	\enumerator{Plus}
+	\enumerator{Minus}
+	\enumerator{Mult}
+	\enumerator{Slash}
+	\enumerator{Modulo}
+	\enumerator{Remainder}
+	\enumerator{Bitand}
+	\enumerator{Bitor}
+	\enumerator{Bitxor}
+	\enumerator{Lshift}
+	\enumerator{Rshift}
+	\enumerator{Equal}
+	\enumerator{NotEqual}
+	\enumerator{Less}
+	\enumerator{LessEqual}
+	\enumerator{Greater}
+	\enumerator{GreaterEqual}
+	\enumerator{Compare}
+	\enumerator{LogicAnd}
+	\enumerator{LogicOr}
+	\enumerator{Assign}
+	\enumerator{PlusAssign}
+	\enumerator{MinusAssign}
+	\enumerator{MultAssign}
+	\enumerator{SlashAssign}
+	\enumerator{ModuloAssign}
+	\enumerator{BitandAssign}
+	\enumerator{BitorAssign}
+	\enumerator{BitxorAssign}
+	\enumerator{LshiftAssign}
+	\enumerator{RshiftAssign}
+	\enumerator{Comma}
+	\enumerator{Dot}
+	\enumerator{Arrow}
+	\enumerator{DotStar}
+	\enumerator{ArrowStar}
+	\enumerator{Curry}
+	\enumerator{Apply}
+	\enumerator{Index}
+	\enumerator{DefaultAt}
+	\enumerator{New}
+	\enumerator{NewArray}
+	\enumerator{Destruct}
+	\enumerator{DestructAt}
+	\enumerator{Cleanup}
+	\enumerator{Qualification}
+	\enumerator{Promote}
+	\enumerator{Demote}
+	\enumerator{Coerce}
+	\enumerator{Rewrite}
+	\enumerator{Bless}
+	\enumerator{Cast}
+	\enumerator{ExplicitConversion}
+	\enumerator{ReinterpretCast}
+	\enumerator{StaticCast}
+	\enumerator{ConstCast}
+	\enumerator{DynamicCast}
+	\enumerator{Narrow}
+	\enumerator{Widen}
+	\enumerator{Pretend}
+	\enumerator{Closure}
+	\enumerator{ZeroInitialize}
+	\enumerator{ClearStorage}
+
+	\setcounter{enumi}{1023}
+	\enumerator{Msvc}
+	\enumerator{MsvcTryCast}
+	\enumerator{MsvcCurry}
+	\enumerator{MsvcVirtualCurry}
+	\enumerator{MsvcAlign}
+	\enumerator{MsvcBitSpan}
+	\enumerator{MsvcBitfieldAccess}
+	\enumerator{MsvcObscureBitfieldAccess}
+	\enumerator{MsvcInitialize}
+	\enumerator{MsvcBuiltinOffsetOf}
+	\enumerator{MsvcIsBaseOf}
+	\enumerator{MsvcIsConvertibleTo}
+	\enumerator{MsvcIsTriviallyAssignable}
+	\enumerator{MsvcIsNothrowAssignable}
+	\enumerator{MsvcIsAssignable}
+	\enumerator{MsvcIsAssignableNocheck}
+	\enumerator{MsvcBuiltinBitCast}
+	\enumerator{MsvcBuiltinIsLayoutCompatible}
+	\enumerator{MsvcBuiltinIsPointerInterconvertibleBaseOf}
+	\enumerator{MsvcBuiltinIsPointerInterconvertibleWithClass}
+	\enumerator{MsvcBuiltinIsCorrespondingMember}
+	\enumerator{MsvcIntrinsic}
+\end{Enumeration}
+
+\ifcSortSection{Unknown}{DyadicOperator} 
+An invalid dyadic operator.  This value should never be generated.
+
+\ifcSortSection{Plus}{DyadicOperator}
+Source level binary operator ``\code{+}''.
+
+\ifcSortSection{Minus}{DyadicOperator}
+Source level binary operator ``\code{-}''.
+
+\ifcSortSection{Mult}{DyadicOperator}
+Source level binary operator ``\code{*}''.
+
+\ifcSortSection{Slash}{DyadicOperator}
+Source level binary operator ``\code{/}''.
+
+\ifcSortSection{Modulo}{DyadicOperator}
+Source level binary operator ``\code{\%}''.
+
+\ifcSortSection{Remainder}{DyadicOperator}
+
+\ifcSortSection{Bitand}{DyadicOperator}
+Source level binary operator ``\code{\&}''.
+
+\ifcSortSection{Bitor}{DyadicOperator}
+Source level binary operator ``\code{|}''.
+
+\ifcSortSection{Bitxor}{DyadicOperator}
+Source level binary operator ``\code{\^}''.
+
+\ifcSortSection{Lshift}{DyadicOperator}
+Source level binary operator ``\code{<<}''.
+
+\ifcSortSection{Rshift}{DyadicOperator}
+Source level binary operator ``\code{>>}''.
+
+\ifcSortSection{Equal}{DyadicOperator}
+Source level binary operator ``\code{==}''.
+
+\ifcSortSection{NotEqual}{DyadicOperator}
+Source level binary operator ``\code{!=}''.
+
+\ifcSortSection{Less}{DyadicOperator}
+Source level binary operator ``\code{<}''.
+
+\ifcSortSection{LessEqual}{DyadicOperator}
+Source level binary operator ``\code{<=}''.
+
+\ifcSortSection{Greater}{DyadicOperator}
+Source level binary operator ``\code{>}''.
+
+\ifcSortSection{GreaterEqual}{DyadicOperator}
+Source level binary operator ``\code{>=}''.
+
+\ifcSortSection{Compare}{DyadicOperator}
+Source level binary operator ``\code{<=>}''.
+
+\ifcSortSection{LogicAnd}{DyadicOperator}
+Source level binary operator ``\code{\&\&}''.
+
+
+\ifcSortSection{LogicOr}{DyadicOperator}
+Source level binary operator ``\code{||}''.
+
+\ifcSortSection{Assign}{DyadicOperator}
+Source level binary operator ``\code{=}''.
+
+\ifcSortSection{PlusAssign}{DyadicOperator}
+Source level binary operator ``\code{+=}''.
+
+\ifcSortSection{MinusAssign}{DyadicOperator}
+Source level binary operator ``\code{-=}''.
+
+\ifcSortSection{MultAssign}{DyadicOperator}
+Source level binary operator ``\code{*=}''.
+
+\ifcSortSection{SlashAssign}{DyadicOperator}
+Source level binary operator ``\code{/=}''.
+
+\ifcSortSection{ModuloAssign}{DyadicOperator}
+Source level binary operator ``\code{\%=}''.
+
+\ifcSortSection{BitandAssign}{DyadicOperator}
+Source level binary operator ``\code{\&=}''.
+
+\ifcSortSection{BitorAssign}{DyadicOperator}
+Source level binary operator ``\code{|=}''.
+
+\ifcSortSection{BitxorAssign}{DyadicOperator}
+Source level binary operator ``\code{\^=}''.
+
+\ifcSortSection{LshiftAssign}{DyadicOperator}
+Source level binary operator ``\code{<<=}''.
+
+\ifcSortSection{RshiftAssign}{DyadicOperator}
+Source level binary operator ``\code{>>=}''.
+
+\ifcSortSection{Comma}{DyadicOperator}
+Source level binary operator ``\code{,}''.
+
+\ifcSortSection{Dot}{DyadicOperator}
+Source level binary operator ``\code{.}''.
+
+\ifcSortSection{Arrow}{DyadicOperator}
+Source level binary operator ``\code{->}''.
+
+\ifcSortSection{DotStar}{DyadicOperator}
+Source level binary operator ``\code{.*}''.
+
+\ifcSortSection{ArrowStar}{DyadicOperator}
+Source level binary operator ``\code{->*}''
+
+\ifcSortSection{Curry}{DyadicOperator}
+\ifcSortSection{Apply}{DyadicOperator}
+\ifcSortSection{Index}{DyadicOperator}
+\ifcSortSection{DefaultAt}{DyadicOperator}
+\ifcSortSection{New}{DyadicOperator}
+\ifcSortSection{NewArray}{DyadicOperator}
+\ifcSortSection{Destruct}{DyadicOperator}
+\ifcSortSection{DestructAt}{DyadicOperator}
+\ifcSortSection{Cleanup}{DyadicOperator}
+\ifcSortSection{Qualification}{DyadicOperator}
+\ifcSortSection{Promote}{DyadicOperator}
+\ifcSortSection{Demote}{DyadicOperator}
+\ifcSortSection{Coerce}{DyadicOperator}
+\ifcSortSection{Rewrite}{DyadicOperator}
+\ifcSortSection{Bless}{DyadicOperator}
+\ifcSortSection{Cast}{DyadicOperator}
+
+A C-style cast operation.
+
+\ifcSortSection{ExplicitConversion}{DyadicOperator}
+
+A functional cast notation.
+
+\ifcSortSection{ReinterpretCast}{DyadicOperator}
+Source level operator ``\code{reinterpret\_cast}''.
+
+\ifcSortSection{StaticCast}{DyadicOperator}
+Source level operator ``\code{static\_cast}''.
+
+\ifcSortSection{ConstCast}{DyadicOperator}
+Source level operator ``\code{const\_cast}''.
+
+\ifcSortSection{DynamicCast}{DyadicOperator}
+Source level operator ``\code{dynamic\_cast}''.
+
+\ifcSortSection{Narrow}{DyadicOperator}
+\ifcSortSection{Widen}{DyadicOperator}
+\ifcSortSection{Pretend}{DyadicOperator}
+\ifcSortSection{Closure}{DyadicOperator}
+\ifcSortSection{ZeroInitialize}{DyadicOperator}
+\ifcSortSection{ClearStorage}{DyadicOperator}
+
+\ifcSortSection{Msvc}{DyadicOperator}
+This is a marker, not an actual operator. Dyadic operators with 
+value greater that this are MSVC extensions.
+
+\ifcSortSection{MsvcTryCast}{DyadicOperator}
+\ifcSortSection{MsvcCurry}{DyadicOperator}
+\ifcSortSection{MsvcVirtualCurry}{DyadicOperator}
+\ifcSortSection{MsvcAlign}{DyadicOperator}
+\ifcSortSection{MsvcBitSpan}{DyadicOperator}
+\ifcSortSection{MsvcBitfieldAccess}{DyadicOperator}
+\ifcSortSection{MsvcObscureBitfieldAccess}{DyadicOperator}
+\ifcSortSection{MsvcInitialize}{DyadicOperator}
+\ifcSortSection{MsvcBuiltinOffsetOf}{DyadicOperator}
+\ifcSortSection{MsvcIsBaseOf}{DyadicOperator}
+\ifcSortSection{MsvcIsConvertibleTo}{DyadicOperator}
+\ifcSortSection{MsvcIsTriviallyAssignable}{DyadicOperator}
+\ifcSortSection{MsvcIsNothrowAssignable}{DyadicOperator}
+\ifcSortSection{MsvcIsAssignable}{DyadicOperator}
+\ifcSortSection{MsvcIsAssignableNocheck}{DyadicOperator}
+
+\ifcSortSection{MsvcBuiltinBitCast}{DyadicOperator}
+Source level ``\code{\_\_builtin\_bit\_cast}'' operator (\sortref{MsvcBuiltinBitCast}{SourceKeyword}).
+
+\ifcSortSection{MsvcBuiltinIsLayoutCompatible}{DyadicOperator}
+\ifcSortSection{MsvcBuiltinIsPointerInterconvertibleBaseOf}{DyadicOperator}
+\ifcSortSection{MsvcBuiltinIsPointerInterconvertibleWithClass}{DyadicOperator}
+\ifcSortSection{MsvcBuiltinIsCorrespondingMember}{DyadicOperator}
+\ifcSortSection{MsvcIntrinsic}{DyadicOperator}
+
+
+\subsection{Triadic operators}
+\label{sec:ifc:OperatorSort:Triadic}
+
+A sort value \valueTag{OperatorSort::Triadic} indicates a triadic operator -- 
+an operator accepting three arguments.  The
+value of the \field{index} is to be interpreted as a value of type 
+\type{TriadicOperator}, which is a set of $13$-bit values enumerated as follows.
+%
+\begin{Enumeration}{TriadicOperator}
+	\enumerator{Unknown}
+	\enumerator{Choice}
+	\enumerator{ConstructAt}
+	\enumerator{Initialize}
+
+	\setcounter{enumi}{1023}
+	\enumerator{Msvc}
+\end{Enumeration}
+
+\ifcSortSection{Unknown}{TriadicOperator}
+An invalid triadic operator.  This value should never be generated.
+
+\ifcSortSection{Choice}{TriadicOperator}
+Source-level ternary ``\code{?:}'' operator.
+
+\ifcSortSection{ConstructAt}{TriadicOperator}
+Source-level representation of ``\code{new(p) T(x)}'', where
+\begin{itemize}
+	\item the first operand is the placement \code{p}
+	\item the second operand is the contructed type \code{T}
+	\item the third operand is the initializing value \code{x}
+\end{itemize}
+
+\ifcSortSection{Initialize}{TriadicOperator}
+
+C++ abstract machine operation.
+
+\ifcSortSection{Msvc}{TriadicOperator}
+This is a marker, not an actual operator. Triadic operators with 
+value greater that this are MSVC extensions.
+
+
+\subsection{Storage operators}
+\label{sec:ifc:OperatorSort:Storage}
+
+A sort value \valueTag{OperatorSort::Storage} indicates a storage 
+allocation or deallocattion operator.  The
+value of the \field{index} is to be interpreted as a value of type 
+\type{StorageOperator}, which is a set of $13$-bit values enumerated as follows.
+%
+\begin{Enumeration}{StorageOperator}
+	\enumerator{Unknown}
+	\enumerator{AllocateSingle}
+	\enumerator{AllocateArray}
+	\enumerator{DeallocateSingle}
+	\enumerator{DeallocateArray}
+
+	\setcounter{enumi}{2013}
+	\enumerator{Msvc}
+\end{Enumeration}
+
+\ifcSortSection{Unknown}{StorageOperator}
+An invalid triadic operator.  This value should never be generated.
+
+\ifcSortSection{AllocateSingle}{StorageOperator}
+Source-level ``\code{new}'' operator.
+
+\ifcSortSection{AllocateArray}{StorageOperator}
+Source-level ``\code{new[]}'' operator.
+
+\ifcSortSection{DeallocateSingle}{StorageOperator}
+Source-level ``\code{delete}'' operator.
+
+\ifcSortSection{DeallocateArray}{StorageOperator}
+Source-level ``\code{delete[]}'' operator.
+
+\ifcSortSection{Msvc}{StorageOperator}
+This is a marker, not an actual operator. Triadic operators with 
+value greater that this are MSVC extensions.
+
+\subsection{Variadic operators}
+\label{sec:ifc:OperatorSort:Variadic}
+
+A sort value \valueTag{OperatorSort::Variadic} indicates a variadic operator -- 
+an operator accepting any number of arguments.  The
+value of the \field{index} is to be interpreted as a value of type 
+\type{VariadicOperator}, which is a set of $13$-bit values enumerated as follows.
+%
+\begin{Enumeration}{VariadicOperator}
+	\enumerator{Unknown}
+	\enumerator{Collection}
+	\enumerator{Sequence}
+
+	\setcounter{enumi}{1023}
+	\enumerator{Msvc}
+	\enumerator{MsvcHasTrivialConstructor}
+	\enumerator{MsvcIsConstructible}
+	\enumerator{MsvcIsNothrowConstructible}
+	\enumerator{MsvcIsTriviallyConstructible}
+\end{Enumeration}
+
+
+\ifcSortSection{Unknown}{VariadicOperator}
+An invalid triadic operator.  This value should never be generated.
+
+\ifcSortSection{Collection}{VariadicOperator}
+
+C++ abstract machine.  Collection of expressions, with no specific order of evaluation. 
+
+\ifcSortSection{Sequence}{VariadicOperator}
+
+C++ abstract machine.  Like \valueTag{VariadicOperator::Collection} 
+(\sortref{Collection}{VariadicOperator}) but with a defined left-to-right 
+order of evaluation.
+
+\ifcSortSection{Msvc}{VariadicOperator}
+This is a marker, not an actual operator. Triadic operators with 
+value greater that this are MSVC extensions.
+
+\ifcSortSection{MsvcHasTrivialConstructor}{VariadicOperator}
+Source-level ``\code{__has_trivial_constructor}'' operator (\sortref{MsvcHasTrivialConstructor}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsConstructible}{VariadicOperator}
+Source-level ``\code{__is_contructible}'' operator (\sortref{MsvcIsConstructible}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsNothrowConstructible}{VariadicOperator}
+Source-level ``\code{__is_nothrow_contructible}'' operator (\sortref{MsvcIsNothrowConstructible}{SourceKeyword}).
+
+\ifcSortSection{MsvcIsTriviallyConstructible}{VariadicOperator}
+Source-level ``\code{__is_trivially_constructible}'' operator 
+(\sortref{MsvcIsTriviallyConstructible}{SourceKeyword}).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,222 @@
+%% By Gabriel Dos Reis.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ifc-format}[2017/05/20]
+
+%% For anything math-y
+\RequirePackage{euler}
+
+%% Everything is based on TikZ.
+\RequirePackage{tikz}
+%\usetikzlibrary{node-families}
+
+%% Bring in support for C-like object layout.
+\RequirePackage{object-layout}
+
+%%  This is the package we would like to best.
+\RequirePackage{bytefield}
+
+%% For displaying enumerations in two columns
+\RequirePackage{multicol}
+
+\RequirePackage{calc}
+
+%% Input this old package for hexadecimal display.  
+%% Odd it is not properly packaged as a LaTeX package file.
+\input{binhex.tex}
+
+%% For formatting code
+\RequirePackage{listings}
+
+%% Typesetting meta variables
+\newcommand{\var}[1]{\ensuremath{\mathtt{#1}}}
+
+\newcommand{\clipValue}[2]{{#1}${}_{[#2]}$}
+\newcommand{\clipType}[2]{\clipValue{\type{#1}}{#2}}
+\newcommand{\field}[1]{\textit{#1}}
+\newcommand{\type}[1]{\textsl{#1}}
+
+\newcommand{\hexvalue}[1]{\textsf{0x\nhex{2}{#1}}}
+
+%% Typeset the bit number
+\newcommand{\bitText}[1]{\tiny{#1}}
+
+%% The x-position of the ending wall of the current bit.
+\newlength{\ifc@bitfield@endx}
+
+\newcounter{ifc@bit}
+\newcounter{ifc@prevBit}
+\def\ifc@lastbit{0}
+
+\newcommand{\bitSeparate}[1]{%
+	\draw[thin,xshift=(#1)*\bitWidth](0,0) -- (0,\bitHeight);
+}
+
+\newcommand{\bitWall}{
+	\draw[thin,xshift=\ifc@bitfield@endx] (0, 0)
+		 node[below right] {\bitText{\arabic{ifc@bit}}}
+		  -- (0,\bitHeight);
+	\setcounter{ifc@prevBit}{\value{ifc@bit} - 1}
+	\node at (0, 0) [below left,xshift=\ifc@bitfield@endx] {\bitText{\arabic{ifc@prevBit}}};
+	\node at (0, 0) [below right,xshift=\ifc@bitfield@endx] {\bitText{\arabic{ifc@bit}}};
+}
+
+\newcommand{\bitfield}[2]{%
+	\node (n) [anchor=base west, xshift=\ifc@bitfield@endx, minimum width= #1 * \bitWidth] at (0, \bitHeight/2) {#2};
+	\pgfpointanchor{n}{east}
+	\pgfmathsetmacro{\ifc@bitfield@endx}{\pgf@x}
+	\addtocounter{ifc@bit}{#1}
+}
+
+%% Bit width -- don't expect more than two digits in a numbering.
+\newlength\bitWidth
+\setlength{\bitWidth}{\widthof{\bitText{99}}}
+
+%% Format some text (a letter) below a designated bit slot.
+\newcommand{\bitFormatTextAt}[2]{%
+	\node[below right] at (#2 * \bitWidth, 0) {\bitText{#1}};
+}
+
+%% Format a bit number right below the corresponding bit slot.
+\newcommand{\bitFormat}[1]{%
+	\bitFormatTextAt{#1}{#1}
+}
+
+%% Environement for defining C++ enumarations
+\newenvironment{Enumeration}[1]%
+	{%
+		\newcommand{\enumerator}[1]{\item \hyperref[sec:ifc:#1:##1]{\valueTag{##1}}}
+		\small
+		\begin{multicols}{2}
+			\renewcommand{\theenumi}{\protect\ensuremath{\hexvalue{\value{enumi}}}}
+		\begin{enumerate} \setcounter{enumi}{-1}
+	}%
+	{\end{enumerate}\end{multicols}}
+
+\newenvironment{SortEnum}[1]
+	{%
+		\noindent The type \type{#1} is a set of \bitlength{#1}-bit values enumerated as follows
+		\begin{Enumeration}{#1}
+	}%
+	{\end{Enumeration}}
+
+
+\newcommand{\ifcSortSection}[2]{%
+	\subsubsection{\valueTag{#2::#1}}
+	\label{sec:ifc:#2:#1}
+}
+
+\newcommand{\ifcdoc}[2]{%
+	\paragraph{\valueTag{#2::#1}}
+	\label{sec:ifc:#2:#1}
+}
+
+%% Environment to help define structures
+\newenvironment{Structure}
+	{%
+		\begin{figure}[H]
+			\centering
+	}%
+	{\end{figure}}
+
+% Reference to a labeled section describing a sort.
+\newcommand{\sortref}[2]{\secref{sec:ifc:#2:#1}}
+
+\def\bitHeight{2em}
+
+\newenvironment{BasicAbstractReferenceLayout}[1]%
+	{%
+		\begin{tikzpicture}
+			\edef\lastBit{\number\numexpr#1-1}
+			\setcounter{ifc@bit}{0}
+			\setlength{\ifc@bitfield@endx}{0pt}
+			\draw[very thick](0,0) rectangle (#1 * \bitWidth, \bitHeight);
+			\bitFormat{0}
+			\bitFormat{\lastBit}
+	}%
+	{\end{tikzpicture}}
+
+\newcommand{\absref}[3][32]{%
+	\expandafter\gdef\csname ifc:bits@#3\endcsname{#2}
+	\begin{BasicAbstractReferenceLayout}{#1}
+		%\addtocounter{ifc@bit}{\number\numexpr#2-1\relax}
+		\edef\ifc@lastbit{\number\numexpr\ifc@lastbit+#2-1\relax}
+		\def\ifc@compl{\number\numexpr#1-#2\relax}
+		\def\ifc@typedTag{\field{tag}: \clipType{#3}{#2}}
+		\bitfield{#2}{\ifc@typedTag}
+		\bitWall{}
+		\bitfield{\ifc@compl}{\field{index}: \clipType{Index}{\ifc@compl}}
+	\end{BasicAbstractReferenceLayout}
+}
+
+\newcommand{\bitlength}[1]{\csname ifc:bits@#1\endcsname}
+
+%% Define the byte-size of a type, not counting alignment.
+\newcommand{\defineBytesize}[2]{ 		%
+	\newcounter{bytes@#1}				%
+	\setcounter{bytes@#1}{#2}			%
+}
+
+%% Define the bits-size and the byte-size of type, not counting alignment.
+\newcounter{ifc@bytes}											% temporary register, used in \defineBitsize
+\newcounter{ifc@rem}											% temporary register, used in \defineBitsize
+\newcommand{\defineBitsize}[2]{                  				%
+	\newcounter{bits@#1}										%
+	\setcounter{bits@#1}{#2}									%
+	\setcounter{ifc@bytes}{#2 / 8}								%
+	\setcounter{ifc@rem}{#2 - \value{ifc@bytes} * 8}			%
+	\ifnum\value{ifc@rem}=0\else\stepcounter{ifc@bytes}\fi		%
+	\defineBytesize{#1}{\value{ifc@bytes}}						%
+}
+
+%% The number of bits needed by the value representation of a type.
+\newcommand{\bitsize}[1]{\value{bits@#1}}
+
+%% Code formatting options
+\newcommand{\code}[1]{\lstinline!#1!}
+\renewcommand{\ttdefault}{txtt}
+\lstset{
+  language=C++,
+  showstringspaces=false,
+  basicstyle=\ttfamily,
+  columns=flexible,
+  keywordstyle={}
+}
+
+
+%% The number of bytes needed by the value representation of a type.
+\newcommand{\bytesize}[1]{\value{bytes@#1}}
+
+%% Declare a new type that is a typefull view over an existing one.
+\newcommand{\newtype}[2]{ 								%
+	\defineBitsize{#1}{#2}								%
+	\begin{figure}[H]									%
+		\centering 										%
+		\lstinline! enum class #1 : uint#2_t \{ \};! 	%
+		\caption{Definition of type \type{#1}}			%
+		\label{fig:ifc-#1-def}							%
+	\end{figure}										%
+}
+
+%% Declare a data member of a structure.
+\newcommand{\DeclareMember}[2]{%
+	{\field{#1}: \type{#2}}
+}
+
+%% Entity structures
+\newcommand{\structure}[2][]{%
+	\begin{tikzpicture}
+	\matrix [matrix of nodes,
+			row sep=-\pgflinewidth,
+			inner sep=0pt,
+			nodes={rectangle, draw, inner sep=0.333em, anchor=west, text width=15em,#1}]
+	(M) {
+			 #2
+	};
+	% Draw a boundingbox around the while thing.
+	\draw [very thick] (M.north west) -- (M.north east) -- (M.south east) -- (M.south west) -- (M.north west);
+	\end{tikzpicture}
+}
+
+
+\endinput
