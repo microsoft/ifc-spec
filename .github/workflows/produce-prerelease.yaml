@@ -1,0 +1,27 @@
+
+name: Create prerelease PDF
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  build_draft_pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Compile document
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: ifc.tex
+          working_directory: ltx
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.8.10
+        with:
+          allowUpdates: true
+          name: prerelease
+          tag: prerelease
+          artifacts: ltx/ifc.pdf
+          removeArtifacts: true
