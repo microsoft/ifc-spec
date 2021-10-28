@@ -12,6 +12,12 @@ This format is designed to offer a persistent form of the in-memory [Internal Pr
    - **Compiler neutrality**: Not tied to a particular compiler
    - **Scalability**: Able to represent hundreds of thousands of lines of codes on common machines
 
+## Downloading
+
+The latest prerelease IFC specification can be [downloaded here](https://github.com/Microsoft/ifc-spec/releases/download/prerelease/ifc.pdf).
+
+Official releases can be found on the [releases page](https://github.com/Microsoft/ifc-spec/releases).
+
 
 ## Contribute
 
