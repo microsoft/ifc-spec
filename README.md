@@ -14,7 +14,7 @@ This format is designed to offer a persistent form of the in-memory [Internal Pr
 
 ## Downloading
 
-The latest prerelease IFC specification can be [downloaded here](https://github.com/Microsoft/ifc-spec/releases/download/prerelease/ifc.pdf).
+The latest IFC draft specification can be [downloaded here](https://github.com/Microsoft/ifc-spec/releases/download/prerelease/ifc.pdf).
 
 Official releases can be found on the [releases page](https://github.com/Microsoft/ifc-spec/releases).
 
