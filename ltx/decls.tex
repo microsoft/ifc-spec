@@ -164,7 +164,7 @@ The MSVC-specific traits are defined by the following enumeration
 
 \subsection{Parameter Level}
 
-A template declaration can have many nesting levesl.  This is the case of member templates of class templates; that is a member of a clsss template, that is itself a template.
+A template declaration can have many nesting levels.  This is the case of member templates of class templates; that is a member of a class template, that is itself a template.
 Parameter nesting level starts from 1.  The nesting level is given by a value of type \type{ParameterLevel} defined as
 \newtype{ParameterLevel}{32}
 
@@ -523,7 +523,7 @@ The \field{type} field designates the kind of enumeration, with:
    \item \code{TypeBasis::Enum} meaning a classic enumeration
    \item \code{TypeBasis::Class} or \code{TypeBasis::Struct} meaning a scoped enumeration
 \end{itemize}
-The \field{base} field designates the underlying type of the enumeraion.
+The \field{base} field designates the underlying type of the enumeration.
 The \field{initializer} is a slice (\secref{sec:ifc-sequence}) of the enumerator partition (\secref{sec:ifc:DeclSort:Enumerator}). 
  It designates the sequence of enumerators (if any) declared as part
 of the enumeration declaration.
@@ -569,7 +569,7 @@ Each entry in that partition is a structure with the following components:
 \end{itemize}
 
 This structure is also used to represent template aliases -- mistakenly called alias templates in the ISO C++ document.  For template aliases,
-the \field{aliasee} field denotes a \valueTag{TypeSort::Forall} type (\sortref{Forall}{TypeSort}), which is the represenation of the \grammar{template-parameter} list followed by the \grammar{type-id} 
+the \field{aliasee} field denotes a \valueTag{TypeSort::Forall} type (\sortref{Forall}{TypeSort}), which is the representation of the \grammar{template-parameter} list followed by the \grammar{type-id} 
 that would syntactically appear on the right hand side of the source-level \grammar{using-declaration}.
 
 
@@ -617,7 +617,7 @@ The structure \type{ParameterizedEntity} has the following layout
 \end{figure}
 %
 The \field{decl} field denotes the declaration that is being 
-parameterized either directly or indirectly by a set of template parameeter lists.
+parameterized either directly or indirectly by a set of template parameter lists.
 The \field{head} field designates the sentence (\secref{sec:ifc-sentence}) that makes up the
 non-defining declarative part of the current instantiation.
 That sentence is no longer meaningful in recent releases of MSVC since
@@ -641,6 +641,7 @@ A template declaration: class, function, constructor, type alias, variable.
 		\DeclareMember{home\_scope}{DeclIndex} \\
 		\DeclareMember{chart}{ChartIndex} \\
 		\DeclareMember{entity}{ParameterizedEntity} \\
+		\DeclareMember{type}{TypeIndex} \\
 		\DeclareMember{specifiers}{BasicSpecifiers} \\
 		\DeclareMember{access}{Access} \\
 		\DeclareMember{properties}{ReachableProperties} \\
@@ -654,6 +655,7 @@ The \field{locus} field denotes the source location of this declaration.
 The \field{home\_scope} field designate the home scope of this template.
 The \field{chart} field denotes the set of parameter list to this template.
 The \field{entity} field describes the declaration being parameterized by this template.  Its structure is defined below.
+The \field{type} field denotes the type of this template declaration.
 The \field{specifiers} field denotes declaration specifiers for this template.
 The \field{access} field denotes the access level of this declaration.
 The \field{properties} field designates the set of reachable semantic properties.
@@ -689,7 +691,7 @@ The \field{locus} field denotes the source location.
 The \field{home\_scope} field denotes the parent declaration of this partial specialization.
 The \field{chart} field denotes the set of template-parameter lists of this partial specialization.
 The \field{entity} field describes the current instantiation of this partial specialization.
-The \field{form} field is an index into the partition of specialization form (template and template-argument list) named "form.spec".
+The \field{form} field is an index into the partition of specialization form (template and template-argument list) named \code{"form.spec"}.
 The \field{specifiers} field denotes the declaration specifiers of this partial specialization.
 The \field{access} field denotes the access level of this partial specialization.
 The \field{properties} field denotes the set of reachable semantic properties.
@@ -771,9 +773,9 @@ and meaning of the fields:
 \begin{itemize}
 	\item \field{name} designates the name of the concept
 	\item \field{locus} designates the source location of the concept definition
-	\item \field{home\_scope} desinates the declaration of the enclosing scope
+	\item \field{home\_scope} designates the declaration of the enclosing scope
 	\item \field{type} designates the full type of the concept definition
-	\item \field{chart} is the paramater list list to the concept
+	\item \field{chart} is the parameter list list to the concept
 	\item \field{constraint} is the body of predicate defining the concept
 	\item \field{specifiers} is the set of basic declaration specifiers
 	\item \field{access} is the access specifier for the concept definition
@@ -899,7 +901,7 @@ The \field{name} field designates the name of the non-static member function.
 The \field{locus} field designates the source location of this declaration.
 The \field{type} field designates the type of this non-static member function.  Note that the type also includes the calling convention.
 The \field{home\_scope} designates the enclosing type declaration.
-The \field{chart} designates the function parameter list aling with their default arguments.
+The \field{chart} designates the function parameter list along with their default arguments.
 The \field{traits} indicates any additional function-specific traits (\secref{sec:ifc-function-traits}).
 The \field{access} designates the access specifier for this function.
 
@@ -936,7 +938,7 @@ The meaning of the fields is as follows:
 	\item \field{locus} denotes the source location of the constructor.
 	\item \field{type} denotes the type of this constructor, a type described in \sortref{Tor}{TypeSort}.
 	\item \field{home\_scope} denotes the declaration of the enclosing type.
-	\item \field{chart} denotes the function parameter list along with thir default argument expressions.
+	\item \field{chart} denotes the function parameter list along with their default argument expressions.
 	\item \field{traits} designates function-specific traits (\secref{sec:ifc-function-traits}).
 	\item \field{specifiers} designate the usual basic declaration specifiers.
 	\item \field{access} designates the access specifier of the constructor.
@@ -988,7 +990,7 @@ with the following meaning
 \label{sec:ifc:DeclSort:InheritedConstructor}
 
 A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::InheritedConstructor}
-designates an inheritated constructor.  The \field{index} of that abstract reference
+designates an inherited constructor.  The \field{index} of that abstract reference
 is an index into the inherited constructor partition.  Each entry in that partition
 is a structure with the following layout
 %
@@ -1013,7 +1015,7 @@ The meaning of the fields is as follows
 	\item \field{locus} denotes the source location of this declaration.
 	\item \field{type} denotes the type of this constructor, a type described in \sortref{Tor}{TypeSort}.
 	\item \field{home\_scope} denotes the declaration of the enclosing type.
-	\item \field{chart} denotes the function parameter list along with thir default argument expressions.
+	\item \field{chart} denotes the function parameter list along with their default argument expressions.
 	\item \field{traits} designates function-specific traits (\secref{sec:ifc-function-traits}).
 	\item \field{specifiers} designate the usual basic declaration specifiers.
 	\item \field{access} designates the access specifier of the constructor.
@@ -1255,7 +1257,7 @@ in that partition is a structure with the following layout
 \label{sec:ifc:DeclSort:Tuple}
 
 A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Tuple} designates a sequence
-of declarations referenced in other source-level contructs, e.g. a set of bindings during 
+of declarations referenced in other source-level constructs, e.g. a set of bindings during 
 parsing of templated declarations.  The \field{index} field is an index into the
 tuple declaration partition.  Each entry in that partition is a structure with the following
 layout
@@ -1324,7 +1326,7 @@ Each entry in that partition is a structure with the following components:
 \label{sec:ifc:DeclSort:Property}
 
 A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Property}
-designates MSVC's extenion of ``property declaration.''  The \field{index}
+designates MSVC's extension of ``property declaration.''  The \field{index}
 field is an index into the property declaration partition.  Each entry in that partition
 is a structure with the following layout
 %
@@ -1367,7 +1369,7 @@ with the property.
 		\DeclareMember{traits}{SegmentTraits} \\
 		\DeclareMember{type}{SegmentType} \\
 	}
-	\caption{Sturucture of a code segment declaration}
+	\caption{Structure of a code segment declaration}
 	\label{fig:ifc-code-segment-structure}
  \end{figure}
  %
