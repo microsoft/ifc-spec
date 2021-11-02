@@ -96,8 +96,10 @@ The fundamental types are made out a small set of type basis defined as:
 		Function,
 		Empty,
 		VariableTemplate,
+		Concept,
 		Auto,
 		DecltypeAuto,
+		Overload
 	};
 \end{typedef}
 %
@@ -112,7 +114,7 @@ with the following meaning:
   \item \code{TypeBasis::Double}: fundamental type \code{double}
   \item \code{TypeBasis::Nullptr}: fundamental type \code{decltype(nullptr)}
   \item \code{TypeBasis::Ellipsis}: fundamental type denoted by \code{...}
-  \item \code{TypeBasis::SegmentType}
+  \item \code{TypeBasis::SegmentType}.  Note: this basis member is subject to removal in future revision.
   \item \code{TypeBasis::Class}: fundamental type \code{class}
   \item \code{TypeBasis::Struct}: fundamental type \code{struct}
   \item \code{TypeBasis::Union}: fundamental type \code{union}
@@ -120,11 +122,13 @@ with the following meaning:
   \item \code{TypeBasis::Typename}: fundamental concept \code{typename}
   \item \code{TypeBasis::Namespace}: fundamental type \code{namespace}
   \item \code{TypeBasis::Interface}: fundamental type \code{\_\_interface}
-  \item \code{TypeBasis::Function}: fundamental concept of function
+  \item \code{TypeBasis::Function}: fundamental concept of function.  Note: this basis member is object to removal in future revision.
   \item \code{TypeBasis::Empty}: fundamental type resulting from an empty pack expansion
-  \item \code{TypeBasis::VariableTemplate}: concept of variable template
+  \item \code{TypeBasis::VariableTemplate}: concept of variable template.  Note: this basis member is subject to removal in future revision.
+  \item \code{TypeBasis::Concept}: fundamental type of a \code{concept} expression.
   \item \code{TypeBasis::Auto}: type placeholder \code{auto}
   \item \code{TypeBasis::DecltypeAuto} type placeholder \code{decltype(auto)}
+  \item \code{TypeBasis::Overload}:  fundamental type for an overload set.
 \end{itemize}
 
 \note{The current set of type basis is subject to change.}
