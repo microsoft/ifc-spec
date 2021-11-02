@@ -587,7 +587,7 @@ The \field{array\_or\_function} field, if non null, denotes an array (\sortref{A
 The \field{trailing\_target}, if non null, denotes a trailing return type (\sortref{TrailingReturnType}{SyntaxSort}) in the declarator.
 The \field{virtual\_specifiers}, if non null, denotes the \grammar{virt-specifier-seq} grammatical element (\sortref{VirtualSpecifierSeq}{SyntaxSort}) in the source level construct.
 The \field{name} field, if non null, denotes the name (\grammar{id-expression}) introduced by the declarator.
-The \field{ellipsis} field, if non null, indicates that the expansion operatror \code{...} was used to introduce the \grammar{declarator-id}.
+The \field{ellipsis} field, if non null, indicates that the expansion operator \code{...} was used to introduce the \grammar{declarator-id}.
 The \field{locus} field denotes the source location of the declarator.
 The \field{qualifiers} field denotes the \grammar{cv-qualifier-seq} of the declarator.
 The \field{convention} field denotes the calling convention specifier in the declarator (if this is a function declarator).
@@ -598,8 +598,13 @@ The \field{callable} field indicates that the declarator introduces a callable c
 
 
 \subsection{\valueTag{SyntaxSort::PointerDeclarator}}
-\label{sec:ifc:SyntaxSort:PointerDeclarator}
+\label{sec:ifc:SyntaxSort:PointerDeclarator} 
 
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::PointerDeclarator} designates a source-level syntactic construct
+that captures the grammatical production of \grammar{ptr-declarator}.
+The \field{index} field of that abstract references is an index into the partition of pointer-declarator syntax trees.
+Each entry of that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
@@ -613,6 +618,17 @@ The \field{callable} field indicates that the declarator introduces a callable c
 	}
 	\label{fig:ifc:SyntaxSort:PointerDeclarator}
 \end{figure}
+%
+with the type \type{PointerDeclaratorSort} defining $8$-bit values as follows
+\begin{typedef}{PointerDeclaratorSort}{}
+	enum class PointerDeclaratorSort : uint8_t {
+		None,
+		Pointer,
+		LvalueReference,
+		RvalueReference,
+		PointerToMember,
+	};
+\end{typedef}
 
 \partition{syntax.pointer-declarator}
 
