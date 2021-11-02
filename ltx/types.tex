@@ -675,7 +675,7 @@ The \field{expr} field denotes the syntactic representation of the expression op
 
 \partition{type.decltype}
 
-\paragraph{Note:} The decltype representation will change in the future to change its operand representation to an expression three.
+\paragraph{Note:} The \code{decltype} representation will change in the future to change its operand representation to an expression tree.
 
 \subsection{\valueTag{TypeSort::Placeholder}}
 \label{sec:ifc:TypeSort:Placeholder}
@@ -690,16 +690,18 @@ Each entry in that partition is a structure with the following layout
 	\structure{
 		\DeclareMember{constraint}{ExprIndex} \\
 		\DeclareMember{basis}{TypeBasis} \\
+		\DeclareMember{elaboration}{TypeIndex} \\
 	}
 	\caption{Structure of a placeholder type}
 	\label{fig:ifc-placeholder-type-structure}
 \end{figure}
 %
-The \field{constraint} field designate the (generalized) predicate that the placeholder
-shall satisfy -- at the input source lvel.
+The \field{constraint} field designates the (generalized) predicate that the placeholder
+shall satisfy -- at the input source level.
 The \field{basis} field is a structure denoting the type basis
 (\secref{sec:ifc-fundamental-type-basis}) pattern expected for placeholder type,
 either \code{auto} or \code{decltype(auto)}.
+The \field{elaboration} field, if non null, designates the deduced type corresponding to the placeholder type.
 
 \partition{type.placeholder}
 
