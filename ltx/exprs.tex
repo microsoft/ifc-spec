@@ -158,9 +158,11 @@ The meaning of these tags is as follows:
 	\item \valueTag{LiteralSort::Immediate}: The \field{value} field of the abstract reference directly holds a 32-bit unsigned integer value.
 	\item \valueTag{LiteralSort::Integer}: The \field{value} field is an index into the \code{"const.i64"} partition.  The value at that entry is a 64-bit unsigned integer value.
 	\item \valueTag{LiteralSort::FloatingPoint}: The \field{value} field is an index into the \code{"const.f64"} partition. 
-	 The value at that entry is a 64-bit floating point value, in IEEE 754 little endian format.
+	Each entry in that partition is a $12$-byte structure: The first $8$ bytes represent 
+	a 64-bit floating point value, in IEEE 754 little endian format.  The remaining $4$ bytes have indeterminate values.
 \end{itemize}
 
+\note{This representation is subject to change in future releases.}
 
 \subsection{\valueTag{ExprSort::Lambda}}
 \label{sec:ifc:ExprSort:Lambda}
