@@ -632,28 +632,51 @@ A \type{TypeIndex} value with tag \valueTag{TypeSort::Base} represents an
 abstract reference to a use of a type as a base-class (in a class inheritance)
 at the C++ source-level.
 The \field{index} field is an index into the base type partition.
+Each entry in that partition is a structure with the following layout
 %
 \begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{type}{TypeIndex} \\
 		\DeclareMember{access}{Access} \\
-		\DeclareMember{shared}{bool} \\
-		\DeclareMember{pack\_expanded}{bool} \\
+		\DeclareMember{specifiers}{BaseTypeSpecifiers} \\
 	}
 	\caption{Structure of a base type}
 	\label{fig:ifc-base-type-structure}
 \end{figure}
 %
-The \field{type} field denotes the type base being used as base-class.
-The \field{access} field denotes the access specifier in the inheritance path.
-The \field{shared} field indicates whether the base class is virtual or not.
-The \field{pack\_expanded} field indicate where the base class is the result of pack expansion.
+
+The meanings of the fields are as follows:
+\begin{itemize} 
+	\item \field{type} denotes the type base being used as a base type.
+	\item \field{access} denotes the access specifier in the inheritance path.
+	\item \field{specifiers} indicates specifiers for the base type (\secref{sec:ifc-base-type-specifiers}).
+\end{itemize}
 
 \partition{type.base}
 
 \note{This representation is subject to change}
 
+\subsubsection{Base type specifiers}
+\label{sec:ifc-base-type-specifiers}
+
+Base type specifiers are bitmask values of type
+\begin{typedef}{BaseTypeSpecifiers}{}
+	enum class BaseTypeSpecifiers : uint8_t {
+		None		= 0,
+		Shared		= 0x01,
+		Expanded    = 0x02,
+	};
+\end{typedef}
+%
+with the following meaning:
+\begin{itemize}
+	\item \code{BaseTypeSpecifiers::None}: no base type specifiers.
+	\item \code{BaseTypeSpecifiers::Shared}: the base class is virtual.
+	\item \code{BaseTypeSpecifiers::Expanded}: the base class is a pack expansion.
+\end{itemize}
+
+\note{Since type expansions are type designators, a base type that is a pack expansion should be designated by \valueTag{TypeSort::Expansion} (\secref{sec:ifc:TypeSort:Expansion}), not a bitmask value.}
 
 \subsection{\valueTag{TypeSort::Decltype}}
 \label{sec:ifc:TypeSort:Decltype}
