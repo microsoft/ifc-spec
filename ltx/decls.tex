@@ -468,6 +468,7 @@ Properties specific to scope entities are described by values of the bitmask typ
 		Inline			= 1 << 1,
 		InitializerExported	= 1 << 2,
 		ClosureType	= 1 << 3,
+		Final = 1 << 4,
 		Vendor			= 1 << 7,
 	};
 \end{typedef}
@@ -476,14 +477,11 @@ with the following meaning:
 \begin{itemize}
   \item \code{ScopeTraits::None}: No scope traits.
   \item \code{ScopeTraits::Unnamed}: the scope is unnamed in the input source code.
-  \item \code{ScopeTraits::Inline}: valid only for namespace entties.  The namespace is declared "\code{inline}".
-   \item \code{ScopeTraits::InitializedExported}: valid only if the definition of this scope entity is lexically exported, in particular this indicates whether completeness of types is exported.
-	\item \code{ScopeTraits::Vendor}: valid only if the scope entity has vendor-defined traits.
-
-%  \item \code{ScopeTraits::NoVtable}: valid only for class-types.  The class declaration used \code{\_\_declspec(novtable)}.
-%  \item \code{ScopeTraits::CodeSegment}: valid only for class-types.  The class declaration used \code{\_\_declspec(code\_segment)}.
-%  \item \code{ScopeTraits::IntrinsicType}: valid only for class-types. The class declaration used \code{\_\_declspec(intrin_type)}.
-%  \item \code{ScopeTraits::EmptyBases}: valid only for class-types.  The class declaration used \code{\_\_declspec(empty\_bases)}.
+  \item \code{ScopeTraits::Inline}: valid only for namespaces.  The namespace is declared \code{inline}.
+  \item \code{ScopeTraits::InitializedExported}: valid only if the definition of this scope entity is lexically exported, in particular this indicates whether completeness of types is exported.
+  \item \code{ScopeTraits::ClosureType}: valid only for class types.  This trait indicates that the scope represents a closure type.
+  \item \code{ScopeTraits::Final}: valid only for class types. This trait indicates that the scope is defined \code{final}.
+  \item \code{ScopeTraits::Vendor}: valid only if the scope entity has vendor-defined traits.
 \end{itemize}
 
 \subsubsection{Class-type layout packing}
