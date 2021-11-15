@@ -66,7 +66,7 @@ The \field{index} field is a $16$-bit value, the interpretation of which depends
 on the \field{sort} field, which itself is a $8$-bit value.  
 
 In this document, we use the phrase \emph{word} to emphasize that these "tokens" are not tokens in ISO C++ standards sense.
-They are MSVC-internal parser (complex) data structures.
+They are MSVC-internal parser (complex) data structures, scheduled for removal.
 
 \partition{src.word}
 
@@ -458,7 +458,7 @@ special macro name.
 \label{sec:ifc:SourceLiteral:MsvcBinding}
 
 A literal word of this value denotes a C++ source-level identifier bound to 
-declaration in the context of a templated definition -- this binding designates
+declaration in the context of a templated definition -- that binding designates
 the result of the first phase of 2-phase name lookup up as applied to 
 templated definitions.   The \field{index} field is of type \type{ExprIndex}
 and references (\secref{sec:ifc:ExprSort:NamedDecl}) the declarations bound 
@@ -516,6 +516,13 @@ Values of type \type{SourceOperator} are enumerated as follows
 	\enumerator{DotStar}
 	\enumerator{ArrowStar}
 \end{Enumeration}
+
+The use of an operator at C++ source-level may be bound to a set of
+declarations in the context of a templated definition -- that binding designates
+the result of the first phase of 2-phase name lookup up as applied to 
+templated definitions.   The \field{index} field is of type \type{ExprIndex}
+and references (\secref{sec:ifc:ExprSort:NamedDecl}) the declarations bound 
+to that operator.
 
 \ifcdoc{Unknown}{SourceOperator}
 No operator word of this value shall be produced.
@@ -764,6 +771,13 @@ and those with values greater than $0x1FFF$
 	\enumerator{MsvcConfusedSizeof}
 	\enumerator{MsvcConfusedAlignas}
 \end{Enumeration}
+
+In some circumstances, the use of a keyword (e.g. \code{new} in a \grammar{new-expression}) 
+at C++ source-level may be bound to a set of declarations in the context of a 
+templated definition -- that binding designates the result of the first phase of 2-phase 
+name lookup up as applied to templated definitions.   The \field{index} field is of 
+type \type{ExprIndex} and references (\secref{sec:ifc:ExprSort:NamedDecl}) the declarations bound 
+to that keyword.
 
 
 \ifcdoc{Unknown}{SourceKeyword} No reserved word of this word shall be produced.
