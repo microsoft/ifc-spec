@@ -1843,6 +1843,7 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{Read}
 	\enumerator{Materialize}
 	\enumerator{PseudoDtorCall}
+	\enumerator{LookupGlobally}
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
@@ -1955,6 +1956,7 @@ Source-level postfix ``\code{--}'' operator.
 \ifcSortSection{Read}{MonadicOperator} C++ abstract machine lvalue-to-rvalue conversion operator.
 \ifcSortSection{Materialize}{MonadicOperator} C++ abstract machine class temporary materialization operator.
 \ifcSortSection{PseudoDtorCall}{MonadicOperator} Pseudo-destructor call operator.
+\ifcSortSection{LookupGlobally}{MonadicOperator} Any operator in the immediate operand expression, at source-level, is to be looked-up in the global scope.  For example, in \code{::new T(a, b)}, the corresponding storage allocation function \code{operator new} is to be looked up in the global scope.
 
 \ifcSortSection{Msvc}{MonadicOperator} This is a marker, not an actual operator. Monadic operators with 
 value greater that this are MSVC extensions.
@@ -2168,6 +2170,7 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{Closure}
 	\enumerator{ZeroInitialize}
 	\enumerator{ClearStorage}
+	\enumerator{Select}
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
@@ -2346,6 +2349,8 @@ Source level operator ``\code{dynamic\_cast}''.
 \ifcSortSection{Closure}{DyadicOperator}
 \ifcSortSection{ZeroInitialize}{DyadicOperator}
 \ifcSortSection{ClearStorage}{DyadicOperator}
+\ifcSortSection{Select}{DyadicOperator} Use of the source-level scope resolution operator ``\code{::}''.
+The first operand designates the scope, and the second operand designates the member to select.
 
 \ifcSortSection{Msvc}{DyadicOperator}
 This is a marker, not an actual operator. Dyadic operators with 
