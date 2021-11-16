@@ -95,7 +95,7 @@ The numerical values assigned to these symbolic constants are subject to change.
 \label{sec:ifc-reachable-properties}
 
 In certain circumstances, the IFC stores more information than the bare minimum
-required by the ISO C++ Modules specification.  In such cases, it is necessarilyto know 
+required by the ISO C++ Modules specification.  In such cases, it is necessary to know 
 which semantic properties are reachable, outside the owning module, to the importers.
 In other circumstances, known such additional information is useful in performing
 additional checks such as ODR violation detection.  The availability of such
@@ -849,19 +849,10 @@ with the following meaning
 \begin{description}
 	\item \code{FunctionTraits::None}: no property
 	\item \code{FunctionTraits::Inline}: the function is declared \code{inline}
-%	\item \code{FunctionTraits::ForceInline}: the function is declared \code{\_\_forceinline}
 	\item \code{FunctionTraits::Constexpr}: the function is declared \code{constexpr}
 	\item \code{FunctionTraits::Explicit}: the function is declared \code{explicit}
 	\item \code{FunctionTraits::Virtual}: the function is declared \code{virtual}
 	\item \code{FunctionTraits::NoReturn}: the function is declared \code{[[noreturn]]} or \code{\_\_declspec(noreturn)}
-%	\item \code{FunctionTraits::Naked}: the function is declared \code{\_\_declspec(naked)}
-%	\item \code{FunctionTraits::NoAlias}: the function is declared \code{\_\_declspec(noalias)}
-%	\item \code{FunctionTraits::NoThrow}: the function is declared \code{\_\_declspec(nothrow)}
-%	\item \code{FunctionTraits::NoInline}: the function is declared \code{\_\_declspec(noinline)}
-%	\item \code{FunctionTraits::Restrict}: the function is declared \code{\_\_declspec(restrict)}
-%	\item \code{FunctionTraits::SafeBuffers}: the function is declared \code{\_\_declspec(safebuffers)}
-%	\item \code{FunctionTrsits::DllExport}: the function is declared \code{\_\_declspec(dllexport)}
-%	\item \code{FunctionTraits::CodeSegment}: the function is declared \code{\_\_declspec(code\_seg)}
 	\item \code{FunctionTraits::PureVirtual}: the function is pure virtual, e.g. with \code{ = 0}
 	\item \code{FunctionTraits::HiddenFriend}: the function is a hidden friend
      \item \code{FunctionTraits::Constrained} : the function has requires-constraints

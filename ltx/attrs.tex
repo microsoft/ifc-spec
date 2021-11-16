@@ -1,7 +1,7 @@
 \label{sec:ifc-attrs}
 
 
-Attributess are denotated by attribute references of type \type{AttrIndex}. 
+Attributes are denoted by attribute references of type \type{AttrIndex}. 
 Like all abstract references, an \type{AttrIndex} value is 32-bit wide with alignment $4$.
 \begin{figure}[htbp]
   \centering
@@ -65,7 +65,7 @@ The \field{word} field represents that word making up this basic attribute.
 
 An \type{AttrIndex} reference with tag \valueTag{AtrSort::Scoped} denotes a scoped attribute, that is a
 basic attribute followed by ``\code{::}'' and another basic attribute.
-For exampke, \code{gsl::suppress} in ``\code{[[gsl::suppress(type.1)]]}'' is a scoped attribute.
+For example, \code{gsl::suppress} in ``\code{[[gsl::suppress(type.1)]]}'' is a scoped attribute.
 The \field{index} field of that abstract reference is an index into the scoped attribute partition.
 Each entry in that partition is a structure with the following layout
 %
@@ -79,7 +79,7 @@ Each entry in that partition is a structure with the following layout
     \label{fig:ifc:AttrSort:Scoped}
 \end{figure}
 %
-The \field{scope} field reprensents the word appearing before the ``\code{::}'' token.
+The \field{scope} field represents the word appearing before the ``\code{::}'' token.
 The \field{member} field represents the word appearing after the ``\code{::}'' token.
 
 \partition{attr.scoped}
@@ -202,7 +202,7 @@ Each entry in that partition is a structure with the following layout
     \label{fig:ifc:AttrSort:Elaborated}
 \end{figure}
 %
-The \field{expression} field denotes the result of the parsing and semantic analyzis of the 
+The \field{expression} field denotes the result of the parsing and semantic analysis of the 
 source-level words making up the attributes.  The input source level words are not retained.
 
 \partition{attr.elaborated}

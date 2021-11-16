@@ -1,7 +1,11 @@
 \label{sec:ifc-charts}
 
 
-Parameterized declarations are entities that are either templates themselves, or templated in the sense that while not themselves templates they are declared in the lexical scopes of templates (e.g. non-template non-member friend functions lexically defined in a class-definition).  The parameter list of such declarations or entities are represented by \emph{chart}s, each designated by a \type{ChartIndex} abstract reference.    
+Parameterized declarations are entities that are either templates themselves, or templated in the 
+sense that while not themselves templates they are declared in the lexical scopes of templates 
+(e.g. non-template non-member friend functions lexically defined in a class-definition).  
+The parameter list of such declarations or entities are represented by \emph{chart}s, each 
+designated by a \type{ChartIndex} abstract reference.    
 Like all abstract references, it is a 32-bit value
 \begin{figure}[htbp]
   \centering
@@ -22,7 +26,8 @@ Like all abstract references, it is a 32-bit value
 \subsection{\valueTag{ChartSort::None}}
 \label{sec:ifc:ChartSort:None}
 
-A \type{ChartIndex} abstract reference with tag \valueTag{ChartSort::None} indicates an empty template parameter list, as in \code{template<>}
+A \type{ChartIndex} abstract reference with tag \valueTag{ChartSort::None} indicates an empty template 
+parameter list, as in \code{template<>}
 at the C++ source level.  There is no concrete parameter list stored in the IFC file.
 
 \partition{chart.none}
@@ -30,7 +35,8 @@ at the C++ source level.  There is no concrete parameter list stored in the IFC 
 \subsection{\valueTag{ChartSort::Unilevel}}
 \label{sec:ifc:ChartSort:Unilevel}
 
-A \type{ChartIndex} abstract reference with tag \valueTag{ChartSort::Unilevel} designates a sequence non-empty sequence of parameters (\secref{sec:ifc:DeclSort:Parameter}).
+A \type{ChartIndex} abstract reference with tag \valueTag{ChartSort::Unilevel} designates a sequence 
+non-empty sequence of parameters (\secref{sec:ifc:DeclSort:Parameter}).
 
 \begin{figure}[H]
 	\centering
@@ -53,7 +59,9 @@ The \field{constraint} denotes the condition of the requires clause, if present.
 \subsection{\valueTag{ChartSort::Multilevel}}
 \label{sec:ifc:ChartSort:Multilevel}
 
-A \type{ChartIndex} abstract reference with tag \valueTag{ChartSort::Multilevel} indicates a set of template parameter lists, each of them either an empty template parameter list (tag \valueTag{ChartSort::None}) or a unilevel template parameter list (tag \valueTag{ChartSort::Unilevel}).
+A \type{ChartIndex} abstract reference with tag \valueTag{ChartSort::Multilevel} indicates a set of template 
+parameter lists, each of them either an empty template parameter list (tag \valueTag{ChartSort::None}) or a unilevel 
+template parameter list (tag \valueTag{ChartSort::Unilevel}).
 
 \begin{figure}[H]
 	\centering

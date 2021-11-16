@@ -69,7 +69,7 @@ C++, capable of capturing ISO C++ and practical dialects.
 \section{Multiple IFCs per file}
 \label{sec:ifc-multiple-ifcs-per-file}
 
-The current specification only defines one IFC per containing file.  However, the long term goal is to support multiple IFCs per contaning file.
+The current specification only defines one IFC per containing file.  However, the long term goal is to support multiple IFCs per containing file.
 Where there is a mention of "offset from the beginning of the file", it should be understood "offset from the beginning of the current IFC".
 
 \section{Type of IFC container}
@@ -122,12 +122,12 @@ in coming updates to 8-byte in anticipation of large IFC file support.
 
 \subsection{Cardinality: counting items}
 At various places, the IFC indicates how many elements there are in a given
-table.  That information is given by a 32-bit integer value abstacted as
+table.  That information is given by a 32-bit integer value abstracted as
 follows: \newtype{Cardinality}{32}
 
 \subsection{Extent of entities}
 \label{sec:ifc-entity-size}
-At various places, in partitular in partition summaries (\secref{sec:ifc-partition}), the IFC needs to indicate 
+At various places, in particular in partition summaries (\secref{sec:ifc-partition}), the IFC needs to indicate 
 the number of bytes contain in entity representation.  That information is
 indicated by a 32-bit value of type \newtype{EntitySize}{32}
 
@@ -296,7 +296,7 @@ The structure of the field {internal} may change in future revisions.
 \section{IFC Table of Contents}
 \label{sec:ifc-toc}
 
-The data in an IFC are essentially homoegenous tables (called
+The data in an IFC are essentially homogenous tables (called
 \emph{partitions}) with entries referencing each other.  
 
 The table of 
@@ -342,7 +342,7 @@ So, the byte count of a partition is obtained by multiplying the individual
 
 The IFC, like the IPR, is designed to represent all of C++, including extensions.  This means representing faithfully
 non-template entities as well as template entities.  An \term{elaboration} of an entity is the result of full semantics
-anlysis (e.g. the result of name lookup, type checking, overload resolution, template specialization if needed, etc.) of that
+analysis (e.g. the result of name lookup, type checking, overload resolution, template specialization if needed, etc.) of that
 entity.  A node, in the abstract semantics graph of an IFC, representing a non-template is an elaboration.
 
 By contrast, semantics analysis of templates proceeds in two steps, by language definition.  For example, in a template code where \code{T} is a type parameter, the meaning of the expression \code{T\{ 42 \}} depends both on the meaning and structure of the 

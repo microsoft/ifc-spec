@@ -102,7 +102,7 @@ Each entry in that partition has two components: a \field{type} field and a \fie
 	\label{fig:ifc-empty-expression-structure}
 \end{figure}
 %
-The \field{type} field is a reference to the type of the expresssion.
+The \field{type} field is a reference to the type of the expression.
 The \field{locus} field is a reference to the source location.
 
 \partition{expr.empty}
@@ -203,7 +203,7 @@ Finally, the \field{body} field denotes the syntactic element for the body of th
 Certain C++ source-level contexts permit both value expressions and type expressions.
 A \type{ExprIndex} value with tag \valueTag{ExprSort::Type} represents a reference to a type expression.
 The \field{index} field is an index into the type expression partition.
-Each enty in that partition has two components: a \field{type} field, and a \field{locus} field.
+Each entry in that partition has two components: a \field{type} field, and a \field{locus} field.
 %
 \begin{figure}[H]
 	\centering
@@ -349,12 +349,12 @@ into the simple identifier partition.  Each entry in that partition is a structu
 		\DeclareMember{type}{TypeIndex} \\
 		\DeclareMember{name}{NameIndex} \\
 	}
-	\caption{Structue of a simple-identifier expression}
+	\caption{Structure of a simple-identifier expression}
 	\label{fig:ifc-simple-identifier-structure}
 \end{figure}
 %
 The \field{locus} field denotes the location of this expression.  The \field{type}, if not null, denotes the
-type of the expression.  The \field{name} field desinates the simple identifier.
+type of the expression.  The \field{name} field designates the simple identifier.
 
 \partition{expr.simple-identifier}
 
@@ -388,7 +388,7 @@ It is scheduled for removal in future releases of MSVC.}
 
 An \type{ExprIndex} value with tag \valueTag{ExprSort::QualifiedName} designates a representation of 
 C++ input source level grammar term \grammar{qualified-id}, typically in templated code that is not
-yet sfully semantically analyzed.  The \field{index} field of that abstract reference is an index into
+yet fully semantically analyzed.  The \field{index} field of that abstract reference is an index into
 the qualified name partition.  Each entry of that partition has the following layout
 %
 \begin{figure}[H]
@@ -404,8 +404,8 @@ the qualified name partition.  Each entry of that partition has the following la
 \end{figure}
 %
 The \field{elements} field designates the sequence of unqualified names (\sortref{UnqualifiedId}{ExprSort})
- in the source level construct.  The \field{template\_keyword}, if not null, designates the present of
- the \code{typename} keyword in the soure level to indicate to the parser that the qualified name names a type.
+ in the source level construct.  The \field{template\_keyword}, if not null, designates the presence of
+ the \code{typename} keyword in the input source program to indicate to the parser that the qualified name actually names a type.
 
 \partition{expr.qualified-name}
 
@@ -431,7 +431,7 @@ Each entry in that partition has three components: a \field{scope} field, a \fie
 	\label{fig:ifc-path-expression-structure}
 \end{figure}
 %
-The \field{scope} field denotes the qualifiying part of the expression.
+The \field{scope} field denotes the qualifying part of the expression.
 The \field{member} field denotes the referenced member of the \field{scope}.
 The \field{locus} field denotes the source location.
 
@@ -445,7 +445,7 @@ A \type{ExprIndex} value with tag \valueTag{ExprSort::Read} represents
 a reference to an expression that reads from a given memory location.
 It is also used to represents so-called lvalue-to-rvalue conversions.
 The \field{index} field is an index into the read expression partition.
-Each enty in that partition has three components: a \field{type} field, an \field{address} field, and a \field{locus} field.
+Each entry in that partition has three components: a \field{type} field, an \field{address} field, and a \field{locus} field.
 %
 \begin{figure}[H]
 	\centering
@@ -495,7 +495,7 @@ with the following semantics
 
 A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) monadic operator to argument.
 The \field{index} field is an index into the monadic expression partition.
-Each entry in that parrition has four components: a \field{type} field, a \field{opcat} field, an \field{argument} field, and a \field{locus} field.
+Each entry in that partition has four components: a \field{type} field, a \field{opcat} field, an \field{argument} field, and a \field{locus} field.
 %
 \begin{figure}[H]
 	\centering
@@ -522,7 +522,7 @@ The \field{locus} denotes the source location.
 
 A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) dyadic operator (\secref{sec:ifc:OperatorSort:Dyadic}) to arguments.
 The \field{index} field is an index into the dyadic expression partition.
-Each entry in that parrition has four components: a \field{type} field, a \field{opcat} field, an \field{arguments} field, and a \field{locus} field.
+Each entry in that partition has four components: a \field{type} field, a \field{opcat} field, an \field{arguments} field, and a \field{locus} field.
 %
 \begin{figure}[H]
 	\centering
@@ -548,7 +548,7 @@ The \field{locus} denotes the source location.
 
 A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) triadic operator (\secref{sec:ifc:OperatorSort:Triadic}) to arguments.
 The \field{index} field is an index into the triadic expression partition.
-Each entry in that parrition has four components: a \field{type} field, a \field{opcat} field, an \field{arguments} field, and a \field{locus} field.
+Each entry in that partition has four components: a \field{type} field, a \field{opcat} field, an \field{arguments} field, and a \field{locus} field.
 %
 \begin{figure}[H]
 	\centering
@@ -722,7 +722,7 @@ The \field{locus} field denotes the source location.
 \label{sec:ifc:ExprSort:MemberInitializer}
 
 An \type{ExprIndex} value with tag \valueTag{ExprSort::MemberInitializer} designates the initialization of 
-a base-class subobject, or a non-static data member, or a call to a delagated constructor.  The \field{index}
+a base-class subobject, or a non-static data member, or a call to a delegated constructor.  The \field{index}
 field of that abstract reference is an index into the member initializer partition.  Each entry in that
 partition has the following layout 
 %
@@ -743,10 +743,10 @@ The \field{locus} field designates the source location of the member initializat
 The \field{type} field denotes the type of the initialization.
 The \field{member} field, if not null, designates the non-static data member being initialized.
 The \field{base} field, if not null, designates the initialization of a base-class subobject.
-Both fields \field{member} and \field{base} cannot be simulateneously non-null.
-However, they can be simulateneously null; in that case, the expression is used
+Both fields \field{member} and \field{base} cannot be simultaneously non-null.
+However, they can be simultaneously null; in that case, the expression is used
 to represent a call to a delegated constructor.
-The \field{initializer} field denotes the expression perfoming the initialization.
+The \field{initializer} field denotes the expression performing the initialization.
 
 
 \partition{expr.member-initializer}
@@ -815,7 +815,7 @@ the \field{path} is a sequence of expressions designating each base-class compon
 
 An \type{ExprIndex} value with tag \valueTag{ExprSort::InitializerList} designates a brace-enclosed comma-separated 
 sequence of expressions.
-The \field{index} field is an index into the partition of initiliazer list expressions.
+The \field{index} field is an index into the partition of initializer list expressions.
 Each entry in that partition is a structure with the following layout
 %
 \begin{figure}[H]
@@ -839,7 +839,7 @@ The \field{elements} field denotes the sequence of expressions enclosed in the b
 \label{sec:ifc:ExprSort:Cast}
 
 An \type{ExprIndex} value with tag \valueTag{ExprSort::Cast} designates a conversion operation.
-The conversion may be explicit (in the input source code) and implicit (as required by semantics analyzis).
+The conversion may be explicit (in the input source code) and implicit (as required by semantics analysis).
 The \field{index} field of this abstract reference  is a position into the partition of cast expressions.
 Each entry in that partition is a structure with the following layout
 %
@@ -1173,7 +1173,7 @@ and \newtype{DestructorSort}{8}
 		\DeclareMember{expr}{ExprIndex} \\
 		\DeclareMember{sort}{InitializerSort} \\
 	}
-	\caption{Structure of an initialzer expression}
+	\caption{Structure of an initializer expression}
 	\label{fig:ifc-initializer-structure}
 \end{figure}
 with \newtype{InitializerSort}{8}
@@ -1309,8 +1309,8 @@ The meaning of the fields is as follows
 	\item \field{locus} denotes the source location of this expression.
 	\item \field{type} denotes the type of this expression.
 	\item \field{class} denotes the declaration of the class type of the object designated by this expression.
-	\item \field{members} denotes the sequence of direct non-baseclass subobjects of the object.
-	\item \field{base\_subobjects} denotes the sequence of baseclasse subobjects of the object.
+	\item \field{members} denotes the sequence of direct non-base class subobjects of the object.
+	\item \field{base\_subobjects} denotes the sequence of base class subobjects of the object.
 \end{itemize}
 
 \partition{expr.product-type-value}
@@ -1546,7 +1546,7 @@ A reference to a member of a template
 \end{figure}
 %
 
-The \field{member\_name} field designates the nane of the member; the \field{member\_locus} designates the source location where the member is declared.
+The \field{member\_name} field designates the name of the member; the \field{member\_locus} designates the source location where the member is declared.
 The \field{scope} field designates the enclosing scope of the member.  The \field{arguments} designates the set of template arguments to
 this member.
 The field \field{locus} is the source location where the expression appears.
@@ -1677,7 +1677,7 @@ with the these meanings of the fields:
 
 A \type{ExprIndex} value with tag \valueTag{ExprSort::Tokens} represents an arbitrary token sequence (yet to be parsed) denoting an expression. 
 The \field{index} field is an index into to the token sequence expression partition.
-Each entry of that partition is a structure witht the following components: a \field{tokens} field, and a \field{locus} field.
+Each entry of that partition is a structure with the following components: a \field{tokens} field, and a \field{locus} field.
 %
 \begin{figure}[H]
 	\centering
@@ -1843,6 +1843,7 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{Read}
 	\enumerator{Materialize}
 	\enumerator{PseudoDtorCall}
+	\enumerator{LookupGlobally}
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
@@ -1955,6 +1956,7 @@ Source-level postfix ``\code{--}'' operator.
 \ifcSortSection{Read}{MonadicOperator} C++ abstract machine lvalue-to-rvalue conversion operator.
 \ifcSortSection{Materialize}{MonadicOperator} C++ abstract machine class temporary materialization operator.
 \ifcSortSection{PseudoDtorCall}{MonadicOperator} Pseudo-destructor call operator.
+\ifcSortSection{LookupGlobally}{MonadicOperator} Any operator in the immediate operand expression, at source-level, is to be looked-up in the global scope.  For example, in \code{::new T(a, b)}, the corresponding storage allocation function \code{operator new} is to be looked up in the global scope.
 
 \ifcSortSection{Msvc}{MonadicOperator} This is a marker, not an actual operator. Monadic operators with 
 value greater that this are MSVC extensions.
@@ -2168,6 +2170,7 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{Closure}
 	\enumerator{ZeroInitialize}
 	\enumerator{ClearStorage}
+	\enumerator{Select}
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
@@ -2346,6 +2349,8 @@ Source level operator ``\code{dynamic\_cast}''.
 \ifcSortSection{Closure}{DyadicOperator}
 \ifcSortSection{ZeroInitialize}{DyadicOperator}
 \ifcSortSection{ClearStorage}{DyadicOperator}
+\ifcSortSection{Select}{DyadicOperator} Use of the scope resolution operator ``\code{::}'' as source level.
+The first operand designates the scope, and the second operand designates the member to selct
 
 \ifcSortSection{Msvc}{DyadicOperator}
 This is a marker, not an actual operator. Dyadic operators with 
@@ -2405,7 +2410,7 @@ Source-level ternary ``\code{?:}'' operator.
 Source-level representation of ``\code{new(p) T(x)}'', where
 \begin{itemize}
 	\item the first operand is the placement \code{p}
-	\item the second operand is the contructed type \code{T}
+	\item the second operand is the constructed type \code{T}
 	\item the third operand is the initializing value \code{x}
 \end{itemize}
 
@@ -2422,7 +2427,7 @@ value greater that this are MSVC extensions.
 \label{sec:ifc:OperatorSort:Storage}
 
 A sort value \valueTag{OperatorSort::Storage} indicates a storage 
-allocation or deallocattion operator.  The
+allocation or deallocation operator.  The
 value of the \field{index} is to be interpreted as a value of type 
 \type{StorageOperator}, which is a set of $13$-bit values enumerated as follows.
 %
