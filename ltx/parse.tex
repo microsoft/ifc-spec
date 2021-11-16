@@ -185,10 +185,10 @@ as follows
 \ifcdoc{Public}{KeywordSort} Source-level keyword ``\code{public}''.
 \ifcdoc{Protected}{KeywordSort} Source-level keyword ``\code{protected}''.
 \ifcdoc{Private}{KeywordSort} Source-level keyword ``\code{private}''.
-\ifcdoc{Default}{KeywordSort} Source-level keywprd ``\code{default}''.
+\ifcdoc{Default}{KeywordSort} Source-level keyword ``\code{default}''.
 \ifcdoc{Delete}{KeywordSort} Source-level keyword ``\code{delete}''.
 \ifcdoc{Mutable}{KeywordSort} Source-level keyword ``\code{mutable}''.
-\ifcdoc{Constexpr}{KeywordSort} Source-level keywprd ``\code{constexpr}''.
+\ifcdoc{Constexpr}{KeywordSort} Source-level keyword ``\code{constexpr}''.
 \ifcdoc{Consteval}{KeywordSort} Source-level keyword ``\code{consteval}''.
 \ifcdoc{Typename}{KeywordSort} Source-level keyword ``\code{typename}''.
 
@@ -258,7 +258,7 @@ The \field{type} field is a structure denoting the semantic placeholder type
 designates the source location of the syntax of the placeholder type
 (denoted by \code{auto} or \code{decltype(auto)}).  Finally the \field{locus} field
 denotes the source location of the entire syntax for the placeholder type;
-this source location may be different from that desinated by \field{keyword}
+this source location may be different from that designated by \field{keyword}
 if there are additional constraints (as indicated by the use of a concept type).
 
 \partition{syntax.placeholder-type-specifier}
@@ -509,7 +509,7 @@ if there are additional constraints (as indicated by the use of a concept type).
 \label{sec:ifc:SyntaxSort:TypeId}
 
 A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::TypeId} designates the source-level
-syntactic contruct \grammar{type-id} which is the syntax
+syntactic construct \grammar{type-id} which is the syntax
 \grammar{type-specified-seq} optionally followed by \grammar{abstract-declarator}. 
 The \field{index} field of that abstract reference is an index into the syntax of type-id partition.
 Each entry of that partition is a structure with the following layout:
@@ -698,7 +698,7 @@ Each entry of that partition is a structure with the following layout
 \end{figure}
 %
 The \field{declarator} field denotes the outer declarator, while the \field{next} field
-denotes the innner declarator.
+denotes the inner declarator.
 
 \partition{syntax.array-or-function-declarator}
 

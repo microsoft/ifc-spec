@@ -136,7 +136,7 @@ with the following meaning:
 \subsubsection{Fundamental type precision}
 \label{sec:ifc-fundamental-type-precision}
 
-The bit precision of a funamental type is a value of type \type{TypePrecision} defined as follows:
+The bit precision of a fundamental type is a value of type \type{TypePrecision} defined as follows:
 %
 \begin{typedef}{TypePrecision}{}
 	enum class TypePrecision : uint8_t {
@@ -241,7 +241,7 @@ A \type{TypeIndex} value with tag \valueTag{TypeSort::Syntactic} represents
 an abstract reference to type expressed at the C++ source-level as a type-id.
 Typical examples include a template-id designating a specialization.
 The \field{index} field is an index into the syntactic type partition.
-Each entry in that partition is a structure wth a single component: the \field{expr} field.
+Each entry in that partition is a structure with a single component: the \field{expr} field.
 %
 \begin{figure}[H]
 	\centering
@@ -411,7 +411,7 @@ The \field{target} field denotes the return type of the function type.
 The \field{source} field denotes the parameter type list.  A null \field{source} value indicates no parameter type. If the function type has at most
 one parameter type, the \field{source} denotes that type. Otherwise, it is a tuple type made
 of all the parameter types.
-The \field{eh\_spec} denotes the C++ souce-level noexcept-specification.
+The \field{eh\_spec} denotes the C++ source-level noexcept-specification.
 The \field{convention} field denotes the calling convention of the function type.
 The \field{traits} field denotes additional function type traits.
 
@@ -434,7 +434,7 @@ Certain function types properties are expressed as value of bitmask type \type{F
 %
 with the following meaning
 \begin{itemize}
-	\item \code{FunctionTypeTraits::None}: the function type is that of a function that is not non-static member (either a non-menber function
+	\item \code{FunctionTypeTraits::None}: the function type is that of a function that is not non-static member (either a non-member function
 		or a static member function).
 	\item \code{FunctionTypeTraits::Const}: the function type is that of a function that is a non-static member function declared with a \code{const}
 		qualifier.
@@ -526,7 +526,7 @@ The \field{source} field denotes the parameter type list.  The function type has
 one parameter type, the \field{source} denotes that type. Otherwise, it is a tuple type made
 of all the parameter types.
 The \field{scope} denotes the C++ source-level enclosing class type.
-The \field{eh\_spec} denotes the C++ souce-level noexcept-specification.
+The \field{eh\_spec} denotes the C++ source-level noexcept-specification.
 The \field{convention} field denotes the calling convention of the function type.
 The \field{traits} field denotes additional function type traits.
 
@@ -586,7 +586,7 @@ The \field{path} field denotes the expression designating the dependent type.
 A \type{TypeIndex} value with tag \valueTag{TypeSort::Qualified} represents
 an abstract reference to a C++ source-level cv-qualified type.
 The \field{index} field is an index into the qualified type partition.
-Each entrry in that partition is a structure with two components: the \field{unqualified} field,
+Each entry in that partition is a structure with two components: the \field{unqualified} field,
 and the \field{qualifiers} field.
 %
 \begin{figure}[H]
@@ -738,7 +738,7 @@ The \field{elaboration} field, if non null, designates the deduced type correspo
 A \type{TypeIndex} value with tag \valueTag{TypeSort::Tuple} represents
 an abstract reference to tuple type, i.e. finite sequence of types.
 The \field{index} field is an index into the tuple type partition.
-Each entry in that partition is a structrure with two components: a \field{start} field,
+Each entry in that partition is a structure with two components: a \field{start} field,
 and a \field{cardinality} field.
 %
 \begin{figure}[H]
@@ -812,7 +812,7 @@ regular framework of vendor-extension types.
 \label{sec:ifc:TypeSort:SyntaxTree}
 
 A \type{TypeIndex} value with tag \valueTag{TypeSort::SyntaxTree} represents an abstract 
-reference to a type designated by a raw syntax contruct (\secref{sec:ifc-syntax-tree-table}).
+reference to a type designated by a raw syntax construct (\secref{sec:ifc-syntax-tree-table}).
 The \field{index} field is an index into the syntax tree type partition.
 Each entry in that partition is a structure with a single component: the \field{syntax} field:
 %

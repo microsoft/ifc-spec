@@ -39,7 +39,7 @@ is stored as a sequence in the scope member partition, and the description of th
 
 The type \type{T} of the \field{trait} associated with \field{decl} is \type{Sequence} (\secref{sec:ifc-sequence})
 of \type{Declaration}s (\figref{fig:ifc-declaration-structure}),
-denothing the sequence of descriptions for each specialization of the template \field{decl}.  The
+denoting the sequence of descriptions for each specialization of the template \field{decl}.  The
 value of the field \field{trait.start} is an index into the scope member partition 
 (\secref{sec:ifc-scope-member}), and the field \field{trait.cardinality} gives the number of \type{Declaration}s
 in that sequence.
@@ -57,7 +57,7 @@ is stored as a sequence in the scope member partition, and the description of th
 
 The type \type{T} of the \field{trait} associated with \field{decl} is \type{Sequence} (\secref{sec:ifc-sequence})
 of \type{Declaration}s (\figref{fig:ifc-declaration-structure}),
-denothing the sequence of descriptions for each declared friend of \field{decl}.  The
+denoting the sequence of descriptions for each declared friend of \field{decl}.  The
 value of the field \field{trait.start} is an index into the scope member partition 
 (\secref{sec:ifc-scope-member}), and the field \field{trait.cardinality} gives the number of \type{Declaration}s
 in that sequence.
@@ -92,7 +92,7 @@ The \field{body} field designates the statement body (\secref{sec:ifc-statements
 \section{Template Alias}
 \label{sec:ifc-template-alias-trait}
 
-MSVC, in its current form, uses syntax trees (\secref{sec:ifc-syntax-tree-table}) to represesent
+MSVC, in its current form, uses syntax trees (\secref{sec:ifc-syntax-tree-table}) to represent
 declarations of template aliases.  For each template alias declaration \field{decl}, the type \type{T}
 of the corresponding \field{trait} is \type{SyntaxIndex} (\figref{fig:ifc-syntax-index}).
 
@@ -140,7 +140,7 @@ has an entry in the declaration attribute partition.  The type \type{T} of \fiel
 
 The MSVC compiler associates a certain set of vendor-specific traits to most declarations.  
 These vendor-specific traits are represented by the 32-bit bitmask type \type{MsvcTraits}
-idefined n \secref{sec:ifc-msvc-trait-bitset}.
+defined in \secref{sec:ifc-msvc-trait-bitset}.
 
 \partition{.msvc.trait.vendor-traits}
 
