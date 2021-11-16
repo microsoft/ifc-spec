@@ -1,4 +1,5 @@
-
+# Creates or updates a 'prerelease' release whenever main is
+# changed. Attaches a built PDF to that release.
 name: Create prerelease PDF
 on:
   push:
@@ -17,11 +18,12 @@ jobs:
           root_file: ifc.tex
           working_directory: ltx
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1.8.10
+      - name: Create prerelease
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          allowUpdates: true
-          name: prerelease
-          tag: prerelease
-          artifacts: ltx/ifc.pdf
-          removeArtifacts: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "prerelease"
+          prerelease: true
+          title: "Prerelease"
+          files: |
+            ltx/ifc.pdf

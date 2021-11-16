@@ -1,8 +1,11 @@
-name: Build PDF document
+# Builds a PDF of the IFC spec and attaches it to any release that
+# is created.
+
+name: Attach PDF to Release
 on:
   release:
     types:
-      - created
+      - published
 
 jobs:
   build_latex:
