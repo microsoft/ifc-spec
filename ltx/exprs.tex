@@ -1011,54 +1011,17 @@ The \field{type} field designates the type of the entire \code{alignof}-expressi
 \subsection{\valueTag{ExprSort::New}}
 \label{sec:ifc:ExprSort:New}
 
-\begin{figure}[H]
-	\centering
-	\structure[text width = 14em]{
-		\DeclareMember{double\_colon}{SourceLocation} \\
-		\DeclareMember{new\_keyword}{SourceLocation} \\
-		\DeclareMember{allocated\_type}{TypeIndex} \\
-		\DeclareMember{placement}{ExprIndex} \\
-		\DeclareMember{initializer}{ExprIndex} \\
-	}
-\end{figure}
+This structure is no longer emitted. \grammar{new-expression}s are now emitted as either monadic, dyadic, or triadic trees as appropriate.
 
-The field \field{double\_colon} designates the location of the global scope operator \code{::}, if present.
-The field \field{new\_keyword} designates the location of the \code{new} keyword operator.
-The field \field{allocated\_type} designates the source-level syntax of the type allocated in the new expression.
-The field \field{placement} designates the placement, if there is any.
-The field \field{initialzier} designates the initializer, if any.
-
-\partition{expr.new}
-
-\note{This structure is scheduled for removal in future releases}.
+\note{This sort value is available for reuse in future releases.}
 
 
 \subsection{\valueTag{ExprSort::Delete}}
 \label{sec:ifc:ExprSort:Delete}
 
-n \type{ExprIndex} value with tag \valueTag{ExprSort::Delete} represents an abstract 
-reference to the non-array form of a \grammar{delete-expression}.  The \field{index} field 
-denotes the position of entry into the delete expression partition.  Each entry of
-that partition is a structure with the following layout
-%
-\begin{figure}[H]
-	\centering
-	\structure[text width = 14em]{
-		\DeclareMember{double\_colon}{SourceLocation} \\
-		\DeclareMember{delete\_keyword}{SourceLocation} \\
-		\DeclareMember{address}{ExprIndex} \\
-	}
-\end{figure}
-%
-with these meanings of the fields:
-\begin{itemize}
-	\item \field{double\_colon} denotes the source location of \code{::}, if present at the source level, indicating request for the global allocation function.
-	\item \field{delete\_keyword} denotes the location of the \code{delete} keyword in the input source file.
-	\item \field{address} denotes the operand (pointer) to be deleted.
-\end{itemize}
+This structure is no longer emitted. \grammar{delete-expression}s are now emitted with appropriate structures.
 
-\partition{expr.delete}
-\note{This structure is scheduled for removal.}
+\note{This sort value is available for reuse in future releases.}
 
 
 \subsection{\valueTag{ExprSort::Typeid}}
