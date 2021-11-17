@@ -13,18 +13,38 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Extract branch name
         shell: bash
         run: echo "RELEASE_NAME=$(echo ${GITHUB_REF#refs/heads/release/})" >> $GITHUB_ENV
+
+      - name: Extract changelog (comparing with main branch)
+        shell: bash
+        run: |
+          echo 'CHANGELOG<<EOF' >> $GITHUB_ENV
+          git log $(git merge-base origin/main HEAD)..HEAD --pretty=format:"[\`%h\`]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/%h) %s (%aN)" >> $GITHUB_ENV
+          echo >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
       - name: Compile document
         uses: xu-cheng/latex-action@v2
         with:
           root_file: ifc.tex
           working_directory: ltx
-      - uses: "marvinpinto/action-automatic-releases@latest"
+
+      - name: Update release
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: ${{env.RELEASE_NAME}}
+          token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          title: ${{env.RELEASE_NAME}}
+          draft: false
+          name: ${{ env.RELEASE_NAME }}
+          tag_name: ${{ env.RELEASE_NAME }}
           files: ltx/ifc.pdf
+          generate_release_notes: false
+          body: |
+            ## Changelog
+            ${{ env.CHANGELOG }}
+
