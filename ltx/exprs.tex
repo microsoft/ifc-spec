@@ -495,24 +495,32 @@ with the following semantics
 
 A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) monadic operator to argument.
 The \field{index} field is an index into the monadic expression partition.
-Each entry in that partition has four components: a \field{type} field, a \field{opcat} field, an \field{argument} field, and a \field{locus} field.
+Each entry in that partition is a structure with the following layout
 %
 \begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{impl}{DeclIndex} \\
 		\DeclareMember{argument}{ExprIndex} \\
-		\DeclareMember{operator}{MonadicOperator} \\
+		\DeclareMember{assoc}{MonadicOperator} \\
 	}
 	\caption{Structure of a monadic expression}
 	\label{fig:ifc-monadic-expression-structure}
 \end{figure}
 %
-The \field{operator} field denotes the conceptual monadic operation, usually as written in the input C++ source code, \secref{sec:ifc:OperatorSort:Monadic}.
-The \field{type} field denotes the type of the expression.
-The \field{argument} field denotes the argument to the operator.
-The \field{locus} denotes the source location.
+and meanings of the fields:
+\begin{itemize}
+	\item \field{locus} denotes the source location.
+	\item \field{type} denotes the type of the expression.
+	\item \field{impl}, when non-null, designates the semantic resolution of the operator denoted by \code{assoc} if it is user-defined.
+	This semantic resolution can be an overload set (i.e. \valueTag{DeclSort::Tuple}) if the expression appears in a templated code,
+	accounting for the set of declarations found by applicable name lookup in the template definition context.
+	\item \field{argument} denotes the argument to the operator.
+	\item \field{assoc} field denotes the conceptual monadic operation, usually as written in the input C++ source code, 
+	\secref{sec:ifc:OperatorSort:Monadic}.
+\end{itemize}
 
 \partition{expr.monad}
 
@@ -520,26 +528,34 @@ The \field{locus} denotes the source location.
 \subsection{\valueTag{ExprSort::Dyad}}
 \label{sec:ifc:ExprSort:Dyad}
 
-A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) dyadic operator (\secref{sec:ifc:OperatorSort:Dyadic}) to arguments.
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Dyad} represents the application of a (source-level) dyadic operator (\secref{sec:ifc:OperatorSort:Dyadic}) to arguments.
 The \field{index} field is an index into the dyadic expression partition.
-Each entry in that partition has four components: a \field{type} field, a \field{opcat} field, an \field{arguments} field, and a \field{locus} field.
+Each entry in that partition is a structure with the following layout
 %
 \begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{impl}{DeclIndex} \\
 		\DeclareMember{arguments}{ExprIndex[2]} \\
-		\DeclareMember{operator}{DyadicOperator} \\
+		\DeclareMember{assoc}{DyadicOperator} \\
 	}
 	\caption{Structure of a dyadic expression}
 	\label{fig:ifc-dyadic-expression-structure}
 \end{figure}
 %
-The \field{operator} field denotes the conceptual dyadic operation (usually as written in the input C++ source code).
-The \field{type} field denotes the type of the expression.
-The \field{arguments} field denotes the two arguments to the operator.
-The \field{locus} denotes the source location.
+and meanings of the fields:
+\begin{itemize}
+	\item The \field{locus} denotes the source location.
+	\item The \field{type} field denotes the type of the expression.
+	\item The \field{impl} field, when non-null, designates the semantic resolution of the operator denoted by \code{assoc} 
+	if it is user-defined. This semantic resolution can be an overload set (\valueTag{DeclSort::Tuple}) if the expression 
+	appears in a templated code, accounting for the set of declarations found by applicable name lookup in the template definition context.
+	\item The \field{arguments} field denotes the two arguments to the operator.
+	\item The \field{assoc} field denotes the conceptual dyadic operation, usually as written in the input C++ source code
+	(\secref{sec:ifc:OperatorSort:Dyadic}).
+\end{itemize}
 
 \partition{expr.dyad}
 
@@ -548,24 +564,32 @@ The \field{locus} denotes the source location.
 
 A \type{ExprIndex} value with tag \valueTag{ExprSort::Monad} represents the application of a (source-level) triadic operator (\secref{sec:ifc:OperatorSort:Triadic}) to arguments.
 The \field{index} field is an index into the triadic expression partition.
-Each entry in that partition has four components: a \field{type} field, a \field{opcat} field, an \field{arguments} field, and a \field{locus} field.
+Each entry in that partition is a structure with the following layout
 %
 \begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{impl}{DeclIndex} \\
 		\DeclareMember{arguments}{ExprIndex[3]} \\
-		\DeclareMember{operator}{TriadicOperator} \\
+		\DeclareMember{assoc}{TriadicOperator} \\
 	}
 	\caption{Structure of a triadic expression}
 	\label{fig:ifc-triadic-expression-structure}
 \end{figure}
 %
-The \field{opcat} field denotes the conceptual triadic operation (usually as written in the input C++ source code).
-The \field{type} field denotes the type of the expression.
-The \field{arguments} field denotes the three arguments to the operator.
-The \field{locus} denotes the source location.
+and meaning of the fields:
+\begin{itemize}
+	\item \field{locus} denotes the source location.
+	\item \field{type} denotes the type of the expression.
+	\item \field{impl}, when non-null, designates the semantic resolution of the operator denoted by \code{assoc} if it is user-defined.
+	This semantic resolution can be an overload set (\valueTag{DeclSort::Tuple}) if the expression appears in a templated code,
+	accounting for the set of declarations found by applicable name lookup in the template definition context.
+	\item \field{arguments} denotes the three arguments to the operator.
+	\item \field{assoc} denotes the conceptual triadic operation, usually as written in the input C++ source code
+	(\secref{sec:ifc:OperatorSort:Triadic}).
+\end{itemize}
 
 \partition{expr.triad}
 
@@ -1006,6 +1030,8 @@ The field \field{initialzier} designates the initializer, if any.
 
 \partition{expr.new}
 
+\note{This structure is scheduled for removal in future releases}.
+
 
 \subsection{\valueTag{ExprSort::Delete}}
 \label{sec:ifc:ExprSort:Delete}
@@ -1032,7 +1058,7 @@ with these meanings of the fields:
 \end{itemize}
 
 \partition{expr.delete}
-\note{This structure is subject to change.}
+\note{This structure is scheduled for removal.}
 
 
 \subsection{\valueTag{ExprSort::Typeid}}
