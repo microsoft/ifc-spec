@@ -502,7 +502,7 @@ Each entry in that partition is a structure with the following layout
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
-		\DeclareMember{impl}{ExprIndex} \\
+		\DeclareMember{impl}{DeclIndex} \\
 		\DeclareMember{argument}{ExprIndex} \\
 		\DeclareMember{assoc}{MonadicOperator} \\
 	}
@@ -537,7 +537,7 @@ Each entry in that partition is a structure with the following layout
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
-		\DeclareMember{impl}{ExprIndex} \\
+		\DeclareMember{impl}{DeclIndex} \\
 		\DeclareMember{arguments}{ExprIndex[2]} \\
 		\DeclareMember{assoc}{DyadicOperator} \\
 	}
@@ -571,7 +571,7 @@ Each entry in that partition is a structure with the following layout
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
-		\DeclareMember{impl}{ExprIndex} \\
+		\DeclareMember{impl}{DeclIndex} \\
 		\DeclareMember{arguments}{ExprIndex[3]} \\
 		\DeclareMember{assoc}{TriadicOperator} \\
 	}
