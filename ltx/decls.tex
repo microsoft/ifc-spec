@@ -23,8 +23,8 @@ declaration.  Like all abstract references, it is a 32-bit value
 	\enumerator{Temploid}
 	\enumerator{Template}
 	\enumerator{PartialSpecialization}
-	\enumerator{ExplicitSpecialization}
-	\enumerator{ExplicitInstantiation}
+	\enumerator{Specialization}
+	\enumerator{UnusedSort0}
 	\enumerator{Concept}
 	\enumerator{Function}
 	\enumerator{Method}
@@ -697,50 +697,58 @@ The \field{properties} field denotes the set of reachable semantic properties.
 \partition{decl.partial-specialization}
 
 
-\subsection{\valueTag{DeclSort::ExplicitSpecialization}} 
-\label{sec:ifc:DeclSort:ExplicitSpecialization}
+\subsection{\valueTag{DeclSort::Specialization}} 
+\label{sec:ifc:DeclSort:Specialization}
 
-An explicit specialization
-of a template (class-type or function). 
-
-\begin{figure}[H]
-	\centering
-	\structure[text width = 14em]{
-		\DeclareMember{form}{Index} \\
-		\DeclareMember{decl}{DeclIndex} \\
-	}
-	\caption{Structure of an explicit specialization declaration}
-	\label{fig:ifc-explicit-specialization-declaration}
-\end{figure}
-
-The \field{form} field is an index into the specialization form partition (named "form.spec").
-The \field{decl} field denotes the declaration under the empty template parameter list.
-The \field{properties} field designates the set of reachable semantic properties.
-
-\partition{decl.explicit-specialization}
-
-
-\subsection{\valueTag{DeclSort::ExplicitInstantiation}} 
-\label{sec:ifc:DeclSort:ExplicitInstantiation}
-
-An explicit instantiation
-request of a template specialization. 
+A \type{DeclIndex} value with tag \valueTag{DeclSort::Specialization} designates a specialization of template declaration.
+The \field{index} field of that abstract reference is an index into the specialization partition.
+Each entry in that partition is a structure with the following layout
 %
 \begin{figure}[H]
 	\centering
 	\structure[text width = 14em]{
 		\DeclareMember{form}{Index} \\
 		\DeclareMember{decl}{DeclIndex} \\
+		\DeclareMember{sort}{SpecializationSort} \\
 	}
-	\caption{Structure of an explicit instantiation declaration}
-	\label{fig:ifc-explicit-instantiation-declaration}
+	\caption{Structure of a template declaration specialization}
+	\label{fig:ifc-specialization-declaration}
 \end{figure}
 %
+and meanings of the fields
+\begin{itemize}
+	\item The value of \field{form} is an index into the specialization form partition (named "form.spec").
+	\item \field{decl}, when non null, denotes the declaration produced by the specialization.
+	\item \field{sort} designates how the specialization is obtained (\secref{sec:ifc-SpecializationSort}).
+\end{itemize}
 
-The \field{form} field is an index into the partition of specialization forms.
-The \field{decl} field denotes the declarations designated by the explicit instantiation.
+\partition{decl.specialization}
 
-\partition{decl.explicit-instantiation}
+\subsubsetion{How to specialize a template}
+\label{sec:ifc-SpecializationSort}
+
+The method by which the declaration for a template specialization is produced can be indicated by a value of type
+%
+\begin{typedef}{SpecializationSort}{}
+	enum class SpecializationSort : uint8_t {
+		Implicit = 0x0,
+		Explicit = 0x1,
+		Instantiation = 0x2,
+	};
+\end{typedef}
+%
+with the following meaning
+\begin{itemize}
+	\item \valueTag{SpecializationSort::Implicit}: the declaration is an implicit specialization.
+	\item \valueTag{Specialization::Explicit}: the declaration is an explicit specialization.
+	\item \valueTag{Specialization::Instantiation}: the declaration is an explicit instantiation.
+\end{itemize}
+
+
+\subsection{\valueTag{DeclSort::UnusedSort0}} 
+\label{sec:ifc:DeclSort:UnusedSort0}
+
+No structure associated with this sort.
 
 \subsection{\valueTag{DeclSort::Concept}}
 \label{sec:ifc:DeclSort:Concept}
