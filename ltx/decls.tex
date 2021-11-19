@@ -282,7 +282,6 @@ Each entry in that partition is a structure with the following layout
 			\DeclareMember{position}{ParameterPosition} \\
 			\DeclareMember{sort}{ParameterSort} \\
 			\DeclareMember{properties}{ReachableProperties} \\
-			\DeclareMember{pack}{bool} \\
 		}
 	\caption{Structure of a template parameter declaration}
 	\label{fig:ifc-template-parameter-structure}
@@ -299,8 +298,9 @@ and these meanings of the fields:
 	\item \field{position} denotes the position of this parameter in the parameter list
 	\item \field{sort} denotes the sort of parameter (function-parameter vs template-parameter)
 	\item \field{properties} denotes the set of reachable properties of this parameter.
-	\item \field{pack} is true if this parameter was declared as a parameter pack.  This field is no longer needed.
 \end{itemize}
+
+If the parameter declaration was that of a pack, then its type is denoted by a pack expansion (\sortref{Expansion}{TypeSort}).
 
 \note{This representation will change in the future as it is currently too irregular and too tightly coupled with VC++ internal representation oddities.}
 
