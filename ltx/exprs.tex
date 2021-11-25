@@ -1285,7 +1285,7 @@ The \field{index} field of that abstract reference is an index into the product 
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
-		\DeclareMember{class}{DeclIndex} \\
+		\DeclareMember{structure}{TypeIndex} \\
 		\DeclareMember{members}{ExprIndex} \\
 		\DeclareMember{base\_subobjects}{ExprIndex} \\
 	}
@@ -1297,7 +1297,7 @@ The meaning of the fields is as follows
 \begin{itemize}
 	\item \field{locus} denotes the source location of this expression.
 	\item \field{type} denotes the type of this expression.
-	\item \field{class} denotes the declaration of the class type of the object designated by this expression.
+	\item \field{structure} denotes the class type of the object designated by this expression.
 	\item \field{members} denotes the sequence of direct non-base class subobjects of the object.
 	\item \field{base\_subobjects} denotes the sequence of base class subobjects of the object.
 \end{itemize}
@@ -1317,7 +1317,7 @@ The \field{index} field of that abstract reference is an index into the sum type
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
-		\DeclareMember{variant}{DeclIndex} \\
+		\DeclareMember{variant}{TypeIndex} \\
 		\DeclareMember{discriminant}{ActiveMember} \\
 		\DeclareMember{value}{ExprIndex} \\
 	}
@@ -1331,7 +1331,7 @@ The meaning of the fields is as follows
 \begin{itemize}
 	\item \field{locus} denotes the source location of this expression.
 	\item \field{type} denotes the type of this expression.
-	\item \field{variant} denotes the declaration of the union class type of the object designated by this expression.
+	\item \field{variant} denotes the union class type of the object designated by this expression.
 	\item \field{disciminant} denotes the index of the active member of the union object
 	\item \field{value} denotes the value of the active member.
 \end{itemize}
