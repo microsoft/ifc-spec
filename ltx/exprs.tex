@@ -2202,9 +2202,15 @@ Source level binary operator ``\code{*}''.
 Source level binary operator ``\code{/}''.
 
 \ifcSortSection{Modulo}{DyadicOperator}
-Source level binary operator ``\code{\%}''.
+The Euclidean modulo operator at the abstract machine semantics level.
+At source level, this corresponds to the binary operator ``\code{\%}''.
+When both operands are integers, the result is always non-negative, between $0$ and the absolute value of the second operand.
+See also \sortref{Remainder}{DyadicOperator}.
 
 \ifcSortSection{Remainder}{DyadicOperator}
+Source level binary operator ``\code{\%}''. 
+When both operands are integers the result is truncated towards 0 as defined the corresponding ISO standards of C11 and up, and C++11 and up, 
+See also \sortref{Modulo}{DyadicOperator}.
 
 \ifcSortSection{Bitand}{DyadicOperator}
 Source level binary operator ``\code{\&}''.
@@ -2295,30 +2301,67 @@ Source level binary operator ``\code{->}''.
 Source level binary operator ``\code{.*}''.
 
 \ifcSortSection{ArrowStar}{DyadicOperator}
-Source level binary operator ``\code{->*}''
+Source level binary operator ``\code{->*}''.
 
 \ifcSortSection{Curry}{DyadicOperator}
-\ifcSortSection{Apply}{DyadicOperator}
-\ifcSortSection{Index}{DyadicOperator}
-\ifcSortSection{DefaultAt}{DyadicOperator}
-\ifcSortSection{New}{DyadicOperator}
-\ifcSortSection{NewArray}{DyadicOperator}
-\ifcSortSection{Destruct}{DyadicOperator}
-\ifcSortSection{DestructAt}{DyadicOperator}
-\ifcSortSection{Cleanup}{DyadicOperator}
-\ifcSortSection{Qualification}{DyadicOperator}
-\ifcSortSection{Promote}{DyadicOperator}
-\ifcSortSection{Demote}{DyadicOperator}
-\ifcSortSection{Coerce}{DyadicOperator}
-\ifcSortSection{Rewrite}{DyadicOperator}
-\ifcSortSection{Bless}{DyadicOperator}
-\ifcSortSection{Cast}{DyadicOperator}
+Abstract machine operation binding the first parameter of a function taking at least one argument.
 
-A C-style cast operation.
+\ifcSortSection{Apply}{DyadicOperator}
+Abstract machine operation applying a callable to an argument list (conceptually a tuple).
+
+\ifcSortSection{Index}{DyadicOperator}
+Source level binary operator ``\code{[]}'' as in ``\code{x[y]}''.
+
+\ifcSortSection{DefaultAt}{DyadicOperator}
+Abstraction machine operation corresponding to default construction of an object at a given address, e.g. ``\code{new(p) T}''.
+
+\ifcSortSection{New}{DyadicOperator}
+Abstract machine operation corresponding to allocating appropriate storage and constructing an object of a given type 
+and with a given initializer, e.g. ``\code{new T(x)}''.
+
+\ifcSortSection{NewArray}{DyadicOperator}
+Abstract machine operation corresponding to allocating appropriate storage and default constructing an array of a given element type and length, 
+e.g. ``\code{new T[n]}''. 
+
+\ifcSortSection{Destruct}{DyadicOperator}
+Abstract machine operation corresponding to the explicit call of a destructor for an object, e.g. ``\code{x.~T()}''.
+See also \sortref{DestructAt}{DyadicOperator}.
+
+\ifcSortSection{DestructAt}{DyadicOperator}
+Abstract machine operation corresponding to the explicit call of a destructor through a pointer, e.g. ``\code{p->~T()}''.
+See also \sortref{Destruct}{DyadicOperator}.
+
+\ifcSortSection{Cleanup}{DyadicOperator}
+Abstract machine operation evaluating the first operand, then running the second operand as a cleanup (object destruction).
+
+\ifcSortSection{Qualification}{DyadicOperator}
+Abstract machine operation corresponding to implicit cv-qualification of the type of the expression, 
+e.g. as in from ``\code{T}'' to ``\code{const T}''.
+
+\ifcSortSection{Promote}{DyadicOperator}
+Abstract machine operation corresponding to integral or floating point promotion at the source level.
+See also \sortref{Demote}{DyadicOperator}.
+
+\ifcSortSection{Demote}{DyadicOperator}
+Abstract machine operation corresponding to the inverse of an integral or floating point promotion at the source level.
+See also \sortref{Promote}{DyadicOperator}.
+
+\ifcSortSection{Coerce}{DyadicOperator}
+Abstract machine operation corresponding to an implicit conversion at the source level that is neither 
+a promotion (\sortref{Promote}{DyadicOperator}) nor a demotion (\sortref{Demote}{DyadicOperator}).
+
+\ifcSortSection{Rewrite}{DyadicOperator}
+Abstract machine operation where the semantics of the first operand (source-level construct) is defined by that of the second operand.
+
+\ifcSortSection{Bless}{DyadicOperator}
+Abstract machine operation proclaiming a valid object of given type (second operand) at a given address (first operand).  
+Note that this operation is not a placement-new operator (which would entail running a constructor).
+
+\ifcSortSection{Cast}{DyadicOperator}
+A C-style cast operation, e.g. ``\code{T)x}''
 
 \ifcSortSection{ExplicitConversion}{DyadicOperator}
-
-A functional cast notation.
+A functional cast notation, e.g. ``\code{T(x)}''.
 
 \ifcSortSection{ReinterpretCast}{DyadicOperator}
 Source level operator ``\code{reinterpret\_cast}''.
@@ -2333,12 +2376,32 @@ Source level operator ``\code{const\_cast}''.
 Source level operator ``\code{dynamic\_cast}''.
 
 \ifcSortSection{Narrow}{DyadicOperator}
+Abstract machine operation corresponding to the runtime-checked conversion of a pointer of type ``\code{B*}'' 
+(or reference of type ``\code{B\&}'') to a pointer of type ``\code{D*}'' (or reference of type ``\code{D\&}'')
+where the class ``\code{D}'' is a derived class of ``\code{B}''.
+
 \ifcSortSection{Widen}{DyadicOperator}
+Abstract machine operation corresponding to the implicit conversion of a pointer of type ``\code{D*}'' (or 
+reference of type ``\code{D\&}'') to a pointer of type ``\code{B*}'' (or a reference of type ``\code{B&}''),
+where the class ``\code{D}'' is a derived class of ``\code{B}''.
+
 \ifcSortSection{Pretend}{DyadicOperator}
+Abstract machine operation generalizing \code{bitcat} and \code{rinterpret\_cast}.
+
 \ifcSortSection{Closure}{DyadicOperator}
+Abstract machine operation pairing a function pointer (the second operand) and an environment of captured variables (the first operand) 
+for proper execution, as in lambda expressions.
+
 \ifcSortSection{ZeroInitialize}{DyadicOperator}
+Abstract machine operation performing zero-initialization of an object or a subobject.
+See also \sortref{ClearStorage}{DyadicOperator}.
+
 \ifcSortSection{ClearStorage}{DyadicOperator}
-\ifcSortSection{Select}{DyadicOperator} Use of the source-level scope resolution operator ``\code{::}''.
+Abstract machine operation clearing (i.e. setting all bytes to value $0$) a storage span.
+See also \sortref{ZeroInitialize}{DyadicOperator}.
+
+\ifcSortSection{Select}{DyadicOperator}
+Use of the source-level scope resolution operator ``\code{::}''.
 The first operand designates the scope, and the second operand designates the member to select.
 
 \ifcSortSection{Msvc}{DyadicOperator}
@@ -2346,29 +2409,81 @@ This is a marker, not an actual operator. Dyadic operators with
 value greater that this are MSVC extensions.
 
 \ifcSortSection{MsvcTryCast}{DyadicOperator}
+Abstract machine operation corresponding to the WinRT extension operation of ``\emph{try cast}''.
+
 \ifcSortSection{MsvcCurry}{DyadicOperator}
+Abstract machine operation corresponding to the MSVC extension of bound member function, 
+e.g. ``\code{this->fun}'' where \code{fun} is a non-static member function.  
+The first operand designates the object,
+and the second operand designates the non-static member function.
+See also \sortref{MsvcVirtualCurry}{DyadicOperator}.
+
 \ifcSortSection{MsvcVirtualCurry}{DyadicOperator}
+Abstract machine operation with similar semantics as that of \valueTag{DyadicOperator::MsvcCurry}, except
+the resulting callable requires a dynamic dispatch.
+
 \ifcSortSection{MsvcAlign}{DyadicOperator}
+Abstract machine operation of aligning a pointer to an adequate storage address boundary.
+
 \ifcSortSection{MsvcBitSpan}{DyadicOperator}
+Abstract machine operation describing the span of a bitfield.
+The first operand describes the offset (in number of bits) from the start of the storage hosting the bitfield.
+The second operand describes the number of bits spanned by the bitfield.
+
 \ifcSortSection{MsvcBitfieldAccess}{DyadicOperator}
+Abstract machine operation describing access to a bitfield.
+The first operand designates the start of the storage hosting the bitfield.
+The second operand describes the span (\sortref{MsvcBitSpan}{DyadicOperator}) of the bitfield.
+
 \ifcSortSection{MsvcObscureBitfieldAccess}{DyadicOperator}
+Abstract machine operation describing access to a bitfield.  
+See also \sortref{MsvcBitfieldAccess}{DyadicOperator}.
+
 \ifcSortSection{MsvcInitialize}{DyadicOperator}
+Abstract machine operation describing the initialization of an object.
+The first operand designates the storage to initialize.
+The second operand designates the initializer or the function to run to perform initialization (in the case constructor).
+
 \ifcSortSection{MsvcBuiltinOffsetOf}{DyadicOperator}
+Source level ``\code{__builtin_offsetof}'' operator (\sortref{MsvcBuiltinOffsetOf}{SourceKeyword}).
+
 \ifcSortSection{MsvcIsBaseOf}{DyadicOperator}
+Source level ``\code{__is_base_of}'' operator (\sortref{MsvcIsBaseOf}{SourceKeyword}).
+
 \ifcSortSection{MsvcIsConvertibleTo}{DyadicOperator}
+Source level ``\code{__is_convertible_to}'' operator (\sortref{MsvcIsConvertibleTo}{SourceKeyword}).
+
 \ifcSortSection{MsvcIsTriviallyAssignable}{DyadicOperator}
+Source level ``\code{__is_trivially_assignable}'' operator (\sortref{MsvcIsTriviallyAssignable}{SourceKeyword}).
+
 \ifcSortSection{MsvcIsNothrowAssignable}{DyadicOperator}
+Source level ``\code{__is_nothrow_assignable}'' operator (\sortref{MsvcIsNothrowAssignable}{SourceKeyword}).
+
 \ifcSortSection{MsvcIsAssignable}{DyadicOperator}
+Source level ``\code{__is_assignable}'' operator (\sortref{MsvcIsAssignable}{SourceKeyword}).
+
 \ifcSortSection{MsvcIsAssignableNocheck}{DyadicOperator}
+Source level ``\code{__is_assignable_no_precondition_check}'' operator (\sortref{MsvcIsAssignableNocheck}{SourceKeyword})
 
 \ifcSortSection{MsvcBuiltinBitCast}{DyadicOperator}
-Source level ``\code{\_\_builtin\_bit\_cast}'' operator (\sortref{MsvcBuiltinBitCast}{SourceKeyword}).
+Source level ``\code{__builtin_bit_cast}'' operator (\sortref{MsvcBuiltinBitCast}{SourceKeyword}).
 
 \ifcSortSection{MsvcBuiltinIsLayoutCompatible}{DyadicOperator}
+Source level ``\code{__builtin_is_layout_compatible}'' operator (\sortref{MsvcBuiltinIsLayoutCompatible}{SourceKeyword}).
+
 \ifcSortSection{MsvcBuiltinIsPointerInterconvertibleBaseOf}{DyadicOperator}
+Source level ``\code{__builtin_is_pointer_interconvertible_base_of}'' operator (\sortref{MsvcBuiltinIsPointerInterconvertibleBaseOf}{SourceKeyword}).
+
 \ifcSortSection{MsvcBuiltinIsPointerInterconvertibleWithClass}{DyadicOperator}
+Source level ``\code{__builtin_is_pointer_interconvertible_with_class}'' operator (\sortref{MsvcBuiltinIsPointerInterconvertibleWithClass}{SourceKeyword}).
+
 \ifcSortSection{MsvcBuiltinIsCorrespondingMember}{DyadicOperator}
+Source level ``\code{__builtin_is_corresponding_member}'' operator (\sortref{MsvcBuiltinIsCorrespondingMember}{SourceKeyword}).
+
 \ifcSortSection{MsvcIntrinsic}{DyadicOperator}
+Abstract machine operation corresponding to the call of an MSVC intrinsic operator of function.
+The first operand is an integer constant describing the intrinsic; the second operand is the argument list.
+See also \sortref{Call}{ExprSort}.
 
 
 \subsection{Triadic operators}

@@ -6,6 +6,9 @@
 %% For anything math-y
 \RequirePackage{euler}
 
+%% Control of figures.
+\RequirePackage{float}
+
 %% Everything is based on TikZ.
 \RequirePackage{tikz}
 %\usetikzlibrary{node-families}
@@ -27,6 +30,13 @@
 
 %% For formatting code
 \RequirePackage{listings}
+
+%% Load this package last to get referencing commands right.
+\usepackage{hyperref}
+
+\hypersetup{
+	colorlinks=true
+}
 
 %% Typesetting meta variables
 \newcommand{\var}[1]{\ensuremath{\mathtt{#1}}}
@@ -120,7 +130,7 @@
 	{\end{figure}}
 
 % Reference to a labeled section describing a sort.
-\newcommand{\sortref}[2]{\secref{sec:ifc:#2:#1}}
+\newcommand{\sortref}[2]{\hyperref[sec:ifc:#2:#1]{#2::#1}}
 
 \def\bitHeight{2em}
 
