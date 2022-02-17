@@ -192,11 +192,33 @@ as follows
 \ifcdoc{Consteval}{KeywordSort} Source-level keyword ``\code{consteval}''.
 \ifcdoc{Typename}{KeywordSort} Source-level keyword ``\code{typename}''.
 
+\subsection{Direction of fold expressions}
+\label{sec:ifc:syntax-fold-direction}
+
+A fold expression can be left-leaning or right-leaning.  The determination 
+of that direction is denoted by values of type \type{FoldDirection} defined as
+\begin{typedef}{FoldDirection}{}
+	enum class FoldDirection : uint32_t {
+		Unknown,
+		Left,
+		Right
+	};
+\end{typedef}
+with the following meaning
+\begin{itemize}
+	\item \code{FoldDirection::Unknown} indicates that the direction of the fold expression is not yet known.
+	\item \code{FoldDirection::Left} indicates that the expression is a left fold.
+	\item \code{FoldDirection::Right} indicates that the expression is a right fold.
+\end{itemize}
+
 \section{Syntax tree structures}
 \label{sec:ifc:SyntaxSort-structures}
 
 \subsection{\valueTag{SyntaxSort::VendorExtension}}
 \label{sec:ifc:SyntaxSort:VendorExtension}
+
+Valid abstract references of this sort have index starting at $1$.
+No structure is defined for this abstract reference as of this version.
 
 \partition{syntax.vendor-extension}
 
@@ -571,7 +593,7 @@ Each entry of that partition is a structure with the following layout
 		\DeclareMember{trailing\_target}{SyntaxIndex} \\
 		\DeclareMember{virtual\_specifiers}{SyntaxIndex} \\
 		\DeclareMember{name}{ExprIndex} \\
-		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{qualifiers}{Qualifiers} \\
 		\DeclareMember{convention}{CallingConvrntion} \\
@@ -587,7 +609,7 @@ The \field{array\_or\_function} field, if non null, denotes an array (\sortref{A
 The \field{trailing\_target}, if non null, denotes a trailing return type (\sortref{TrailingReturnType}{SyntaxSort}) in the declarator.
 The \field{virtual\_specifiers}, if non null, denotes the \grammar{virt-specifier-seq} grammatical element (\sortref{VirtualSpecifierSeq}{SyntaxSort}) in the source level construct.
 The \field{name} field, if non null, denotes the name (\grammar{id-expression}) introduced by the declarator.
-The \field{ellipsis} field, if non null, indicates that the expansion operator \code{...} was used to introduce the \grammar{declarator-id}.
+The \field{expander} field, if non null, indicates that the expansion operator \code{...} was used to introduce the \grammar{declarator-id}.
 The \field{locus} field denotes the source location of the declarator.
 The \field{qualifiers} field denotes the \grammar{cv-qualifier-seq} of the declarator.
 The \field{convention} field denotes the calling convention specifier in the declarator (if this is a function declarator).
@@ -774,7 +796,7 @@ denotes the inner declarator.
 		\DeclareMember{type\_specifiers}{SyntaxIndex} \\
 		\DeclareMember{declarator}{SyntaxIndex} \\
 		\DeclareMember{locus}{SourceLocation} \\
-		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
 	}
 	\label{fig:ifc:SyntaxSort:ExceptionDeclaration}
 \end{figure}
@@ -1229,7 +1251,7 @@ denotes the inner declarator.
 		\DeclareMember{type\_list}{SyntaxIndex} \\
 		\DeclareMember{throw}{SourceLocation} \\
 		\DeclareMember{left\_paren}{SourceLocation} \\
-		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
 		\DeclareMember{right\_paren}{SourceLocation} \\
 	}
 	\label{fig:ifc:SyntaxSort:DynamicExceptionSpec}
@@ -1442,7 +1464,7 @@ The meaning of the fields is as follows
 		\DeclareMember{constraint}{SyntaxIndex} \\
 		\DeclareMember{argument}{SyntaxIndex} \\
 		\DeclareMember{locus}{SourceLocation} \\
-		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
 	}
 	\caption{Structure of a type \grammar{template-parameter} syntax tree}
 	\label{fig:ifc:SyntaxSort:TypeTemplateParameter}
@@ -1454,7 +1476,7 @@ The meaning of the fields is as follows:
 	\item \field{constraint} denotes any optional type constraint on this parameter.
 	\item \field{argument} denotes the corresponding default argument (if any).
 	\item \field{locus} denotes the source location of this declaration.
-	\item \field{ellipsis}, if non null, denotes the source location of \code{...} indicating a parameter pack.
+	\item \field{expander}, if non null, denotes the source location of \code{...} indicating a parameter pack.
 \end{itemize}
 
 \partition{syntax.type-template-parameter}
@@ -1469,7 +1491,7 @@ The meaning of the fields is as follows:
 		\DeclareMember{argument}{SyntaxIndex} \\
 		\DeclareMember{parameters}{SyntaxIndex} \\
 		\DeclareMember{locus}{SourceLocation} \\
-		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
 		\DeclareMember{comma}{SourceLocation} \\
 		\DeclareMember{key}{KeywordSyntax} \\
 	}
@@ -1483,7 +1505,7 @@ The meaning of the fields is as follows
 	\item \field{argument}, if non null, denotes the corresponding default argument (if any).
 	\item \field{parameters} denotes the parameter list associated with this template \grammar{template-parameter} declaration.
 	\item \field{locus} denotes the source location of this declaration.
-	\item \field{ellipsis}, if non null, denotes the source location of \code{...} indicating a parameter pack.
+	\item \field{expander}, if non null, denotes the source location of \code{...} indicating a parameter pack.
 	\item \field{comma}, if non null, denotes the source location of the separating comma from the next \grammar{template-parameter} declaration.
 	\item \field{key} denotes the keyword (either \code{typename} or \code{class}) used to declare this template \grammar{template-parameter}.
 \end{itemize}
@@ -1497,7 +1519,7 @@ The meaning of the fields is as follows
 \begin{Structure}
 	\structure{
 		\DeclareMember{argument}{ExprIndex} \\
-		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
 		\DeclareMember{comma}{SourceLocation} \\
 	}
 	\caption{Structure of a type \grammar{template-argument}}
@@ -1507,7 +1529,7 @@ The meaning of the fields is as follows
 The meaning of the fields is as follows
 \begin{itemize}
 	\item \field{argument} denotes the type \grammar{template-argument}.
-	\item \field{ellipsis}, if non null, denotes the source location of \code{...} if this template argument is actually an expansion.
+	\item \field{expander}, if non null, denotes the source location of \code{...} if this template argument is actually an expansion.
 	\item \field{comma}, if non null, denotes the source location of the comma separating from the next template argument.
 \end{itemize}
 
@@ -1519,7 +1541,7 @@ The meaning of the fields is as follows
 \begin{Structure}
 	\structure{
 		\DeclareMember{argument}{SyntaxIndex} \\
-		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
 		\DeclareMember{comma}{SourceLocation} \\
 	}
 	\caption{Structure of a non-type \grammar{template-argument} syntax tree}
@@ -1529,7 +1551,7 @@ The meaning of the fields is as follows
 The meaning of the fields is as follows
 \begin{itemize}
 	\item \field{argument} is an expression that denotes the non-type \grammar{template-argument}.
-	\item \field{ellipsis}, if non null, denotes the source location of \code{...} if this template argument is actually an expansion.
+	\item \field{expander}, if non null, denotes the source location of \code{...} if this template argument is actually an expansion.
 	\item \field{comma}, if non null, denotes the source location of the comma separating from the next template argument.
 \end{itemize}
 
@@ -1613,11 +1635,55 @@ The meaning of the fields is as follows
 \subsection{\valueTag{SyntaxSort::MemInitializer}}
 \label{sec:ifc:SyntaxSort:MemInitializer}
 
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::MemInitializer} represents a reference
+to a parse tree of \grammar{mem-initializer}.  The \field{index} field is an index into the
+member-initialization partition.  Each entry in that partition is a structure with the following layout
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{member}{ExprIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{expander}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{mem-initializer} syntax tree}
+	\label{fig:ifc:SyntaxSort:MemInitializer}
+\end{Structure}
+%
+The meanings of the fields are as follows
+\begin{itemize}
+	\item \field{member} designates the subobject (field or base-class) to be initialized.
+	\item \field{initialized} designates the expression used to initialize the subobject.
+	\item \field{expander}, if non-zero, designates the source location of the pack-expansion 
+	operator of the \grammar{mem-initializer}.
+	\item \field{comma}, if non-zero, indicates the source location of a comma after the \grammar{mem-initializer}.
+\end{itemize}
+
 \partition{syntax.mem-initializer}
 
 
 \subsection{\valueTag{SyntaxSort::CtorInitializer}}
 \label{sec:ifc:SyntaxSort:CtorInitializer}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::CtorInitializer} represents a reference
+to a parse tree of \grammar{ctor-initializer}.  The \field{index} is an index into the constructor initializer
+partition. Each entry in that partition is a structure with the following layout
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{initializers}{SyntaxIndex} \\
+		\DeclareMember{colon}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{ctor-initializer} syntax tree}
+	\label{fig:ifc:SyntaxSort:CtorInitializer}
+\end{Structure}
+%
+The meanings of the fields are as follows
+\begin{itemize}
+	\item \field{initializers} designates the sequence of \grammar{mem-initializer}
+	(\sortref{MemInitializer}{SyntaxSort}) in this \grammar{ctor-initializer}.
+	\item \field{color} designates the source location of the colon in the this \grammar{ctor-initializer}.
+\end{itemize} 
 
 \partition{syntax.ctor-initializer}
 		
@@ -1625,45 +1691,170 @@ The meaning of the fields is as follows
 \subsection{\valueTag{SyntaxSort::LambdaIntroducer}}
 \label{sec:ifc:SyntaxSort:LambdaIntroducer}
 
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::LambdaIntroducer} represents a reference
+to a parse tree of \grammar{lambda-introducer}.  The \field{index} is an index into the lambda introducer
+partition. Each entry in that partition is a structure with the following layout
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{captures}{SyntaxIndex} \\
+		\DeclareMember{left\_bracket}{SourceLocation} \\
+		\DeclareMember{right\_bracket}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{lambda-introducer} syntax tree}
+	\label{fig:ifc:SyntaxSort:LambdaIntroducer}
+\end{Structure}
+%
+The meanings of the fields are as follows
+\begin{itemize}
+	\item \field{captures}, if non-null, designates either the \grammar{capture-default}
+	(\sortref{CaptureDefault}{SyntaxSort}) or a sequence of
+	\grammar{capture}s.
+	\item \field{left\_paren} and \field{right\_paren} designate the source locations of the open bracket and
+	closing brackets, respectively.
+\end{itemize}
+
 \partition{syntax.lambda-introducer}
 
 \subsection{\valueTag{SyntaxSort::LambdaDeclarator}}
 \label{sec:ifc:SyntaxSort:LambdaDeclarator}
 
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::LambdaDeclarator} represents a reference
+to a parse tree of \grammar{lambda-declarator}.  The \field{index} is an index into the lambda declarator
+partition. Each entry in that partition is a structure with the following layout
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{parameters}{SyntaxIndex} \\
+		\DeclareMember{eh\_spec}{SyntaxIndex} \\
+		\DeclareMember{trailing\_target}{SyntaxIndex} \\
+		\DeclareMember{modifier}{Keyword} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{lambda-declarator} syntax tree}
+	\label{fig:ifc:SyntaxSort:LambdaDeclarator}
+\end{Structure}
+%
+The meanings of the fields are as follow
+\begin{itemize}
+	\item \field{parameters}, if non-null, designates the parse tree for the \grammar{parameter-declaration-clause}.
+	\item \field{eh\_spec}, if non null, designates the parse tree for the \grammar{noexcept-specifier}.
+	\item \field{trailing\_target}, if non-null, designates the parse tree for the \grammar{trailing-return-type}.
+	\item \field{modifier} designates one of the allowed \grammar{decl-specifier} in the \grammar{decl-specifier-seq} 
+	of this \grammar{lambda-declarator}.
+	\item \field{left\_paren} and \field{right\_paren}, when non zero, designate the source locations of the
+	opening and closing parentheses enclosing the \field{parameters}.
+	\item \field{expander}, if non zero, designates the source location of \code{...} in this \grammar{lambda-declarator}.
+\end{itemize}
+
 \partition{syntax.lambda-declarator}
+
 
 \subsection{\valueTag{SyntaxSort::CaptureDefault}}
 \label{sec:ifc:SyntaxSort:CaptureDefault}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+		\DeclareMember{by\_ref}{bool} \\
+	}
+	\caption{Structure of a \grammar{capture-default} syntax tree}
+	\label{fig:ifc:SyntaxSort:CaptureDefault}
+\end{Structure}
 
 \partition{syntax.capture-default}
 
 \subsection{\valueTag{SyntaxSort::SimpleCapture}}
 \label{sec:ifc:SyntaxSort:SimpleCapture}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{ampersand}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{simple-capture} syntax tree}
+	\label{fig:ifc:SyntaxSort:SimpleCapture}
+\end{Structure}
+
 \partition{syntax.simple-capture}
 
 \subsection{\valueTag{SyntaxSort::InitCapture}}
 \label{sec:ifc:SyntaxSort:InitCapture}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{expander}{SourceLocation} \\
+		\DeclareMember{ampersand}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{init-capture} syntax tree}
+	\label{fig:ifc:SyntaxSort:InitCapture}
+\end{Structure}
 
 \partition{syntax.init-capture}
 
 \subsection{\valueTag{SyntaxSort::ThisCapture}}
 \label{sec:ifc:SyntaxSort:ThisCapture}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{asterisk}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\caption{Structure of a \code{this} or \code{*this} capture syntax tree}
+	\label{fig:ifc:SyntaxSort:ThisCapture}
+\end{Structure}
+
 \partition{syntax.this-capture}
 
 \subsection{\valueTag{SyntaxSort::AttributedStatement}}
 \label{sec:ifc:SyntaxSort:AttributedStatement}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{pragma}{SentenceIndex} \\
+		\DeclareMember{stmt}{SyntaxIndex} \\
+		\DeclareMember{attributes}{SyntaxIndex} \\
+	}
+	\caption{Structure of an attributed \grammar{statement} syntax tree}
+	\label{fig:ifc:SyntaxSort:AttributedStatement}
+\end{Structure}
 
 \partition{syntax.attributed-statement}
 
 \subsection{\valueTag{SyntaxSort::AttributedDeclaration}}
 \label{sec:ifc:SyntaxSort:AttributedDeclaration}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{decl}{SyntaxIndex} \\
+		\DeclareMember{attributes}{SyntaxIndex} \\
+	}
+	\caption{Structure of an attributed \grammar{declaration} syntax tree}
+	\label{fig:ifc:SyntaxSort:AttributedDeclaration}
+\end{Structure}
+
 \partition{syntax.attributed-declaration}
 
 \subsection{\valueTag{SyntaxSort::AttributeSpecifierSeq}}
 \label{sec:ifc:SyntaxSort:AttributeSpecifierSeq}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{attributes}{SyntaxIndex} \\
+	}
+	\caption{Structure of a \grammar{attribute-specifier-seq} syntax tree}
+	\label{fig:ifc:SyntaxSort:AttributeSpecifierSeq}
+\end{Structure}
 
 \partition{syntax.attribute-specifier-seq}
 
@@ -1671,16 +1862,49 @@ The meaning of the fields is as follows
 \subsection{\valueTag{SyntaxSort::AttributeSpecifier}}
 \label{sec:ifc:SyntaxSort:AttributeSpecifier}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{prefix}{SyntaxIndex} \\
+		\DeclareMember{attributes}{SyntaxIndex} \\
+		\DeclareMember{left\_brackets}{\arrayType{2}{SyntaxIndex}} \\
+		\DeclareMember{right\_brackets}{\arrayType{2}{SyntaxIndex}} \\
+	}
+	\caption{Structure of a \grammar{attribute-specifier} syntax tree}
+	\label{fig:ifc:SyntaxSort:AttributeSpecifier}
+\end{Structure}
+
 \partition{syntax.attribute-specifier}
 
 \subsection{\valueTag{SyntaxSort::AttributeUsingPrefix}}
 \label{sec:ifc:SyntaxSort:AttributeUsingPrefix}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{scope}{ExprIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{colon}{SourceLocation} \\
+	}
+	\caption{Structure of an \grammar{attribute-using-prefix} syntax tree}
+	\label{fig:ifc:SyntaxSort:AttributeUsingPrefix}
+\end{Structure}
 
 \partition{syntax.attribute-using-prefix}
 
 \subsection{\valueTag{SyntaxSort::Attribute}}
 \label{sec:ifc:SyntaxSort:Attribute}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{scope}{ExprIndex} \\
+		\DeclareMember{argument\_clause}{SyntaxIndex} \\
+		\DeclareMember{colons}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocaion} \\
+	}
+	\caption{Structure of an \grammar{attribute} syntax tree}
+	\label{fig:ifc:SyntaxSort:Attribute}
+\end{Structure}
 
 \partition{syntax.attribute}
 
@@ -1688,10 +1912,31 @@ The meaning of the fields is as follows
 \subsection{\valueTag{SyntaxSort::AttributeArgumentClause}}
 \label{sec:ifc:SyntaxSort:AttributeArgumentClause}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{tokens}{SentenceIndex} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\caption{Structure of an \grammar{attribute-argument-clause} syntax tree}
+	\label{fig:ifc:SyntaxSort:AttributeArgumentClause}
+\end{Structure}
+
 \partition{syntax.attribute-argument-clause}
 
 \subsection{\valueTag{SyntaxSort::Alignas}}
 \label{sec:ifc:SyntaxSort:Alignas}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{operand}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\caption{Structure of an \grammar{alignas-specifier} syntax tree}
+	\label{fig:ifc:SyntaxSort:Alignas}
+\end{Structure}
 
 \partition{syntax.alignas}
 
@@ -1699,11 +1944,32 @@ The meaning of the fields is as follows
 \subsection{\valueTag{SyntaxSort::UsingDeclaration}}
 \label{sec:ifc:SyntaxSort:UsingDeclaration}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{declarators}{SyntaxIndex} \\
+		\DeclareMember{keyword}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{using-declaration} syntax tree}
+	\label{fig:ifc:SyntaxSort:UsingDeclaration}
+\end{Structure}
+
 \partition{syntax.using-declaration}
 
 
 \subsection{\valueTag{SyntaxSort::UsingDeclarator}}
 \label{sec:ifc:SyntaxSort:UsingDeclarator}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{qualified\_name}{ExprIndex} \\
+		\DeclareMember{typename\_kw}{SourceLocation} \\
+		\DeclareMember{expander}{SourceLocation} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{using-declarator} syntax tree}
+	\label{fig:ifc:SyntaxSort:UsingDeclarator}
+\end{Structure}
 
 \partition{syntax.using-declarator}
 
@@ -1711,36 +1977,121 @@ The meaning of the fields is as follows
 \subsection{\valueTag{SyntaxSort::UsingDirective}}
 \label{sec:ifc:SyntaxSort:UsingDirective}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{qualified\_name}{ExprIndex} \\
+		\DeclareMember{using\_kw}{SourceLocation} \\
+		\DeclareMember{namespace\_kw}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{using-directive} syntax tree}
+	\label{fig:ifc:SyntaxSort:UsingDirective}
+\end{Structure}
+
 \partition{syntax.using-directive}
 
 
 \subsection{\valueTag{SyntaxSort::ArrayIndex}}
 \label{sec:ifc:SyntaxSort:ArrayIndex}
 
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::ArrayIndex} represents a reference
+to a parse tree of an expression of the form ``\code{ary[i]}''.  
+The \field{index} is an index into the array indexing parse tree
+partition. Each entry in that partition is a structure with the following layout
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{array}{ExprIndex} \\
+		\DeclareMember{index}{ExprIndex} \\
+		\DeclareMember{left\_bracket}{SourceLocation} \\
+		\DeclareMember{right\_bracket}{SourceLocation} \\
+	}
+	\caption{Structure of an array indexing expression syntax tree}
+	\label{fig:ifc:SyntaxSort:ArrayIndex}
+\end{Structure}
+%
+The meaning of the fields are as follow
+\begin{itemize}
+	\item \field{array} designates the parse tree of the expression denoting the array to index
+	\item \field{index} designates the parse tree of the entry position
+	\item \field{left\_bracket} and \field{right\_bracket} designate the source locations 
+	of the opening and closing brackets in the array indexing expression.
+\end{itemize}
+
 \partition{syntax.array-index}
 
 \subsection{\valueTag{SyntaxSort::SEHTry}}
 \label{sec:ifc:SyntaxSort:SEHTry}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{handler}{SyntaxIndex} \\
+		\DeclareMember{try\_kw}{SourceLocation} \\
+	}
+	\caption{Structure of the MSVC extension SEH \code{__try} statement}
+	\label{fig:ifc:SyntaxSort:SEHTry}
+\end{Structure}
 
 \partition{syntax.seh-try}
 
 \subsection{\valueTag{SyntaxSort::SEHExcept}}
 \label{sec:ifc:SyntaxSort:SEHExcept}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{except\_kw}{SourceLocation} \\
+		\DeclareMember{left\_paren}{SourceLocation} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\caption{Structure of the MSVC extension SEH \code{__except} handler}
+	\label{fig:ifc:SyntaxSort:SEHExcept}
+\end{Structure}
+
 \partition{syntax.seh-except}
 
 \subsection{\valueTag{SyntaxSort::SEHFinally}}
 \label{sec:ifc:SyntaxSort:SEHFinally}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{body}{SyntaxIndex} \\
+		\DeclareMember{finally\_kw}{SourceLocation} \\
+	}
+	\caption{Structure of the MSVC extension SEH \code{__finally} handler}
+	\label{fig:ifc:SyntaxSort:SEHFinally}
+\end{Structure}
 
 \partition{syntax.seh-finally}
 
 \subsection{\valueTag{SyntaxSort::SEHLeave}}
 \label{sec:ifc:SyntaxSort:SEHLeave}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{leave\_kw}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\caption{Structure of the MSVC extension SEH \code{__leave} statement}
+	\label{fig:ifc:SyntaxSort:SEHLeave}
+\end{Structure}
+
 \partition{syntax.seh-leave}
 
 \subsection{\valueTag{SyntaxSort::TypeTraitIntrinsic}}
 \label{sec:ifc:SyntaxSort:TypeTraitIntrinsic}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{arguments}{SyntaxIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{intrinsic}{Operator} \\
+	}
+	\caption{Structure of an MSVC extension intrinsic expression syntax tree}
+	\label{fig:ifc:SyntaxSort:TypeTraitIntrinsic}
+\end{Structure}
 
 \partition{syntax.type-trait-intrinsic}
 
@@ -1765,7 +2116,7 @@ Each entry in that partition is a structure with the following layout
 %
 with the following meanings for the fields:
 \begin{itemize}
-	\item field{start} is an index into the syntax tree heap partition. It points to the first syntax tree abstract reference in the tuple.
+	\item \field{start} is an index into the syntax tree heap partition. It points to the first syntax tree abstract reference in the tuple.
 	\item \field{cardinality} denotes the number of syntax tree abstract references in the tuple.
 \end{itemize}
 
@@ -1775,20 +2126,80 @@ with the following meanings for the fields:
 \subsection{\valueTag{SyntaxSort::AsmStatement}}
 \label{sec:ifc:SyntaxSort:AsmStatement}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{tokens}{SentenceIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of the MSVC extension inline assembly syntax tree}
+	\label{fig:ifc:SyntaxSort:AsmStatement}
+\end{Structure}
+
 \partition{syntax.asm-statement}
 
 \subsection{\valueTag{SyntaxSort::NamespaceAliasDefinition}}
 \label{sec:ifc:SyntaxSort:NamespaceAliasDefinition}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{target}{ExprIndex} \\
+		\DeclareMember{namespace\_kw}{SourceLocation} \\
+		\DeclareMember{assign}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{namespace-alias-definition} syntax tree}
+	\label{fig:ifc:SyntaxSort:NamespaceAliasDefinition}
+\end{Structure}
 
 \partition{syntax.namespace-alias-definition}
 
 \subsection{\valueTag{SyntaxSort::Super}}
 \label{sec:ifc:SyntaxSort:Super}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of the MSVC extension \code{__super} expression syntax tree}
+	\label{fig:ifc:SyntaxSort:Super}
+\end{Structure}
+
 \partition{syntax.super}
 
 \subsection{\valueTag{SyntaxSort::UnaryFoldExpression}}
 \label{sec:ifc:SyntaxSort:UnaryFoldExpression}
+
+A \type{SyntaxIndex} value with tag \valueTag{SyntaxSort::UnaryFoldExpression} represents a reference
+to a parse tree of a unary \grammar{fold-expression}.  
+The \field{index} is an index into the unary fold expression parse tree
+partition. Each entry in that partition is a structure with the following layout
+%
+\begin{Structure}
+	\structure{
+		\DeclareMember{direction}{FoldDirection} \\
+		\DeclareMember{operand}{ExprIndex} \\
+		\DeclareMember{dyad}{DyadicOperator} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{eclipsis}{SourceLocation} \\
+		\DeclareMember{glyph\_locus}{SourceLocation} \\
+		\DeclareMember{righ\_paren}{SourceLocation} \\
+	}
+	\caption{Structure of a unary \grammar{fold-expression} syntax tree}
+	\label{fig:ifc:SyntaxSort:UnaryFoldExpression}
+\end{Structure}
+%
+The meanings of the fields are as follow:
+\begin{itemize}
+	\item \field{direction} indicates whether the folding is left-leaning or right-leaning 
+		(see \secref{sec:ifc:syntax-fold-direction}).
+	\item \field{operand} designates the parse tree of the expression written in this \grammar{fold-expression}.
+	\item \field{dyad} designates the binary operation used for the fold expression.
+	\item \field{locus} designates the source location of the \grammar{fold-expression}.
+	\item \field{eclipsis} designates the parse tree of the \code{...}
+	\item \field{glyph\_locus} designates the source location of the operator in the expression.
+	\item \field{right\_paren} designates the source location of the closing parenthesis.
+\end{itemize}
 
 \partition{syntax.unary-fold-expression}
 
@@ -1796,26 +2207,81 @@ with the following meanings for the fields:
 \subsection{\valueTag{SyntaxSort::BinaryFoldExpression}}
 \label{sec:ifc:SyntaxSort:BinaryFoldExpression}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{direction}{FoldDirection} \\
+		\DeclareMember{operands}{\arrayType{2}{ExprIndex}} \\
+		\DeclareMember{dyad}{DyadicOperator} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{eclipsis}{SourceLocation} \\
+		\DeclareMember{glyph\_loci}{\arrayType{2}{SourceLocation}} \\
+		\DeclareMember{right\_paren}{SourceLocation} \\
+	}
+	\caption{Structure of a binary \grammar{fold-expression} syntax tree}
+	\label{fig:ifc:SyntaxSort:BinaryFoldExpression}
+\end{Structure}
+
 \partition{syntax.binary-fold-expression}
 
 
 \subsection{\valueTag{SyntaxSort::EmptyStatement}}
 \label{sec:ifc:SyntaxSort:EmptyStatement}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+	}
+	\caption{Structure of an empty statement syntax tree}
+	\label{fig:ifc:SyntaxSort:EmptyStatement}
+\end{Structure}
+
 \partition{syntax.empty-statement}
 		
 \subsection{\valueTag{SyntaxSort::StructuredBindingDeclaration}}
 \label{sec:ifc:SyntaxSort:StructuredBindingDeclaration}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{ref}{SourceLocation} \\
+		\DeclareMember{specifiers}{SyntaxIndex} \\
+		\DeclareMember{names}{SyntaxIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{qualifier}{ReferenceQualifier} \\
+	}
+	\caption{Structure of a structured binding declaration syntax tree}
+	\label{fig:ifc:SyntaxSort:StructuredBindingDeclaration}
+\end{Structure}
 
 \partition{syntax.structured-binding-declaration}
 		
 \subsection{\valueTag{SyntaxSort::StructuredBindingIdentifier}}
 \label{sec:ifc:SyntaxSort:StructuredBindingIdentifier}
 
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{comma}{SourceLocation} \\
+	}
+	\caption{Structure of a structured binding identifier syntax tree}
+	\label{fig:ifc:SyntaxSort:StructuredBindingIdentifier}
+\end{Structure}
+
 \partition{syntax.structured-binding-identifier}
 
 \subsection{\valueTag{SyntaxSort::UsingEnumDeclaration}}
 \label{sec:ifc:SyntaxSort:UsingEnumDeclaration}
+
+\begin{Structure}
+	\structure{
+		\DeclareMember{name}{ExprIndex} \\
+		\DeclareMember{using\_kw}{SourceLocation} \\
+		\DeclareMember{enum\_kw}{SourceLocation} \\
+		\DeclareMember{semicolon}{SourceLocation} \\
+	}
+	\caption{Structure of a \grammar{using-enum-declaration} syntax tree}
+	\label{fig:ifc:SyntaxSort:UsingEnumDeclaration}
+\end{Structure}
 
 \partition{syntax.using-enum-declaration}
 
