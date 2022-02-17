@@ -107,7 +107,7 @@ This document uses a few fundamental data types, \type{u8}, \type{u16}, and \typ
 \begin{itemize}
 	\item \type{u8}: $1$ octet, with alignment $1$; usually equivalent to C++'s \code{uint8_t}
 	\item \type{u16}: $2$ octets, with alignment $2$; usually equivalent to C++'s \code{uint16_t}
-	\item \type{u32}: $4$ octets, with alignment %4%; usually equivalent to C++'s \code{uint32_t} 
+	\item \type{u32}: $4$ octets, with alignment $4$; usually equivalent to C++'s \code{uint32_t} 
 \end{itemize} 
 
 \subsection{File offset in bytes}
@@ -151,6 +151,13 @@ A sequence is generically described by a pair:
 %
 The \field{start} field is an index into the partition the sequence is part of.  It designates the first item in the sequence.
 The \field{cardinality} designates the number of items in the sequence.
+
+\subsection{Arrays}
+\label{sec:ifc-array-type}
+Occasionally, a contiguous sequence of $n$ items of type $T$ may be represented inline as having type \arrayType{n}{$T$}.
+Such a group of items is called an array of $n$ elements.  Each item in that array is referred to via indices 
+$0$ through $n-1$ inclusive.
+The inline representation means that the $n$ items are represented consecutively in the containing structure.
 
 \subsection{Content Hash}
 \label{sec:content-sha256-hash}
