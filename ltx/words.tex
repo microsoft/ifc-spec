@@ -402,6 +402,9 @@ and those with values greater than $0x1FFF$
 	\enumerator{MsvcFunctionNameMacro}
 	\enumerator{MsvcStringPrefixMacro}
 	\enumerator{MsvcBinding}
+	\enumerator{MsvcResolvedType}
+	\enumerator{MsvcDefinedConstant}
+	\enumerator{MsvcCastTargetType}
 \end{Enumeration}
 
 \paragraph{\valueTag{SourceLiteral::Unknown}}
@@ -463,6 +466,27 @@ the result of the first phase of 2-phase name lookup up as applied to
 templated definitions.   The \field{index} field is of type \type{ExprIndex}
 and references (\secref{sec:ifc:ExprSort:NamedDecl}) the declarations bound 
 to that identifier.
+
+\paragraph{\valueTag{SourceLiteral::MsvcResolvedType}}  
+\label{sec:ifc:SourceLiteral:MsvcResolvedType}
+
+A literal word denoting a fully resolved type at the C++ source-level.  The
+\field{index} field is of type \type{TypeIndex}.
+
+\paragraph{\valueTag{SourceLiteral::MsvcDefinedConstant}}  
+\label{sec:ifc:SourceLiteral:MsvcDefinedConstant}
+
+A literal word denoting a user-defined constant literal at the C++ source-level.
+The \field{index} field is of type \type{ExprIndex} and refers to a
+(\secref{sec:ifc:ExprSort:Tuple}) of two elements containing the literal constant
+value as the first element and the literal suffix identifier as the second.
+
+\paragraph{\valueTag{SourceLiteral::MsvcCastTargetType}}  
+\label{sec:ifc:SourceLiteral:MsvcCastTargetType}
+
+A literal word denoting a fully resolved type as the target type of a functional
+cast expression at the C++ source-level.  The \field{index} field is of type
+\type{TypeIndex}.
 
 \subsubsection{\valueTag{WordSort::Operator}}
 \label{sec:ifc:WordSort:Operator}
