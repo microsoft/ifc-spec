@@ -1,0 +1,46 @@
+# Creates or updates a 'prerelease' release whenever main is
+# changed. Attaches a built PDF to that release.
+name: On Main Branch Change
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_draft_pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set origin HEAD
+        run: git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/main
+
+      - name: Compile document
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: ifc.tex
+          working_directory: ltx
+
+      - name: Compile changelog
+        run: |
+          echo 'CHANGELOG<<EOF' >> $GITHUB_ENV
+          ruby ./.github/workflows/compile-changelog.rb $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Create prerelease
+        uses: ncipollo/release-action@v1
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          allowUpdates: true
+          name: Prerelease
+          prerelease: true
+          tag: prerelease
+          body: |
+            This release is a prerelease. The contents of this release are likely to change.
+            # Changelog
+            ${{ env.CHANGELOG }}
+          artifacts: |
+            ltx/ifc.pdf
