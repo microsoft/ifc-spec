@@ -2508,6 +2508,9 @@ value of the \field{index} is to be interpreted as a value of type
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
+	\setcounter{enumi}{4063}
+	\enumerator{MsvcConfusion}
+	\enumerator{MsvcConfusedPushState}
 \end{Enumeration}
 
 \ifcSortSection{Unknown}{TriadicOperator}
@@ -2532,6 +2535,20 @@ C++ abstract machine operation.
 This is a marker, not an actual operator. Triadic operators with 
 value greater that this are MSVC extensions.
 
+\ifcSortSection{MsvcConfusion}{TriadicOperator}
+This operator is no longer emitted in this version and up of the IFC.
+
+\ifcSortSection{MsvcConfusedPushState}{TriadicOperator}
+This is an MSVC-specific operator to represent a low-level cleanup action related to exception handling.
+The three operands to this operator have the following meanings:
+\begin{enumerate}
+  \item the first operand designates a constructor call
+  \item the second operand designates a destructor call
+  \item the third operand designates an integer constant expression that is
+   a $64$-bit integer bitmask describing various semantic aspects of the cleanup action. 
+\end{enumerate}
+
+\note{This operator is scheduled for removal in future releases of the IFC.}
 
 \subsection{Storage operators}
 \label{sec:ifc:OperatorSort:Storage}
