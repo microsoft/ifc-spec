@@ -41,8 +41,8 @@ following layout
 	\enumerator{ExpressionList}
 	\enumerator{SizeofType}
 	\enumerator{Alignof}
-	\enumerator{New}
-	\enumerator{Delete}
+	\enumerator{Label}
+	\enumerator{Unused0}
 	\enumerator{Typeid}
 	\enumerator{DestructorCall}
 	\enumerator{SyntaxTree}
@@ -67,7 +67,7 @@ following layout
 	\enumerator{Nullptr}
 	\enumerator{This}
 	\enumerator{TemplateReference}
-	\enumerator{PushState}
+	\enumerator{Unused1}
 	\enumerator{TypeTraitIntrinsic}
 	\enumerator{DesignatedInitializer}
 	\enumerator{PackedTemplateArguments}
@@ -1008,21 +1008,40 @@ The \field{type} field designates the type of the entire \code{alignof}-expressi
 \note{This representation is subject to change.}
 
 
-\subsection{\valueTag{ExprSort::New}}
-\label{sec:ifc:ExprSort:New}
+\subsection{\valueTag{ExprSort::Label}}
+\label{sec:ifc:ExprSort:Label}
 
-This structure is no longer emitted. \grammar{new-expression}s are now emitted as either monadic, dyadic, or triadic trees as appropriate.
+An \type{ExprIndex} value with tag \valueTag{ExprSort::Label} designates a program point (as in a labeled statement).
+The \field{index} field of this abstract reference is a position designating an entry of the partition
+of program points.  Each such entry is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{designator}{ExprIndex} \\
+	}
+	\caption{Structure of label expression}
+	\label{fig:ifc:ExprSort:Label}
+\end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this label expression
+	\item \field{type} designates the type of the program point expression
+	\item \field{designator} designates the ``value'' (which could just be an identifier) of the program point
+\end{itemize}
 
-\note{This sort value is available for reuse in future releases.}
+\note{This representation is subject to change}
+
+\partition{expr.label}
 
 
-\subsection{\valueTag{ExprSort::Delete}}
-\label{sec:ifc:ExprSort:Delete}
+\subsection{\valueTag{ExprSort::Unused0}}
+\label{sec:ifc:ExprSort:Unused0}
 
-This structure is no longer emitted. \grammar{delete-expression}s are now emitted with appropriate structures.
-
-\note{This sort value is available for reuse in future releases.}
-
+No structure is associated with this sort value.
 
 \subsection{\valueTag{ExprSort::Typeid}}
 \label{sec:ifc:ExprSort:Typeid}
@@ -1544,27 +1563,10 @@ The field \field{locus} is the source location where the expression appears.
 
 \note{This structure is subject to removal in future releases.}
 
-\subsection{\valueTag{ExprSort::PushState}}
-\label{sec:ifc:ExprSort:PushState}
- A EH push-state expression (constructor call + matching destructor call)
+\subsection{\valueTag{ExprSort::Unused1}}
+\label{sec:ifc:ExprSort:Unused1}
 
-%
-\begin{figure}[H]
-	\centering
-	\structure{
-		\DeclareMember{locus}{SourceLocation} \\
-		\DeclareMember{type}{TypeIndex} \\
-		\DeclareMember{ctor\_call}{ExprIndex} \\
-		\DeclareMember{dtor\_call}{ExprIndex} \\
-		\DeclareMember{flags}{EHFlags} \\
-	}
-	\caption{Structure of a push state expression}
-	\label{fig:ifc-push-state-expression-structure}
-\end{figure}
-%
-The \field{flags} field is of type \newtype{EHFlags}{16}.
-
-\partition{expr.push-state}
+No structured is associated with this sort value.
 
 
 \subsection{\valueTag{ExprSort::TypeTraitIntrinsic}}
@@ -2511,6 +2513,7 @@ value of the \field{index} is to be interpreted as a value of type
 	\setcounter{enumi}{4063}
 	\enumerator{MsvcConfusion}
 	\enumerator{MsvcConfusedPushState}
+	\enumerator{MsvcConfusedChoice}
 \end{Enumeration}
 
 \ifcSortSection{Unknown}{TriadicOperator}
