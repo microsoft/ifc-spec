@@ -13,22 +13,24 @@ module interface source file.  A statement is designated an abstract reference o
 
 \begin{SortEnum}{StmtSort}
 	\enumerator{VendorExtension}
-	\enumerator{Empty}
+	\enumerator{Try}
 	\enumerator{If}
 	\enumerator{For}
-	\enumerator{Case}
+	\enumerator{Labeled}
 	\enumerator{While}
 	\enumerator{Block}
 	\enumerator{Break}
 	\enumerator{Switch}
 	\enumerator{DoWhile}
-	\enumerator{Default}
+	\enumerator{Goto}
 	\enumerator{Continue}
-	\enumerator{Expression}
+	\enumerator{Expr}
 	\enumerator{Return}
-	\enumerator{VariableDecl}
+	\enumerator{Decl}
 	\enumerator{Expansion}
 	\enumerator{SyntaxTree}
+	\enumerator{Handler}
+	\enumerator{Tuple}
 \end{SortEnum}
 
 \section{Statement structures}
@@ -40,37 +42,71 @@ module interface source file.  A statement is designated an abstract reference o
 \partition{stmt.vendor-extension}
 
 
-\subsection{\valueTag{StmtSort::Empty}}
-\label{sec:ifc:StmtSort:Empty}
+\subsection{\valueTag{StmtSort::Try}}
+\label{sec:ifc:StmtSort:Try}
 
+A \type{StmtIndex} value with tag \valueTag{StmtSort::Try} designates a \grammar{try-block} statement.
+The \field{index} field of that abstract reference is an index into the try-block partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+		\DeclareMember{handlers}{StmtIndex} \\
 	}
-	\caption{Structure of an empty statement}
-	\label{fig:ifc-empty-stmt-structure}
+	\caption{Structure of a \grammar{try-block}}
+	\label{fig:ifc-try-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item the sequence of statements making up the \grammar{compound-statement} body of the \grammar{try-block} is described by a \type{Sequence}
+	      of \type{StmtIndex} abstract references stored in the statement index heap (\secref{sec:ifc-stmt-heap}).
+		  \begin{itemize}
+		     \item \field{start} is the index of the entry in the statement heap for the first \type{StmtIndex} abstract reference of the body of the \grammar{try-block}
+		     \item \field{cardinality} denotes the number of \type{StmtIndex} abstract references in the body of the \grammar{try-block}.
+		  \end{itemize}
+	\item \field{handlers} designates either the handler or the sequence of handlers (\sortref{Handler}{StmtSort}) associated with the \grammar{try-block}.
+\end{itemize}
 
+\note{this representation is subject to change in future versions}
 
-\partition{stmt.empty}
+\partition{stmt.try}
+
+\diffNote{This partition sort value corresponds to \valueTag{StmtSort::Empty} in version 0.41 and prior. That statement sort was removed from this version.}
 
 
 \subsection{\valueTag{StmtSort::If}}
 \label{sec:ifc:StmtSort:If}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::If} designates a \grammar{selection-statement} of \code{if} sort.
+The \field{index} field of that abstract reference is an index into the if-statement partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{initialization}{StmtIndex} \\
 		\DeclareMember{condition}{StmtIndex} \\
 		\DeclareMember{consequence}{StmtIndex} \\
 		\DeclareMember{alternative}{StmtIndex} \\
-		\DeclareMember{locus}{SourceLocation} \\
 	}
 	\caption{Structure of an if-statement}
 	\label{fig:ifc-if-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{if}-statement.
+	\item \field{initialization}, if not null, designates an instance of \grammar{init-statement} in the input source.
+	\item \field{condition} designates the condition expression of declaration controling this \code{if}-statement.
+	\item \field{consequence} designates the branch of this \code{if}-statement to execute when the control condition evaluates to \code{true}.
+	\item \field{alternative}, if not null designates the branch of this \code{if}-statement to execute when the control condition evaluates to \code{false}.
+\end{itemize}
 
 \partition{stmt.if}
 
@@ -78,52 +114,96 @@ module interface source file.  A statement is designated an abstract reference o
 \subsection{\valueTag{StmtSort::For}}
 \label{sec:ifc:StmtSort:For}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::For} designates an \grammar{iteration-statement} of \code{for} sort.
+The \field{index} field of that abstract reference is an index into the \code{for}-statement partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{initialization}{StmtIndex} \\
 		\DeclareMember{condition}{StmtIndex} \\
 		\DeclareMember{continuation}{StmtIndex} \\
 		\DeclareMember{body}{StmtIndex} \\
-		\DeclareMember{locus}{SourceLocation} \\
 	}
-	\caption{Structure of a for-statement}
+	\caption{Structure of a \code{for} \grammar{iteration-statement}}
 	\label{fig:ifc-for-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{for} \grammar{iteration-statement}.
+	\item \field{initialization}, if not null, designates the \grammar{init-statement} of this \code{for} loop.
+	\item \field{condition}, if not null, designates the controling condition of this \code{for} loop.
+	\item \field{continuation}, if not null, designates the expression to evaluate after the current iteration of the body of the \code{for} loop is executed.
+	\item \field{body} designates the body of this \code{for} loop.
+\end{itemize}
 
 \partition{stmt.for}
 
 
-\subsection{\valueTag{StmtSort::Case}}
-\label{sec:ifc:StmtSort:Case}
+\subsection{\valueTag{StmtSort::Labeled}}
+\label{sec:ifc:StmtSort:Labeled}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Labeled} designates a \grammar{labeled-statement}.
+The \field{index} field of that abstract reference is an index into the \grammar{labeled-statement} partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
-		\DeclareMember{expr}{ExprIndex} \\
 		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{label}{ExprIndex} \\
+		\DeclareMember{stmt}{StmtIndex} \\
 	}
-	\caption{Structure of a case-label}
-	\label{fig:ifc-case-label-structure}
+	\caption{Structure of a \grammar{labeled-statement}}
+	\label{fig:ifc-labeled-stmt-structure}
 \end{figure}
 
-\partition{stmt.case}
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \grammar{labled-statement}.
+	\item \field{type} is unused and will be removed from future version.
+	\item \field{label} designates the label of this \grammar{labeled-statement} as follows
+		\begin{itemize}
+			\item if null, then this is the \code{default} case in a \code{switch-statement}, otherwise
+			\item if an integer-constant expression (\sortref{Literal}{ExprSort}), then it is the value of a \code{case} label, otherwise
+			\item it must be a identifier used as a label (\sortref{Label}{ExprSort}) to designate the program point of \field{stmt}.
+		\end{itemize}
+	\item \field{stmt} designates the statement the program point of which is identified by \field{label}.
+\end{itemize}
 
+\partition{stmt.labeled}
+
+\diffNote{This partition sort value corresponds to \valueTag{StmtSort::Case} in version 0.41 and prior. That statement sort was removed from this version.}
 
 
 \subsection{\valueTag{StmtSort::While}}
 \label{sec:ifc:StmtSort:While}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::While} designates an \grammar{iteration-statement} of \code{while} sort.
+The \field{index} field of that abstract reference is an index into the \code{while}\grammar{-statement} partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{condition}{StmtIndex} \\
 		\DeclareMember{body}{StmtIndex} \\
-		\DeclareMember{locus}{SourceLocation} \\
 	}
-	\caption{Structure of a while-statement}
+	\caption{Structure of a \code{while}\grammar{-statement}}
 	\label{fig:ifc-while-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{while}\grammar{-statement}
+	\item \field{condition} designates the condition controling this \grammar{iteration-statement}
+	\item \field{body} designates the body of this \grammar{iteration-statement}
+\end{itemize}
 
 \partition{stmt.while}
 
@@ -131,9 +211,14 @@ module interface source file.  A statement is designated an abstract reference o
 \subsection{\valueTag{StmtSort::Block}}
 \label{sec:ifc:StmtSort:Block}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Block} designates an \grammar{compound-statement}.
+The \field{index} field of that abstract reference is an index into the block-statement partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{start}{Index} \\
 		\DeclareMember{cardinality}{Cardinality} \\
 	}
@@ -141,150 +226,257 @@ module interface source file.  A statement is designated an abstract reference o
 	\label{fig:ifc-block-stmt-structure}
 \end{figure}
 
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this block statement
+	\item \field{start} designates the slot (in the statement heap partition (\secref{sec:ifc-stmt-heap})) of the first \type{StmtIndex} value in this block statement
+	\item \field{cardinality} denotes the number of \type{StmtIndex} values in this bock statement 
+\end{itemize}
+
+\note{this representation is subject to change in future versions}
+
+
 \partition{stmt.block}
 
 
 \subsection{\valueTag{StmtSort::Break}}
 \label{sec:ifc:StmtSort:Break}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Break} designates an \grammar{jump-statement} of \code{break} sort.
+The \field{index} field of that abstract reference is an index into the \code{break}\grammar{-statement} partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 	}
-	\caption{Structure of a break statement}
+	\caption{Structure of a \code{break} statement}
 	\label{fig:ifc-break-stmt-structure}
 \end{figure}
+%
+The field has the following meaning:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{break}\grammar{-statement}
+\end{itemize}
 
 \partition{stmt.break}
-
 
 
 \subsection{\valueTag{StmtSort::Switch}}
 \label{sec:ifc:StmtSort:Switch}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Switch} designates an \grammar{selection-statement} of \code{switch} sort.
+The \field{index} field of that abstract reference is an index into the \code{switch}\grammar{-statement} partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{initialization}{StmtIndex} \\
 		\DeclareMember{condition}{ExprIndex} \\
 		\DeclareMember{body}{StmtIndex} \\
-		\DeclareMember{locus}{SourceLocation} \\
 	}
 	\caption{Structure of a switch-statement}
 	\label{fig:ifc-switch-stmt-structure}
 \end{figure}
+
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{switch}\grammar{-statement}
+	\item \field{initialization} designates the \grammar{init-statement}, if any, in this \code{switch}\grammar{-statement}
+	\item \field{condition} designates the \grammar{condition} scrutinized in this \code{switch}\grammar{-statement}
+	\item \field{body} designates the body of this \code{switch}\grammar{-statement}
+\end{itemize}
 
 \partition{stmt.switch}
 
 \subsection{\valueTag{StmtSort::DoWhile}}
 \label{sec:ifc:StmtSort:DoWhile}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::DoWhile} designates an \grammar{iteration-statement} of \code{do} sort.
+The \field{index} field of that abstract reference is an index into the \code{do}\grammar{-statement} partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
-		\DeclareMember{condition}{StmtIndex} \\
-		\DeclareMember{body}{StmtIndex} \\
 		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{condition}{ExprIndex} \\
+		\DeclareMember{body}{StmtIndex} \\
 	}
-	\caption{Structure of a do-statement}
+	\caption{Structure of a \code{do}-statement}
 	\label{fig:ifc-do-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{do}\grammar{-statement}
+	\item \field{condition} is the condition controling this \grammar{iteration-statement}
+	\item \field{body} is the main statement iterated over by this \grammar{iteration-statement}
+\end{itemize}
 
 \partition{stmt.do-while}
 
 
-\subsection{\valueTag{StmtSort::Default}}
-\label{sec:ifc:StmtSort:Default}
+\subsection{\valueTag{StmtSort::Goto}}
+\label{sec:ifc:StmtSort:Goto}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Goto} designates an \grammar{jump-statement} of \code{goto} sort.
+The \field{index} field of that abstract reference is an index into the \code{goto}\grammar{-statement} partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{target}{ExprIndex} \\
 	}
-	\caption{Structure of a default label}
-	\label{fig:ifc-default-label-structure}
+	\caption{Structure of a \code{goto} statement}
+	\label{fig:ifc-goto-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{goto}\grammar{-statement}
+	\item \field{target} designates the program point (\sortref{Label}{ExprSort}) target of control tranfer
+\end{itemize}
 
-\partition{stmt.default}
+\partition{stmt.goto}
+
+\diffNote{This partition was \valueTag{StmtSort::Default} in version 0.41 and prior. That statement sort was removed from this version.}
 
 
 \subsection{\valueTag{StmtSort::Continue}}
 \label{sec:ifc:StmtSort:Continue}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Continue} designates an \grammar{jump-statement} of \code{continue} sort.
+The \field{index} field of that abstract reference is an index into the \code{continue}\grammar{-statement} partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 	}
-	\caption{Structure of a continue statement}
+	\caption{Structure of a \code{continue} statement}
 	\label{fig:ifc-continue-stmt-structure}
 \end{figure}
+%
+The field has the following meaning:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{continue}\grammar{-statement}
+\end{itemize}
 
 \partition{stmt.continue}
 
-\subsection{\valueTag{StmtSort::Expression}}
-\label{sec:ifc:StmtSort:Expression}
+\subsection{\valueTag{StmtSort::Expr}}
+\label{sec:ifc:StmtSort:Expr}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Expr} designates an \grammar{expression-statement}.
+The \field{index} field of that abstract reference is an index into the exression statement partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
-		\DeclareMember{expr}{ExprIndex} \\
 		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{expr}{ExprIndex} \\
 	}
 	\caption{Structure of an expression-statement}
 	\label{fig:ifc-expr-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \grammar{expression-statement}
+	\item \field{expr} designates the expression in this \grammar{expression-statement}
+\end{itemize}
 
 \partition{stmt.expression}
 
 \subsection{\valueTag{StmtSort::Return}}
 \label{sec:ifc:StmtSort:Return}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Return} designates an \grammar{jump-statement} of \code{return} sort.
+The \field{index} field of that abstract reference is an index into the \code{return}\grammar{-statement} partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
 		\DeclareMember{expr}{ExprIndex} \\
 		\DeclareMember{function\_type}{TypeIndex} \\
-		\DeclareMember{expression\_type}{TypeIndex} \\
-		\DeclareMember{locus}{SourceLocation} \\
 	}
-	\caption{Structure of a return statement}
+	\caption{Structure of a \code{return} statement}
 	\label{fig:ifc-return-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this \code{return}\grammar{-statement}
+	\item \field{type} designates the overall converted type of the expression operand to \code{return}
+	\item \field{expr} designates the expression to be \code{return}ed
+	\item \field{function\_type} designates the type of the function that contains this \code{return}-statement
+\end{itemize}
+
+\note{this representation is subject to change in future versions}
 
 \partition{stmt.return}
 
-\subsection{\valueTag{StmtSort::VariableDecl}}
-\label{sec:ifc:StmtSort:VariableDecl}
+\subsection{\valueTag{StmtSort::Decl}}
+\label{sec:ifc:StmtSort:Decl}
 
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Decl} designates \grammar{declaration-statement}.
+The \field{index} field of that abstract reference is an index into the declaration statement partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
-		\DeclareMember{decl}{DeclIndex} \\
-		\DeclareMember{initializer}{ExprIndex} \\
 		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{decl}{DeclIndex} \\
 	}
-	\caption{Structure of a variable-declaration statement}
+	\caption{Structure of a declaration statement}
 	\label{fig:ifc-decl-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this declaration statement
+	\item \field{decl} designates the declaration (\secref{sec:ifc-decls}) in this statement
+\end{itemize}
 
-\partition{stmt.variable}
+\partition{stmt.decl}
+
+\diffNote{This partition sort value corresponds to \valueTag{StmtSort::VariableDecl} in version 0.41 and prior. That statement sort was removed from this version.}
+
 
 \subsection{\valueTag{StmtSort::Expansion}}
 \label{sec:ifc:StmtSort:Expansion}
 
-A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Expansion}
-designates a statement expansion.
-
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Expansion} designates a statement expansion.
+The \field{index} field of that abstract reference is an index into the expansion statement partition.
+Each entry in that partition is a structure with the following layout
+%
 \begin{figure}[H]
 	\centering
 	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{operand}{StmtIndex} \\
 	}
 	\caption{Structure of an expansion statement}
 	\label{fig:ifc-expansion-stmt-structure}
 \end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this declaration statement
+	\item \field{operand} designates the statement (presumably containing a pack) to be expanded
+\end{itemize}
 
 \partition{stmt.expansion}
 
@@ -298,4 +490,57 @@ designates a statement expansion.
 
 \partition{stmt.syntax-tree}
 
+\subsection{\valueTag{StmtSort::Handler}}
+\label{sec:ifc:StmtSort:Handler}
+
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Handler} designates a handler in a \code{try}-statement.
+The \field{index} field of that abstract reference is an index into the handler partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{exception}{DeclIndex} \\
+		\DeclareMember{body}{StmtIndex} \\
+	}
+	\caption{Structure of an handler statement}
+	\label{fig:ifc-handler-stmt-structure}
+\end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this handler
+	\item \field{exception} designates the declaration of the exception parameter to this handler
+	\item \field{body} designates the statement to execute when the exception is bound to the parameter
+\end{itemize}
+
+\partition{stmt.handler}
+
+\subsection{\valueTag{StmtSort::Tuple}}
+\label{sec:ifc:StmtSort:Tuple}
+
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Tuple} designates a tuple statement, i.e. a sequence of statements treated as a single unit.
+The \field{index} field of that abstract reference is an index into the tuple statement partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{start}{Index} \\
+		\DeclareMember{cardinality}{Cardinality} \\
+	}
+	\caption{Structure of a tuple statement}
+	\label{fig:ifc-tuple-stmt-structure}
+\end{figure}
+%
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{locus} designates the source location of this handler
+	\item \field{start} designates the slot (in the statement heap partition (\secref{sec:ifc-stmt-heap})) of the first \type{StmtIndex} value in this block statement
+	\item \field{cardinality} denotes the number of \type{StmtIndex} values in this bock statement 
+\end{itemize}
+
+\partition{stmt.tuple}
 
