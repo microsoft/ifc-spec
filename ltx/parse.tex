@@ -670,14 +670,23 @@ Each entry in that partition is a structure with the following layout
 		\DeclareMember{eh\_spec}{SyntaxIndex} \\
 		\DeclareMember{left\_paren}{SourceLocation} \\
 		\DeclareMember{right\_paren}{SourceLocation} \\
+		\DeclareMember{ellipsis}{SourceLocation} \\
+		\DeclareMember{ref}{SourceLocation} \\
+		\DeclareMember{traits}{FunctionTypeTraits} \\
 	}
 	\label{fig:ifc:SyntaxSort:FunctionDeclarator}
 \end{figure}
 %
-The \field{parameters} denotes the parameter list of the function declarator.
-The \field{eh\_spec} field, if non null, denotes the exception specification in the function declarator.
-The \field{left\_paren} field denotes the location of the opening parenthesis of this function declarator.
-The \field{right\_paren} field denotes the location of the closing parenthesis of this function declarator.
+The fields have the following meanings:
+\begin{itemize}
+	\item \field{parameters} denotes the parameter list of the function declarator.
+	\item \field{eh\_spec}, if non null, denotes the exception specification in the function declarator.
+	\item \field{left\_paren} denotes the location of the opening parenthesis of this function declarator.
+	\item \field{right\_paren} denotes the location of the closing parenthesis of this function declarator.
+	\item \field{ellipsis}, if non null, denotes the source location of \code{...} in the \grammar{parameter-declaration-clause}
+	\item \field{ref}, if non null, denotes the source location of a \grammar{ref-qualifier}
+	\item \field{traits} denotes the computed \type{FunctionTypeTraits} (\secref{sec:ifc-function-type-traits}).
+\end{itemize}
 
 \partition{syntax.function-declarator}
 
