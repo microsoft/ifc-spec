@@ -1757,7 +1757,7 @@ The type \type{OperatorSort} is a set of $4$-bit values enumerated as follows.
 A sort value \valueTag{OperatorSort::Niladic} indicates a niladic operator -- 
 an operator accepting no argument.  The
 value of the \field{index} is to be interpreted as a value of type 
-\type{NiladicOperator}, which is a set of $13$-bit values enumerated as follows.
+\type{NiladicOperator}, which is a set of $12$-bit values enumerated as follows.
 %
 \begin{Enumeration}{NiladicOperator}
 	\enumerator{Unknown}
@@ -1806,7 +1806,7 @@ Semantically, this is the same as \sortref{Constant}{NiladicOperator}.
 A sort value \valueTag{OperatorSort::Monadic} indicates a monadic operator -- 
 an operator accepting one argument.  The
 value of the \field{index} is to be interpreted as a value of type 
-\type{MonadicOperator}, which is a set of $13$-bit values enumerated as follows.
+\type{MonadicOperator}, which is a set of $12$-bit values enumerated as follows.
 %
 \begin{Enumeration}{MonadicOperator}
 	\enumerator{Unknown}
@@ -2103,7 +2103,7 @@ Source-level \code{sizeof} operator, used in an expression where the operand is 
 A sort value \valueTag{OperatorSort::Dyadic} indicates a dyadic operator -- 
 an operator accepting two arguments.  The
 value of the \field{index} is to be interpreted as a value of type 
-\type{DyadicOperator}, which is a set of $13$-bit values enumerated as follows.
+\type{DyadicOperator}, which is a set of $12$-bit values enumerated as follows.
 %
 \begin{Enumeration}{DyadicOperator}
 	\enumerator{Unknown}
@@ -2388,7 +2388,7 @@ Source level ``\code{\_\_builtin\_bit\_cast}'' operator (\sortref{MsvcBuiltinBit
 A sort value \valueTag{OperatorSort::Triadic} indicates a triadic operator -- 
 an operator accepting three arguments.  The
 value of the \field{index} is to be interpreted as a value of type 
-\type{TriadicOperator}, which is a set of $13$-bit values enumerated as follows.
+\type{TriadicOperator}, which is a set of $12$-bit values enumerated as follows.
 %
 \begin{Enumeration}{TriadicOperator}
 	\enumerator{Unknown}
@@ -2429,7 +2429,7 @@ value greater that this are MSVC extensions.
 A sort value \valueTag{OperatorSort::Storage} indicates a storage 
 allocation or deallocation operator.  The
 value of the \field{index} is to be interpreted as a value of type 
-\type{StorageOperator}, which is a set of $13$-bit values enumerated as follows.
+\type{StorageOperator}, which is a set of $12$-bit values enumerated as follows.
 %
 \begin{Enumeration}{StorageOperator}
 	\enumerator{Unknown}
@@ -2467,7 +2467,7 @@ value greater that this are MSVC extensions.
 A sort value \valueTag{OperatorSort::Variadic} indicates a variadic operator -- 
 an operator accepting any number of arguments.  The
 value of the \field{index} is to be interpreted as a value of type 
-\type{VariadicOperator}, which is a set of $13$-bit values enumerated as follows.
+\type{VariadicOperator}, which is a set of $12$-bit values enumerated as follows.
 %
 \begin{Enumeration}{VariadicOperator}
 	\enumerator{Unknown}
