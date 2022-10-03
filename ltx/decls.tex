@@ -24,7 +24,7 @@ declaration.  Like all abstract references, it is a 32-bit value
 	\enumerator{Template}
 	\enumerator{PartialSpecialization}
 	\enumerator{Specialization}
-	\enumerator{UnusedSort0}
+	\enumerator{DefaultArgument}
 	\enumerator{Concept}
 	\enumerator{Function}
 	\enumerator{Method}
@@ -745,10 +745,42 @@ with the following meaning
 \end{itemize}
 
 
-\subsection{\valueTag{DeclSort::UnusedSort0}} 
-\label{sec:ifc:DeclSort:UnusedSort0}
+\subsection{\valueTag{DeclSort::DefaultArgument}} 
+\label{sec:ifc:DeclSort:DefaultArgument}
 
-No structure associated with this sort.
+A \type{DeclIndex} value with tag \valueTag{DeclSort::DefaultArgument} represents an abstract reference
+to a default argument for a function parameter or a template parameter.  For all practical purposes (ODR),
+a default argument is modelled as a declaration.  
+The \field{index} of that abstract reference is an index into the default argument
+definition partition.  Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{initializer}{ExprIndex} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
+		\DeclareMember{properties}{ReachableProperties} \\
+	}
+\end{figure}
+%
+with the following meanings of the fields:
+\begin{itemize}
+	\item \field{locus} designates the source location of the default argument
+	\item \field{type} designates the type of the parameter corresponding to the default argument
+	\item \field{home\_scope} designates the scope where the default parameter is specified
+	\item \field{initializer} designates the expression specified in the default argument
+	\item \field{specifiers} denotes the basic specifiers of the default arguments
+	\item \field{access} denotes the control access of this default argument
+	\item \field{properties} denotes the reachable properties associated with the default argument
+\end{itemize}
+
+\note{The \field{home\_scope} field is currently null in the current IFC produced by the MSVC toolset.}
+
+\partition{decl.default-arg}
 
 \subsection{\valueTag{DeclSort::Concept}}
 \label{sec:ifc:DeclSort:Concept}
