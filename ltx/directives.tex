@@ -1,0 +1,344 @@
+\label{sec:ifc-directives}
+
+Certain ISO C++ grammatical constructs, such as \grammar{asm-declaration}s or \grammar{using-directive}s, are classified as \grammar{declaration}s but they declare no names.
+Rather, their elaboration effects are to modify the behavior of the C++ translator.  They are, in effect, directives -- i.e. constructs that specify how a C++ 
+translator should process the input source program.
+
+This document uses \type{DirIndex} to indicate a typed abstract reference to a directive.
+Like any abstract reference, it is a $32$-bit value
+\begin{figure}[htbp]
+    \centering
+    \absref{5}{DirSort}
+    \caption{\type{DirIndex}: Abstract reference to a Directive}
+    \label{fig:ifc-dir-index}
+\end{figure}
+
+\begin{SortEnum}{DirSort}
+    \enumerator{VendorExtension}
+    \enumerator{Empty}
+    \enumerator{Attribute}
+    \enumerator{Pragma}
+    \enumerator{Using}
+    \enumerator{DeclUse}
+    \enumerator{Expr}
+    \enumerator{StructuredBinding}
+    \enumerator{SpecifiersSpread}
+    \enumerator{Unused0}
+    \enumerator{Unused1}
+    \enumerator{Unused2}
+    \enumerator{Unused3}
+    \enumerator{Unused4}
+    \enumerator{Unused5}
+    \enumerator{Unused6}
+
+    \enumerator{Unused7}
+    \enumerator{Unused8}
+    \enumerator{Unused9}
+    \enumerator{Unused10}
+    \enumerator{Unused11}
+    \enumerator{Unused12}
+    \enumerator{Unused13}
+    \enumerator{Unused14}
+    \enumerator{Unused15}
+    \enumerator{Unused16}
+    \enumerator{Unused17}
+    \enumerator{Unused18}
+    \enumerator{Unused19}
+    \enumerator{Unused20}
+    \enumerator{Unused21}
+    \enumerator{Tuple}
+\end{SortEnum}
+
+\note{The values of the various \emph{UnusedNN} tag are subject to change in future releases}
+
+\section{Directive Vocabulary Types}
+\label{sec:ifc-dir-support-types}
+
+\subsection{Phases of Translation}
+\label{sec:ifc-translation-phases-type}
+
+A given directive is evaluated at certain translation phases, specified as a bitmask value of type
+%
+\begin{typedef}{Phases}{}
+    enum class Phases : uint32_t {
+        Unknown         = 0,
+        Reading         = 1 << 0,
+        Lexing          = 1 << 1,
+        Preprocessing   = 1 << 2,
+        Parsing         = 1 << 3,
+        Name_resolution = 1 << 4,
+        Typing          = 1 << 5,
+        Evaluation      = 1 << 6,
+        Instantiation   = 1 << 7,
+        Code_generation = 1 << 8,
+        Linking         = 1 << 9,
+        Loading         = 1 << 10,
+        Execution       = 1 << 11,
+    };
+\end{typedef}
+%
+
+\section{Directive Structures}
+\label{sec:ifc-dir-structures}
+
+\subsection{\valueTag{DirSort::VendorExtension}}
+\label{sec:ifc:DirSort:VendorExtension}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::VendorExtension} represents an abstract reference to a vendor-specific directive.
+This tag value is reserved for encoding vendor-specific extensions.
+  
+\partition{dir.vendor-extension}
+
+\subsection{\valueTag{DirSort::Empty}}
+\label{sec:ifc:DirSort:Empty}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::Empty} represents an abstract reference to an \grammar{empty-declaration}.
+The \field{index} field is an index into the empty declaration partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+    }
+    \caption{Structure of an \grammar{empty-declaration}}
+    \label{fig:ifc:DirSort:Empty}
+\end{figure}
+%
+with the following meaning of the field
+\begin{itemize}
+    \item \field{locus} denotes the source location of this \grammar{empty-declaration}, which is also the source location of the sole semi-colon in the declaration
+\end{itemize}
+
+\partition{dir.empty}
+
+\note{At block scope, an \sortref{Empty}{DirSort} may be grammatically undistinguishable from an \grammar{empty-statement}.  
+    The C++ translator is expected to construct the appropriate structure based on the context of processing.}
+
+
+\subsection{\valueTag{DirSort::Attribute}}
+\label{sec:ifc:DirSort:Attribute}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::Attribute} represents an abstract reference to an \grammar{attribute-declaration}.
+The \field{index} field is an index into the attribute declaration partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{attr}{AttrIndex} \\
+    }
+    \caption{Structure of an \grammar{attribute-declaration}}
+    \label{fig:ifc:DirSort:Attribute}
+\end{figure}
+%
+with the following meanings for the fields
+\begin{itemize} 
+    \item \field{locus} denotes the source location of this \grammar{attribute-declaration}
+    \item \field{attr} denotes the attribute (\secref{sec:ifc-attrs}) in this \grammar{attribute-declaration}
+\end{itemize}
+
+\partition{dir.attribute}
+
+\note{At block scope, an \sortref{Attribute}{DirSort} may be grammatically undistinguishable from an attributed \grammar{empty-statement}.  
+    The C++ translator is expected to construct the appropriate structure based on the context of processing.}
+
+
+\subsection{\valueTag{DirSort::Pragma}}
+\label{sec:ifc:DirSort:Pragma}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::Pragma} represents an abstract reference to a pragma directive.
+The \field{index} field is an index into the pragma directive partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{words}{SentenceIndex} \\
+    }
+    \caption{Structure of a pragma directive}
+    \label{fig:ifc:DirSort:Pragma}
+\end{figure}
+%
+with the following meanings for the fields
+\begin{itemize}
+    \item \field{locus} denotes the source location of the entire pragma directive
+    \item \field{words} denotes the sentence index (\secref{sec:ifc-sentence}) of the words (\secref{sec:ifc-words}) making up the directive
+\end{itemize}
+
+\partition{dir.pragma}
+
+\subsection{\valueTag{DirSort::Using}}
+\label{sec:ifc:DirSort:Using}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::Using} represents an abstract reference to a \grammar{using-directive} declaration.
+The \field{index} field is an index into the using-directive partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{scope}{ExprIndex} \\
+    }
+    \caption{Structure of a \grammar{using-directive}}
+    \label{fig:ifc:DirSort:Using}
+\end{figure}
+%
+with the following meanings for the fields
+\begin{itemize}
+    \item \field{locus} denotes the source locatio of this \grammar{using-directive}
+    \item \field{scope} denotes the nominated scope.  The type of \field{scope} determines whether it is a namespace being used, or a plain enum, or a scoped enum.
+\end{itemize}
+  
+\partition{dir.using}
+
+
+\subsection{\valueTag{DirSort::DeclUse}}
+\label{sec:ifc:DirSort:DeclUse}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::DeclUse} represents an abstract reference to a \grammar{using-declaration} declaration.
+The \field{index} field is an index into the using-declaration partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{path}{ExprIndex} \\
+        \DeclareMember{access}{Access} \\
+    }
+    \caption{Structure of a \grammar{using-declaration}}
+    \label{fig:ifc:DirSort:DeclUse}
+\end{figure}
+%
+with the following meanings for the fields
+\begin{itemize}
+    \item \field{locus} denotes the source location of this \grammar{using-declaration}
+    \item \field{path} denotes the nominated scope in this \grammar{using-declaration}.  Note that \field{path} can be a normal \sortref{QualifiedName}{ExprSort} or an \sortref{Expansion}{ExprSort} of a \sortref{QualifiedName}{ExprSort}.
+    \item \field{access} denotes the access specifer for the resulting synonymous declaration(s)
+\end{itemize}
+
+\partition{dir.decl-use}
+
+
+\subsection{\valueTag{DirSort::Expr}}
+\label{sec:ifc:DirSort:Expr}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::Expr} represents an abstract reference to a phased evaluation of an expression.
+The \field{index} field is an index into the phased evaluation partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{expr}{ExprIndex} \\
+        \DeclareMember{phases}{Phases} \\
+    }
+    \caption{Structure of a phased evaluation directive}
+    \label{fig:ifc:DirSort:Expr}
+\end{figure}
+%
+with the following meanings of the fields
+\begin{itemize}
+    \item \field{locus} denotes the source location of this phased evaluation directive
+    \item \field{expr} denotes the expression (\secref{sec:ifc-exprs}) to evaluate
+    \item \field{phases} denotes the set of phases of translation at this which this directive is to be evaluated
+\end{itemize}
+  
+\partition{dir.expr}
+
+
+\subsection{\valueTag{DirSort::StructuredBinding}}
+\label{sec:ifc:DirSort:StructuredBinding}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::StructuredBinding} represents an abstract reference to a structured binding declaration.
+The \field{index} field is an index into the structure binding declaration partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{bindings}{DeclSequence} \\
+        \DeclareMember{specifiers}{DeclSpecifierSequence} \\
+        \DeclareMember{names}{IdentifierSequence} \\
+        \DeclareMember{initializer}{ExprIndex} \\
+        \DeclareMember{ref}{BindingMode} \\
+    }
+    \caption{Structure of a structured binding declaration directive}
+    \label{fig:ifc:DirSort:StructuredBinding}
+\end{figure}
+%
+with the following meanings for the fields
+\begin{itemize}
+    \item \field{locus} denotes the source location of this structured binding declaration
+    \item \field{bindings} is an index into the \sortref{Tuple}{DeclSort} partition denoting the sequence of declarations resulting from the elaboration of this structured binding declaration
+    \item \field{specifiers} denotes the sequence of \grammar{decl-specifier}s in this declaration
+    \item \field{names} denotes the sequence of identifiers in this declaration
+    \item \field{ref} denotes the \grammar{ref-qualifier} in this structured binding declaration
+\end{itemize}
+
+\partition{dir.struct-binding}
+
+
+\subsection{\valueTag{DirSort::SpecifiersSpread}}
+\label{sec:ifc:DirSort:SpecifiersSpread}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::SpecifiersSpread} represents an abstract reference to a spread of sequence of \grammar{decl-specifier}s 
+over a collection of \grammar{init-declarator}s in a single grammatical \grammar{declaration}. 
+Those are directives to the C++ translator to synthesize multiple declarations as part of the elaboration of that grammar production.
+The \field{index} field of the abstract reference is an index into the specifiers spread partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{specifiers}{DeclSpecifierSequence} \\
+        \DeclareMember{targets}{ProclamatorSequence} \\
+        \DeclareMember{access}{Access} \\
+    }
+    \caption{Structire of a specifiers spread directive}
+    \label{fig:ifc:DirSort:SpecifiersSpread}
+\end{figure}
+%
+with the following meanings for the fields
+\begin{itemize}
+    \item \field{locus} denotes the source location of this specifiers spread directive
+    \item \field{specifiers} denotes the sequence of \grammar{decl-specifier}s in this specifiers spread directive
+    \item \field{targets} denotes the sequence of \grammar{init-declarator}s in this specifiers spread directive
+    \item \field{access} denotes the access specifier for the resulting declarations
+\end{itemize}
+
+
+\partition{dir.specifiers-spread}
+
+
+\subsection{\valueTag{DirSort::Tuple}}
+\label{sec:ifc:DirSort:Tuple}
+
+A \type{DirIndex} value with tag \valueTag{DirSort::Tuple} represents an abstract reference to a group of directives treated as a single directive.
+The \field{index} field is an index into the directive tuple partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{locus}{SourceLocation} \\
+        \DeclareMember{elements}{DirIndexSequence} \\
+    }
+    \caption{Structure of a Directive tuple}
+    \label{fig:ifc:DirSort:Tuple}
+\end{figure}
+%
+with the following meanings for the fields
+\begin{itemize}
+    \item \field{locus} denotes the source location of this tuple of directives
+    \item \field{elements} denotes the description of the sequence of \type{DirIndex} values making up this tuple of directives 
+\end{itemize}
+
+\partition{dir.tuple}
