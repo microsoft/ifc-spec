@@ -181,7 +181,8 @@ Each entry in that partition is a structure with the following layout
     \centering
     \structure{
         \DeclareMember{locus}{SourceLocation} \\
-        \DeclareMember{scope}{ExprIndex} \\
+        \DeclareMember{nominated}{ExprIndex} \\
+        \DeclareMember{resolution}{DeclIndex} \\
     }
     \caption{Structure of a \grammar{using-directive}}
     \label{fig:ifc:DirSort:Using}
@@ -190,7 +191,10 @@ Each entry in that partition is a structure with the following layout
 with the following meanings for the fields
 \begin{itemize}
     \item \field{locus} denotes the source locatio of this \grammar{using-directive}
-    \item \field{scope} denotes the nominated scope.  The type of \field{scope} determines whether it is a namespace being used, or a plain enum, or a scoped enum.
+    \item \field{nominated} is a \grammar{qualified-id} (\sortref{QualifiedName}{ExprSort}) that designates a namespace, as written in the input source program
+    \item \field{resolution} denotes the namespace computed based on the elaboration rules of \grammar{using-directive}.  
+    It is a \sortref{Scope}{DeclSort} abstract reference that denotes either
+      the namespace designated by \field{nominated} or an enclosing ancestor of the scope \field{nominated}.
 \end{itemize}
   
 \partition{dir.using}
@@ -217,8 +221,8 @@ Each entry in that partition is a structure with the following layout
 with the following meanings for the fields
 \begin{itemize}
     \item \field{locus} denotes the source location of this \grammar{using-declaration}
-    \item \field{path} denotes the nominated scope in this \grammar{using-declaration}.  Note that \field{path} can be a normal \sortref{QualifiedName}{ExprSort} or an \sortref{Expansion}{ExprSort} of a \sortref{QualifiedName}{ExprSort}.
-    \item \field{result} denotes the declaration(s) resulting from executing this \grammar{using-directive}.  A null value indicates that the \field{path} has not been resolved yet.
+    \item \field{path} is a path expression to the declaration(s) target of this \grammar{using-declaration}.  Note that \field{path} can be a normal \sortref{QualifiedName}{ExprSort} or an \sortref{Expansion}{ExprSort} of a \sortref{QualifiedName}{ExprSort}.
+    \item \field{result} denotes the declaration(s) resulting from executing this \grammar{using-declaration}.  A null value indicates that the \field{path} has not been resolved yet.
 \end{itemize}
 
 \partition{dir.decl-use}
