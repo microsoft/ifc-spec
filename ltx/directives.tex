@@ -325,24 +325,24 @@ with the following meanings for the fields
 \subsection{\valueTag{DirSort::Tuple}}
 \label{sec:ifc:DirSort:Tuple}
 
-A \type{DirIndex} value with tag \valueTag{DirSort::Tuple} represents an abstract reference to a group of directives treated as a single directive.
+A \type{DirIndex} value with tag \valueTag{DirSort::Tuple} represents an abstract reference to a sequence of directives treated as a single directive.
 The \field{index} field is an index into the directive tuple partition.
 Each entry in that partition is a structure with the following layout
 %
 \begin{figure}[H]
     \centering
     \structure{
-        \DeclareMember{locus}{SourceLocation} \\
-        \DeclareMember{elements}{DirIndexSequence} \\
+        \DeclareMember{start}{Index} \\
+        \DeclareMember{cardinality}{Cardinality} \\
     }
-    \caption{Structure of a Directive tuple}
+    \caption{Structure of a tuple of directives}
     \label{fig:ifc:DirSort:Tuple}
 \end{figure}
 %
 with the following meanings for the fields
 \begin{itemize}
-    \item \field{locus} denotes the source location of this tuple of directives
-    \item \field{elements} denotes the description of the sequence of \type{DirIndex} values making up this tuple of directives 
+    \item \field{start} denotes the entry in the directive heap (\secref{sec:ifc-dir-heap}) of the first \type{DirIndex} value in this directive tuple
+    \item \field{cardinality} denotes the number of \type{DirIndex} values in this directive tuple 
 \end{itemize}
 
 \partition{dir.tuple}
