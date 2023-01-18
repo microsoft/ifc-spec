@@ -209,7 +209,6 @@ Each entry in that partition is a structure with the following layout
         \DeclareMember{locus}{SourceLocation} \\
         \DeclareMember{path}{ExprIndex} \\
         \DeclareMember{result}{DeclIndex} \\
-        \DeclareMember{access}{Access} \\
     }
     \caption{Structure of a \grammar{using-declaration}}
     \label{fig:ifc:DirSort:DeclUse}
@@ -220,7 +219,6 @@ with the following meanings for the fields
     \item \field{locus} denotes the source location of this \grammar{using-declaration}
     \item \field{path} denotes the nominated scope in this \grammar{using-declaration}.  Note that \field{path} can be a normal \sortref{QualifiedName}{ExprSort} or an \sortref{Expansion}{ExprSort} of a \sortref{QualifiedName}{ExprSort}.
     \item \field{result} denotes the declaration(s) resulting from executing this \grammar{using-directive}.  A null value indicates that the \field{path} has not been resolved yet.
-    \item \field{access} denotes the access specifer for this \grammar{using-declaration}
 \end{itemize}
 
 \partition{dir.decl-use}
@@ -302,7 +300,6 @@ Each entry in that partition is a structure with the following layout
         \DeclareMember{locus}{SourceLocation} \\
         \DeclareMember{specifiers}{DeclSpecifierSequence} \\
         \DeclareMember{targets}{ProclamatorSequence} \\
-        \DeclareMember{access}{Access} \\
     }
     \caption{Structire of a specifiers spread directive}
     \label{fig:ifc:DirSort:SpecifiersSpread}
@@ -313,7 +310,6 @@ with the following meanings for the fields
     \item \field{locus} denotes the source location of this specifiers spread directive
     \item \field{specifiers} denotes the sequence of \grammar{decl-specifier}s in this specifiers spread directive
     \item \field{targets} denotes the sequence of \grammar{init-declarator}s in this specifiers spread directive
-    \item \field{access} denotes the access specifier for the resulting declarations
 \end{itemize}
 
 

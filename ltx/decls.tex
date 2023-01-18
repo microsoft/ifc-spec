@@ -1269,14 +1269,18 @@ in that partition is a structure with the following layout
 	\centering
 	\structure{
 		\DeclareMember{directive}{DirIndex} \\
+		\DeclareMember{specifiers}{BasicSpecifiers} \\
+		\DeclareMember{access}{Access} \\
 	}
 	\caption{Structure of a barren declaration}
 	\label{fig:ifc:DeclSort:Barren}
 \end{figure}
 %
-with the following meaning for the field
+with the following meanings for the fields
 \begin{itemize}
 	\item \field{directive} denotes the directive (\secref{sec:ifc-directives}) to be executed
+	\item \field{specifiers} denotes the \type{BasicSpecifiers} that apply to the result of executing the \field{directive}
+	\item \field{access} denotes the \type{Access} applied to the result of executing the \field{directive}
 \end{itemize}
 
 \partition{decl.barren}
