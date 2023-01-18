@@ -33,7 +33,7 @@ declaration.  Like all abstract references, it is a 32-bit value
 	\enumerator{Destructor}
 	\enumerator{Reference}
 	\enumerator{UsingDeclaration}
-	\enumerator{UsingDirective}
+	\enumerator{Unused0}
 	\enumerator{Friend}
 	\enumerator{Expansion}
 	\enumerator{DeductionGuide}
@@ -1174,23 +1174,11 @@ The \field{hidden} field indicates whether the member is hidden.
 \note{This representation is subject to change.}
 
 
-\subsection{\valueTag{DeclSort::UsingDirective}}
-\label{sec:ifc:DeclSort:UsingDirective}
+\subsection{\valueTag{DeclSort::Unused0}}
+\label{sec:ifc:DeclSort:Unused0}
 
-A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::UsingDirective} designates a using directive.
-
-
-%
-\begin{figure}[H]
-	\centering
-	TBD.
-\end{figure}
-%
-
-\note{The structure of this declaration is not yet defined.}
-
-\partition{decl.using-directive}
-
+\diffNote{This tag was previously named \valueTag{DeclSort::UsingDirective} but had no defined structure and was never emitted. 
+	For \grammar{using-directive}, see \sortref{Using}{DirSort}.}
 
 \subsection{\valueTag{DeclSort::Friend}}
 \label{sec:ifc:DeclSort:Friend}
@@ -1269,15 +1257,25 @@ following layout
 \label{sec:ifc:DeclSort:Barren}
 
 A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Barren} designates
-a declaration that introduces no name, e.g. \grammar{asm-declaration}, \grammar{static\_assert-declaration}, \grammar{attribute-declaration}, \grammar{empty-declaration}.
+a declaration that introduces no name, i.e. a directive (\secref{sec:ifc-directives}) That is
+the case, for example, of 
+\grammar{asm-declaration}, \grammar{static\_assert-declaration}, \grammar{attribute-declaration}, \grammar{empty-declaration}, etc.
 The \field{index} field is an index into the barren declaration partition.  Each entry
 in that partition is a structure with the following layout
 %
 \begin{figure}[H]
 	\centering
-	TBD.
+	\structure{
+		\DeclareMember{directive}{DirIndex} \\
+	}
+	\caption{Structure of a barren declaration}
+	\label{fig:ifc:DeclSort:Barren}
 \end{figure}
 %
+with the following meaning for the field
+\begin{itemize}
+	\item \field{directive} denotes the directive (\secref{sec:ifc-directives}) to be executed
+\end{itemize}
 
 \partition{decl.barren}
 
