@@ -208,6 +208,7 @@ Each entry in that partition is a structure with the following layout
     \structure{
         \DeclareMember{locus}{SourceLocation} \\
         \DeclareMember{path}{ExprIndex} \\
+        \DeclareMember{result}{DeclIndex} \\
         \DeclareMember{access}{Access} \\
     }
     \caption{Structure of a \grammar{using-declaration}}
@@ -218,7 +219,8 @@ with the following meanings for the fields
 \begin{itemize}
     \item \field{locus} denotes the source location of this \grammar{using-declaration}
     \item \field{path} denotes the nominated scope in this \grammar{using-declaration}.  Note that \field{path} can be a normal \sortref{QualifiedName}{ExprSort} or an \sortref{Expansion}{ExprSort} of a \sortref{QualifiedName}{ExprSort}.
-    \item \field{access} denotes the access specifer for the resulting synonymous declaration(s)
+    \item \field{result} denotes the declaration(s) resulting from executing this \grammar{using-directive}.  A null value indicates that the \field{path} has not been resolved yet.
+    \item \field{access} denotes the access specifer for this \grammar{using-declaration}
 \end{itemize}
 
 \partition{dir.decl-use}
