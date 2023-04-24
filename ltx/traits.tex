@@ -172,6 +172,94 @@ The MSVC compiler records an attribute on a declaration in this trait table.
 
 \partition{.msvc.trait.decl-attrs}
 
+\note{This trait is scheduled for removal in future releases of MSVC.}
 
 
+\subsection{Attributes on Statements}
+\label{sec:ifc-msvc-stmt-attr-trait}
 
+The MSVC compiler records an attribute on a statement in this trait table.
+
+\partition{.msvc.trait.stmt-attrs}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
+
+
+\subsection{Mapping expressions for code generation}
+\label{sec:ifc-msvc-codegen-mapping-trait}
+
+The MSVC compiler currently has an infelicity in the representations for code generation of runtime behavior.
+This trait associates the runtime codegen for inline functions.
+
+\partition{.msvc.trait.codegen-mapping-expr}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
+
+
+\subsection{Dynamic initialization of variables}
+\label{sec:ifc-msvc-dynamic-init-trait}
+
+The MSVC implementation of dynamic initialization of variables with static duration needing non-trivial initialization uses a synthesized linker-level symbol.
+This trait associates such a source-level variable with the corresponding linker-level symbol.
+
+\partition{.msvc.trait.dynamic-init-variable}
+
+\subsection{Code generation properties of labels}
+\label{sec:ifc-msvc-codegen-labels-properties-trait}
+
+The MSVC coompiler needs to record some properties of labels for code generation purposes.
+This trait maps a label to the associated code generation properties.
+
+\partition{.msvc.trait.codegen-label-properties}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
+
+
+\subsection{Code generation type view of \code{switch} statement}
+\label{sec:ifc-msvc-codegen-switch-type-trait}
+
+The MSVC compiler exhibits this oddity where it needs to associate a type with the labels and condition in a \code{switch}-statetement.
+This trait associate a \code{switch} statement with such a type.
+
+\partition{.msvc.trait.codegen-switch-type}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
+
+\subsection{Code generation trait for \code{do}-statement}
+\label{sec:ifc-msvc-codegen-do-stmt-trait}
+
+The MSVC compiler has a weakness in its codegeneration representation of \code{do}-statement.  This traits associates
+additional expressions needed for runtime code generation with a \code{do}-statement.
+
+\partition{.msvc.trait.codegen-dowhile-stmt}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
+
+\subsection{Lexical scope of a declaration}
+\label{sec:ifc-msvc-lexical-scope-trait}
+
+The MSVC compiler has a weakness where it needs to known the lexical scope of a given declaration in order to compute the appropriate linker-level name decoration.
+This trait associates a declaration with its lexical scope (when different from its home scope).
+
+\partition{.msvc.trait.lexical-scope-index}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
+
+\subsection{Range of source file line numbers}
+\label{sec:ifc-msvc-source-file-line-range-trait}
+
+This trait associates a source file with a pair minimum and maximum line numbers in that source file.
+
+\partition{.msvc.trait.file-boundary}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
+
+\subsection{Source File of a header unit}
+\label{sec:ifc-msvc-header-unit-source-file-trait}
+
+The MSVC associates a header name (as it appears in the source code) with the source file it ultimately resolves to.
+This information should be made standard in the normal IFC representation.
+
+\partition{.msvc.trait.header-unit-source-file}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
