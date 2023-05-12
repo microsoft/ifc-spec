@@ -2190,6 +2190,7 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{MsvcBuiltinIsCorrespondingMember}
 	\enumerator{MsvcIntrinsic}
 	\enumerator{MsvcSaturatedArithmetic}
+	\enumerator{MsvcBuiltinAllocationAnnotation}
 \end{Enumeration}
 
 \ifcSortSection{Unknown}{DyadicOperator} 
@@ -2496,6 +2497,9 @@ An MSVC intrinsic for an abstract machine saturated arithemtic operation.
 If the arithmetic computation described by the first operand overflows, 
 then the result is the saturated value indicated by the second operand.
 
+\ifcSortSection{MsvcBuiltinAllocationAnnotation}{DyadicOperator}
+An MSVC intrinsic used to express the type of a runtime-allocated object at a given address.
+The first argument is the expression designating the allocated address; the second argument designates the type of the object allocated at that address.
 
 \subsection{Triadic operators}
 \label{sec:ifc:OperatorSort:Triadic}
