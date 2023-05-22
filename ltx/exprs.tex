@@ -1544,8 +1544,8 @@ A reference to a member of a template
 	\structure{
 		\DeclareMember{locus}{SourceLocation} \\
 		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{member}{DeclIndex} \\
 		\DeclareMember{member\_name}{NameIndex} \\
-		\DeclareMember{member\_locus}{SourceLocation} \\
 		\DeclareMember{scope}{TypeIndex} \\
 		\DeclareMember{arguments}{ExprIndex} \\
 	}
@@ -1553,11 +1553,16 @@ A reference to a member of a template
 	\label{fig:ifc-member-template-expression-structure}
 \end{figure}
 %
+with the following meanings for the fields
+\begin{itemize}
+	\item \field{locus} designates the source location of the reference to the template member
+	\item \field{type} designates the type of this expression
+	\item \field{member} designates the declaration of the template member
+	\item \field{member\_name} designates the name of the referenced template member
+	\item \field{scope} field designates the enclosing scope of the member
+	\item \field{arguments} designates the set of template arguments to this member
+\end{itemize}
 
-The \field{member\_name} field designates the name of the member; the \field{member\_locus} designates the source location where the member is declared.
-The \field{scope} field designates the enclosing scope of the member.  The \field{arguments} designates the set of template arguments to
-this member.
-The field \field{locus} is the source location where the expression appears.
 
 \partition{expr.template-reference}
 
