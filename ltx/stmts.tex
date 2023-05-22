@@ -31,6 +31,7 @@ module interface source file.  A statement is designated an abstract reference o
 	\enumerator{SyntaxTree}
 	\enumerator{Handler}
 	\enumerator{Tuple}
+	\enumerator{Directive}
 \end{SortEnum}
 
 \section{Statement structures}
@@ -532,3 +533,25 @@ The fields have the following meanings:
 
 \partition{stmt.tuple}
 
+\subsection{\valueTag{StmtSort::Directive}}
+\label{sec:ifc:StmtSort:Directive}
+
+A \type{StmtIndex} abstract reference with tag \valueTag{StmtSort::Directive} designates a directive (\secref{sec:ifc-directives}) in grammatical statement context.
+The \field{index} of that abstract reference is an index into the directive statement partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{directive}{DirIndex} \\
+	}
+	\caption{Structure of a directive statement structure}
+	\label{fig:ifc:StmtSort:Directive}
+\end{figure}
+%
+with the following meaning for the field
+\begin{itemize}
+	\item \field{directive} denotes the \type{Directive} contained in this statement
+\end{itemize}
+
+\partition{stmt.directive}
