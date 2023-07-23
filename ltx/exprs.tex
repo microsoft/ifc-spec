@@ -67,7 +67,7 @@ following layout
 	\enumerator{Nullptr}
 	\enumerator{This}
 	\enumerator{TemplateReference}
-	\enumerator{Unused1}
+	\enumerator{Statement}
 	\enumerator{TypeTraitIntrinsic}
 	\enumerator{DesignatedInitializer}
 	\enumerator{PackedTemplateArguments}
@@ -1568,10 +1568,31 @@ with the following meanings for the fields
 
 \note{This structure is subject to removal in future releases.}
 
-\subsection{\valueTag{ExprSort::Unused1}}
-\label{sec:ifc:ExprSort:Unused1}
+\subsection{\valueTag{ExprSort::Statement}}
+\label{sec:ifc:ExprSort:Statement}
 
-No structured is associated with this sort value.
+A \type{ExprIndex} value with tag \valueTag{ExprSort::Statement} represents an abstract reference to a statement used
+ in a context where an expression would normally occur.  Such a context could be in support of code transformation that
+expands a function call to its body where arguments are substituted for parameters, or in support of some extensions
+such as ``statement expressions''.  Yet, another context would be to satisfy IFC-internal typing requirements 
+where a structure is notionally a statement, but needs to appear as argument to an operator expecting an expression
+structure.  In such cases, this structure effectively acts as an embedding of a statement structure in the 
+expression sort category.  The \field{index} is an index into the statement-as-expression partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{type}{TypeIndex} \\
+		\DeclareMember{stmt}{StmtIndex} \\
+	}
+\end{figure}
+%
+and meanings for the fields
+\begin{itemize}
+	\item \field{stmt} designates the statement being embedded in the expression sort category.
+\end{itemize}
 
 
 \subsection{\valueTag{ExprSort::TypeTraitIntrinsic}}
@@ -1892,6 +1913,9 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{MsvcConfusedPopState}
 	\enumerator{MsvcConfusedDtorAction}
 	\enumerator{MsvcConfusedVtorDisplacement}
+	\enumerator{MsvcConfusedDependentExpression}
+	\enumerator{MsvcConfusedSubstitution}
+	\enumerator{MsvcConfusedAggregateReturn}
 \end{Enumeration}
 
 \ifcSortSection{Unknown}{MonadicOperator} 
@@ -2095,6 +2119,17 @@ Source-level pack expansion ``\code{...}'' operator.
 \ifcSortSection{MsvcConfusedDependentSizeof}{MonadicOperator}
 Source-level \code{sizeof} operator, used in an expression where the operand is dependent.
 
+\ifcSortSection{MsvcConfusedDependentExpression}{MonadicOperator}
+This operator indicates a weakness in the current MSVC parser whereby certain expressions are explicitly
+marked dependent (with no indication of whether they are type-dependent or value-dependent).
+
+\ifcSortSection{MsvcConfusedSubstitution}{MonadicOperator}
+This operator indicates a substitution of an expression (the operand) for a template parameter declaration
+(the implementation field of the monadic tree).
+
+\ifcSortSection{MsvcConfusedAggregateReturn}{MonadicOperator}
+This operator indicates a semantic action of a \code{return} statement where the expression-to-return
+evaluates to an aggregate with at least one subobject having non-trivial destructor.
 
 \subsection{Dyadic operators}
 \label{sec:ifc:OperatorSort:Dyadic}
