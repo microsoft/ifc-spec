@@ -1317,11 +1317,27 @@ denotes the number of declaration in the tuple sequence.
 \subsection{\valueTag{DeclSort::SyntaxTree}}
 \label{sec:ifc:DeclSort:SyntaxTree}
 
-A syntax tree in template declaration.
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::SyntaxTree} designates a parse tree
+representation (\secref{sec:ifc-syntax-tree-table}) of a declaration in a templated declarated.
+The \field{index} field of that abstract reference is an index into the declaration parse tree partition.
+Each entry in that partition is a structure with the following components:
+%
 \begin{figure}[H]
 	\centering
-	TBD
+	\structure{
+		\DeclareMember{syntax}{SyntaxIndex} \\
+	}
+	\caption{Structure of a declaration parse tree}
+	\label{fig:ifc-DeclSort-SyntaxTree-structure}
 \end{figure}
+%
+with the following meanings:
+\begin{itemize}
+	\item \field{syntax} is a parse tree abstract reference for the actual parse tree
+\end{itemize}
+
+This structure is, in effect, an indirection that acts as an embedding of portions of parse trees (\secref{sec:ifc-syntax-tree-table})
+into the declaration category.
 
 \partition{decl.syntax-tree}
 
