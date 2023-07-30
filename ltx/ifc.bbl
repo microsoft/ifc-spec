@@ -1,0 +1,13 @@
+\begin{thebibliography}{1}
+
+\bibitem{gdr-bs:ipr-macis-special-issue}
+Gabriel Dos~Reis and Bjarne Stroustrup.
+\newblock {A Principled, Complete, and Efficient Representation of C++}.
+\newblock {\em Journal of Mathematics in Computer Science}, Special Issue on
+  Polynomial System Solving, System and Control, and Software Science, 2011.
+
+\bibitem{ipr:web}
+Internal program representation.
+\newblock \url{https://github.com/GabrielDosReis/ipr}.
+
+\end{thebibliography}

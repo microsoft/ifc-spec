@@ -1,0 +1,1400 @@
+\contentsline {chapter}{Contents}{1}{section*.1}%
+\contentsline {chapter}{\chapternumberline {1}Introduction}{3}{chapter.1}%
+\contentsline {chapter}{\chapternumberline {2}IFC File}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Overview}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Multiple IFCs per file}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Type of IFC container}{6}{section.2.3}%
+\contentsline {section}{\numberline {2.4}On-demand materialization}{6}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Endianness}{6}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Basic data types}{6}{section.2.6}%
+\contentsline {subsection}{File offset in bytes}{7}{section*.2}%
+\contentsline {paragraph}{Note:}{7}{section*.3}%
+\contentsline {subsection}{Cardinality: counting items}{7}{section*.4}%
+\contentsline {subsection}{Extent of entities}{7}{section*.5}%
+\contentsline {subsection}{Generic Indices}{7}{section*.6}%
+\contentsline {subsection}{Sequence}{7}{section*.7}%
+\contentsline {subsection}{Arrays}{8}{section*.8}%
+\contentsline {subsection}{Content Hash}{8}{section*.9}%
+\contentsline {subsection}{File Format Versioning}{8}{section*.10}%
+\contentsline {subsection}{ABI}{8}{section*.11}%
+\contentsline {subsection}{Architecture}{8}{section*.12}%
+\contentsline {subsection}{Language Version}{9}{section*.13}%
+\contentsline {section}{\numberline {2.7}IFC File Signature}{9}{section.2.7}%
+\contentsline {section}{\numberline {2.8}IFC File Header}{9}{section.2.8}%
+\contentsline {paragraph}{Note}{11}{section*.14}%
+\contentsline {section}{\numberline {2.9}IFC Table of Contents}{11}{section.2.9}%
+\contentsline {subsection}{Partition}{11}{section*.15}%
+\contentsline {section}{\numberline {2.10}Elaboration vs. syntax tree}{12}{section.2.10}%
+\contentsline {chapter}{\chapternumberline {3}String table}{13}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Index type}{13}{section.3.1}%
+\contentsline {chapter}{\chapternumberline {4}Translation Units}{15}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Translation unit structures}{15}{section.4.1}%
+\contentsline {subsection}{\textsf {UnitSort::Source}}{15}{section*.16}%
+\contentsline {subsection}{\textsf {UnitSort::Primary}}{15}{section*.17}%
+\contentsline {subsection}{\textsf {UnitSort::Partition}}{16}{section*.18}%
+\contentsline {subsection}{\textsf {UnitSort::Header}}{16}{section*.19}%
+\contentsline {subsection}{\textsf {UnitSort::ExportedTU}}{16}{section*.20}%
+\contentsline {paragraph}{Note:}{16}{section*.21}%
+\contentsline {chapter}{\chapternumberline {5}Modules}{17}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Module description structures}{17}{section.5.1}%
+\contentsline {subsection}{Module reference}{17}{section*.22}%
+\contentsline {subsection}{Imported modules}{17}{section*.23}%
+\contentsline {paragraph}{Partition name:}{17}{section*.24}%
+\contentsline {subsection}{Exported modules}{18}{section*.25}%
+\contentsline {paragraph}{Partition name:}{18}{section*.26}%
+\contentsline {chapter}{\chapternumberline {6}Scopes}{19}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Scope index}{19}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Scope descriptor}{19}{section.6.2}%
+\contentsline {paragraph}{Partition name:}{19}{section*.27}%
+\contentsline {paragraph}{Note:}{20}{section*.28}%
+\contentsline {section}{\numberline {6.3}Scope member}{20}{section.6.3}%
+\contentsline {paragraph}{Partition name:}{20}{section*.29}%
+\contentsline {paragraph}{Note:}{20}{section*.30}%
+\contentsline {chapter}{\chapternumberline {7}Heaps}{21}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Heap structures}{21}{section.7.1}%
+\contentsline {subsection}{Declaration heap}{21}{section*.31}%
+\contentsline {paragraph}{Partition name:}{21}{section*.32}%
+\contentsline {subsection}{Directive heap}{21}{section*.33}%
+\contentsline {paragraph}{Partition name:}{21}{section*.34}%
+\contentsline {subsection}{Type heap}{21}{section*.35}%
+\contentsline {paragraph}{Partition name:}{21}{section*.36}%
+\contentsline {subsection}{Statement heap}{21}{section*.37}%
+\contentsline {paragraph}{Partition name:}{21}{section*.38}%
+\contentsline {subsection}{Expression heap}{22}{section*.39}%
+\contentsline {paragraph}{Partition name:}{22}{section*.40}%
+\contentsline {subsection}{Syntax heap}{22}{section*.41}%
+\contentsline {paragraph}{Partition name:}{22}{section*.42}%
+\contentsline {subsection}{Form heap}{22}{section*.43}%
+\contentsline {paragraph}{Partition name:}{22}{section*.44}%
+\contentsline {subsection}{Chart heap}{22}{section*.45}%
+\contentsline {paragraph}{Partition name:}{22}{section*.46}%
+\contentsline {subsection}{Attribute heap}{22}{section*.47}%
+\contentsline {paragraph}{Partition name:}{22}{section*.48}%
+\contentsline {chapter}{\chapternumberline {8}Declarations}{23}{chapter.8}%
+\contentsline {paragraph}{Note:}{24}{section*.49}%
+\contentsline {section}{\numberline {8.1}Declaration vocabulary types}{24}{section.8.1}%
+\contentsline {subsection}{Access specifiers}{24}{section*.50}%
+\contentsline {subsection}{Basic specifiers}{24}{section*.51}%
+\contentsline {paragraph}{Note:}{24}{section*.52}%
+\contentsline {subsection}{Reachable semantic properties}{24}{section*.53}%
+\contentsline {subsection}{Object traits}{25}{section*.54}%
+\contentsline {paragraph}{Note:}{25}{section*.55}%
+\contentsline {subsection}{Vendor traits}{25}{section*.56}%
+\contentsline {subsection}{Parameter Level}{26}{section*.57}%
+\contentsline {subsection}{Parameter Position}{26}{section*.58}%
+\contentsline {section}{\numberline {8.2}Declaration structures}{26}{section.8.2}%
+\contentsline {subsection}{\textsf {DeclSort::VendorExtension}}{26}{section*.59}%
+\contentsline {paragraph}{Partition name:}{26}{section*.60}%
+\contentsline {subsection}{\textsf {DeclSort::Enumerator}}{26}{section*.61}%
+\contentsline {paragraph}{Partition name:}{27}{section*.62}%
+\contentsline {subsection}{\textsf {DeclSort::Variable}}{27}{section*.63}%
+\contentsline {paragraph}{Partition name:}{28}{section*.64}%
+\contentsline {subsection}{\textsf {DeclSort::Parameter}}{28}{section*.65}%
+\contentsline {paragraph}{Note:}{29}{section*.66}%
+\contentsline {paragraph}{Partition name:}{29}{section*.67}%
+\contentsline {subsubsection}{Parameter sort}{29}{section*.68}%
+\contentsline {subsection}{\textsf {DeclSort::Field}}{29}{section*.69}%
+\contentsline {paragraph}{Partition name:}{30}{section*.70}%
+\contentsline {subsection}{\textsf {DeclSort::Bitfield}}{30}{section*.71}%
+\contentsline {paragraph}{Partition name:}{31}{section*.72}%
+\contentsline {subsection}{\textsf {DeclSort::Scope}}{31}{section*.73}%
+\contentsline {paragraph}{Partition name:}{32}{section*.74}%
+\contentsline {subsubsection}{Scope traits}{33}{section*.75}%
+\contentsline {subsubsection}{Class-type layout packing}{33}{section*.76}%
+\contentsline {subsection}{\textsf {DeclSort::Enumeration}}{33}{section*.77}%
+\contentsline {paragraph}{Partition name:}{34}{section*.78}%
+\contentsline {subsection}{\textsf {DeclSort::Alias}}{34}{section*.79}%
+\contentsline {paragraph}{Partition name:}{35}{section*.80}%
+\contentsline {subsection}{\textsf {DeclSort::Temploid}}{35}{section*.81}%
+\contentsline {paragraph}{Partition name:}{36}{section*.82}%
+\contentsline {subsubsection}{Parameterized Entity}{36}{section*.83}%
+\contentsline {subsection}{\textsf {DeclSort::Template}}{36}{section*.84}%
+\contentsline {paragraph}{Partition name:}{37}{section*.85}%
+\contentsline {subsection}{\textsf {DeclSort::PartialSpecialization}}{37}{section*.86}%
+\contentsline {paragraph}{Partition name:}{37}{section*.87}%
+\contentsline {paragraph}{Note:}{37}{section*.88}%
+\contentsline {subsection}{\textsf {DeclSort::Specialization}}{37}{section*.89}%
+\contentsline {paragraph}{Partition name:}{38}{section*.90}%
+\contentsline {subsubsection}{How to specialize a template}{38}{section*.91}%
+\contentsline {subsection}{\textsf {DeclSort::DefaultArgument}}{38}{section*.92}%
+\contentsline {paragraph}{Note:}{39}{section*.93}%
+\contentsline {paragraph}{Partition name:}{39}{section*.94}%
+\contentsline {subsection}{\textsf {DeclSort::Concept}}{39}{section*.95}%
+\contentsline {paragraph}{Partition name:}{40}{section*.96}%
+\contentsline {paragraph}{Note:}{40}{section*.97}%
+\contentsline {subsection}{\textsf {DeclSort::Function}}{40}{section*.98}%
+\contentsline {paragraph}{Note:}{41}{section*.99}%
+\contentsline {paragraph}{Partition name:}{41}{section*.100}%
+\contentsline {subsubsection}{Function traits}{41}{section*.101}%
+\contentsline {subsection}{\textsf {DeclSort::Method}}{42}{section*.102}%
+\contentsline {paragraph}{Partition name:}{43}{section*.103}%
+\contentsline {subsection}{\textsf {DeclSort::Constructor}}{43}{section*.104}%
+\contentsline {paragraph}{Partition name:}{44}{section*.105}%
+\contentsline {paragraph}{Note:}{44}{section*.106}%
+\contentsline {subsection}{\textsf {DeclSort::InheritedConstructor}}{45}{section*.107}%
+\contentsline {paragraph}{Partition name:}{45}{section*.108}%
+\contentsline {subsection}{\textsf {DeclSort::Destructor}}{45}{section*.109}%
+\contentsline {paragraph}{Note:}{46}{section*.110}%
+\contentsline {paragraph}{Partition name:}{46}{section*.111}%
+\contentsline {subsection}{\textsf {DeclSort::Reference}}{46}{section*.112}%
+\contentsline {paragraph}{Partition name:}{46}{section*.113}%
+\contentsline {subsubsection}{\textsl {ModuleReference}}{47}{section*.114}%
+\contentsline {subsection}{\textsf {DeclSort::UsingDeclaration}}{47}{section*.115}%
+\contentsline {paragraph}{Partition name:}{47}{section*.116}%
+\contentsline {paragraph}{Note:}{48}{section*.117}%
+\contentsline {subsection}{\textsf {DeclSort::Unused0}}{48}{section*.118}%
+\contentsline {subsection}{\textsf {DeclSort::Friend}}{48}{section*.119}%
+\contentsline {paragraph}{Partition name:}{48}{section*.120}%
+\contentsline {subsection}{\textsf {DeclSort::Expansion}}{48}{section*.121}%
+\contentsline {paragraph}{Partition name:}{48}{section*.122}%
+\contentsline {subsection}{\textsf {DeclSort::DeductionGuide}}{48}{section*.123}%
+\contentsline {paragraph}{Partition name:}{49}{section*.124}%
+\contentsline {subsection}{\textsf {DeclSort::Barren}}{49}{section*.125}%
+\contentsline {paragraph}{Partition name:}{49}{section*.126}%
+\contentsline {subsection}{\textsf {DeclSort::Tuple}}{49}{section*.127}%
+\contentsline {paragraph}{Partition name:}{50}{section*.128}%
+\contentsline {subsection}{\textsf {DeclSort::SyntaxTree}}{50}{section*.129}%
+\contentsline {paragraph}{Partition name:}{50}{section*.130}%
+\contentsline {paragraph}{Note:}{50}{section*.131}%
+\contentsline {subsection}{\textsf {DeclSort::Intrinsic}}{50}{section*.132}%
+\contentsline {paragraph}{Partition name:}{51}{section*.133}%
+\contentsline {paragraph}{Note:}{51}{section*.134}%
+\contentsline {subsection}{\textsf {DeclSort::Property}}{51}{section*.135}%
+\contentsline {paragraph}{Partition name:}{51}{section*.136}%
+\contentsline {paragraph}{Note:}{51}{section*.137}%
+\contentsline {subsection}{\textsf {DeclSort::OutputSegment}}{51}{section*.138}%
+\contentsline {subsubsection}{Code segment traits}{52}{section*.139}%
+\contentsline {subsubsection}{Code segment type}{52}{section*.140}%
+\contentsline {paragraph}{Partition name:}{52}{section*.141}%
+\contentsline {paragraph}{Note:}{52}{section*.142}%
+\contentsline {chapter}{\chapternumberline {9}Directives}{53}{chapter.9}%
+\contentsline {paragraph}{Note:}{54}{section*.143}%
+\contentsline {section}{\numberline {9.1}Directive Vocabulary Types}{54}{section.9.1}%
+\contentsline {subsection}{Phases of Translation}{54}{section*.144}%
+\contentsline {section}{\numberline {9.2}Directive Structures}{54}{section.9.2}%
+\contentsline {subsection}{\textsf {DirSort::VendorExtension}}{54}{section*.145}%
+\contentsline {paragraph}{Partition name:}{54}{section*.146}%
+\contentsline {subsection}{\textsf {DirSort::Empty}}{54}{section*.147}%
+\contentsline {paragraph}{Partition name:}{55}{section*.148}%
+\contentsline {paragraph}{Note:}{55}{section*.149}%
+\contentsline {subsection}{\textsf {DirSort::Attribute}}{55}{section*.150}%
+\contentsline {paragraph}{Partition name:}{55}{section*.151}%
+\contentsline {paragraph}{Note:}{55}{section*.152}%
+\contentsline {subsection}{\textsf {DirSort::Pragma}}{55}{section*.153}%
+\contentsline {paragraph}{Partition name:}{56}{section*.154}%
+\contentsline {subsection}{\textsf {DirSort::Using}}{56}{section*.155}%
+\contentsline {paragraph}{Partition name:}{56}{section*.156}%
+\contentsline {subsection}{\textsf {DirSort::DeclUse}}{56}{section*.157}%
+\contentsline {paragraph}{Partition name:}{57}{section*.158}%
+\contentsline {subsection}{\textsf {DirSort::Expr}}{57}{section*.159}%
+\contentsline {paragraph}{Partition name:}{57}{section*.160}%
+\contentsline {subsection}{\textsf {DirSort::StructuredBinding}}{58}{section*.161}%
+\contentsline {paragraph}{Partition name:}{58}{section*.162}%
+\contentsline {subsection}{\textsf {DirSort::SpecifiersSpread}}{58}{section*.163}%
+\contentsline {paragraph}{Partition name:}{59}{section*.164}%
+\contentsline {subsection}{\textsf {DirSort::Tuple}}{59}{section*.165}%
+\contentsline {paragraph}{Partition name:}{59}{section*.166}%
+\contentsline {chapter}{\chapternumberline {10}Types}{61}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Type structures}{61}{section.10.1}%
+\contentsline {subsection}{\textsf {TypeSort::VendorExtension}}{61}{section*.167}%
+\contentsline {paragraph}{Partition name:}{61}{section*.168}%
+\contentsline {subsection}{\textsf {TypeSort::Fundamental}}{62}{section*.169}%
+\contentsline {paragraph}{Partition name:}{62}{section*.170}%
+\contentsline {subsubsection}{Fundamental type basis}{62}{section*.171}%
+\contentsline {paragraph}{Note:}{64}{section*.172}%
+\contentsline {subsubsection}{Fundamental type precision}{64}{section*.173}%
+\contentsline {subsubsection}{Fundamental type sign}{64}{section*.174}%
+\contentsline {subsection}{\textsf {TypeSort::Designated}}{65}{section*.175}%
+\contentsline {paragraph}{Partition name:}{65}{section*.176}%
+\contentsline {subsection}{\textsf {TypeSort::Tor}}{65}{section*.177}%
+\contentsline {paragraph}{Partition name:}{66}{section*.178}%
+\contentsline {subsection}{\textsf {TypeSort::Syntactic}}{66}{section*.179}%
+\contentsline {paragraph}{Partition name:}{66}{section*.180}%
+\contentsline {subsection}{\textsf {TypeSort::Expansion}}{66}{section*.181}%
+\contentsline {paragraph}{Partition name:}{66}{section*.182}%
+\contentsline {subsubsection}{Pack expansion mode}{66}{section*.183}%
+\contentsline {subsection}{\textsf {TypeSort::Pointer}}{67}{section*.184}%
+\contentsline {paragraph}{Partition name:}{67}{section*.185}%
+\contentsline {subsection}{\textsf {TypeSort::PointerToMember}}{67}{section*.186}%
+\contentsline {paragraph}{Partition name:}{67}{section*.187}%
+\contentsline {subsection}{\textsf {TypeSort::LvalueReference}}{67}{section*.188}%
+\contentsline {paragraph}{Partition name:}{68}{section*.189}%
+\contentsline {subsection}{\textsf {TypeSort::RvalueReference}}{68}{section*.190}%
+\contentsline {paragraph}{Partition name:}{68}{section*.191}%
+\contentsline {subsection}{\textsf {TypeSort::Function}}{68}{section*.192}%
+\contentsline {paragraph}{Partition name:}{69}{section*.193}%
+\contentsline {subsubsection}{Function type traits}{69}{section*.194}%
+\contentsline {subsubsection}{Calling convention}{69}{section*.195}%
+\contentsline {paragraph}{Note:}{70}{section*.196}%
+\contentsline {subsubsection}{Noexcept specification}{70}{section*.197}%
+\contentsline {subsection}{\textsf {TypeSort::Method}}{70}{section*.198}%
+\contentsline {paragraph}{Partition name:}{71}{section*.199}%
+\contentsline {subsection}{\textsf {TypeSort::Array}}{71}{section*.200}%
+\contentsline {paragraph}{Partition name:}{71}{section*.201}%
+\contentsline {subsection}{\textsf {TypeSort::Typename}}{71}{section*.202}%
+\contentsline {paragraph}{Partition name:}{71}{section*.203}%
+\contentsline {subsection}{\textsf {TypeSort::Qualified}}{72}{section*.204}%
+\contentsline {paragraph}{Partition name:}{72}{section*.205}%
+\contentsline {subsubsection}{Type qualifiers}{72}{section*.206}%
+\contentsline {subsection}{\textsf {TypeSort::Base}}{72}{section*.207}%
+\contentsline {paragraph}{Partition name:}{73}{section*.208}%
+\contentsline {paragraph}{Note:}{73}{section*.209}%
+\contentsline {subsubsection}{Base type specifiers}{73}{section*.210}%
+\contentsline {paragraph}{Note:}{73}{section*.211}%
+\contentsline {subsection}{\textsf {TypeSort::Decltype}}{73}{section*.212}%
+\contentsline {paragraph}{Partition name:}{74}{section*.213}%
+\contentsline {paragraph}{Note:}{74}{section*.214}%
+\contentsline {subsection}{\textsf {TypeSort::Placeholder}}{74}{section*.215}%
+\contentsline {paragraph}{Partition name:}{74}{section*.216}%
+\contentsline {subsection}{\textsf {TypeSort::Tuple}}{74}{section*.217}%
+\contentsline {paragraph}{Partition name:}{75}{section*.218}%
+\contentsline {subsection}{\textsf {TypeSort::Forall}}{75}{section*.219}%
+\contentsline {paragraph}{Partition name:}{75}{section*.220}%
+\contentsline {paragraph}{Note:}{75}{section*.221}%
+\contentsline {subsection}{\textsf {TypeSort::Unaligned}}{75}{section*.222}%
+\contentsline {paragraph}{Partition name:}{75}{section*.223}%
+\contentsline {paragraph}{Note:}{75}{section*.224}%
+\contentsline {subsection}{\textsf {TypeSort::SyntaxTree}}{76}{section*.225}%
+\contentsline {paragraph}{Partition name:}{76}{section*.226}%
+\contentsline {chapter}{\chapternumberline {11}Expressions}{77}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Expression structures}{78}{section.11.1}%
+\contentsline {subsection}{\textsf {ExprSort::VendorExtension}}{78}{section*.227}%
+\contentsline {paragraph}{Partition name:}{78}{section*.228}%
+\contentsline {subsection}{\textsf {ExprtSort::Empty}}{78}{section*.229}%
+\contentsline {paragraph}{Partition name:}{78}{section*.230}%
+\contentsline {subsection}{\textsf {ExprSort::Literal}}{78}{section*.231}%
+\contentsline {paragraph}{Partition name:}{79}{section*.232}%
+\contentsline {subsubsection}{Literal Values}{79}{section*.233}%
+\contentsline {paragraph}{Note:}{79}{section*.234}%
+\contentsline {subsection}{\textsf {ExprSort::Lambda}}{80}{section*.235}%
+\contentsline {paragraph}{Partition name:}{80}{section*.236}%
+\contentsline {paragraph}{Note:}{80}{section*.237}%
+\contentsline {subsection}{\textsf {ExprSort::Type}}{80}{section*.238}%
+\contentsline {paragraph}{Partition name:}{81}{section*.239}%
+\contentsline {subsection}{\textsf {ExprSort::NamedDecl}}{81}{section*.240}%
+\contentsline {paragraph}{Partition name:}{81}{section*.241}%
+\contentsline {subsection}{\textsf {ExprtSort::UnresolvedId}}{81}{section*.242}%
+\contentsline {paragraph}{Partition name:}{81}{section*.243}%
+\contentsline {paragraph}{Note:}{81}{section*.244}%
+\contentsline {subsection}{\textsf {ExprSort::TemplateId}}{81}{section*.245}%
+\contentsline {paragraph}{Partition name:}{82}{section*.246}%
+\contentsline {subsection}{\textsf {ExprSort::UnqualifiedId}}{82}{section*.247}%
+\contentsline {paragraph}{Partition name:}{82}{section*.248}%
+\contentsline {paragraph}{Note:}{82}{section*.249}%
+\contentsline {subsection}{\textsf {ExprSort::SimpleIdentifier}}{83}{section*.250}%
+\contentsline {paragraph}{Partition name:}{83}{section*.251}%
+\contentsline {paragraph}{Note:}{83}{section*.252}%
+\contentsline {subsection}{\textsf {ExprSort::Pointer}}{83}{section*.253}%
+\contentsline {paragraph}{Partition name:}{83}{section*.254}%
+\contentsline {paragraph}{Note:}{83}{section*.255}%
+\contentsline {subsection}{\textsf {ExprSort::QualifiedName}}{83}{section*.256}%
+\contentsline {paragraph}{Partition name:}{84}{section*.257}%
+\contentsline {paragraph}{Note:}{84}{section*.258}%
+\contentsline {subsection}{\textsf {ExprSort::Path}}{84}{section*.259}%
+\contentsline {paragraph}{Partition name:}{84}{section*.260}%
+\contentsline {subsection}{\textsf {ExprSort::Read}}{84}{section*.261}%
+\contentsline {paragraph}{Partition name:}{85}{section*.262}%
+\contentsline {paragraph}{Note:}{85}{section*.263}%
+\contentsline {subsubsection}{\textsl {ReadConversionSort}}{85}{section*.264}%
+\contentsline {subsection}{\textsf {ExprtSort::Monad}}{86}{section*.265}%
+\contentsline {paragraph}{Partition name:}{86}{section*.266}%
+\contentsline {subsection}{\textsf {ExprSort::Dyad}}{86}{section*.267}%
+\contentsline {paragraph}{Partition name:}{87}{section*.268}%
+\contentsline {subsection}{\textsf {ExprSort::Triad}}{87}{section*.269}%
+\contentsline {paragraph}{Partition name:}{88}{section*.270}%
+\contentsline {subsection}{\textsf {ExprSort::String}}{88}{section*.271}%
+\contentsline {paragraph}{Partition name:}{89}{section*.272}%
+\contentsline {subsubsection}{\textsf {StringSort::Ordinary}}{89}{section*.273}%
+\contentsline {subsubsection}{\textsf {StringSort::UTF8}}{89}{section*.274}%
+\contentsline {subsubsection}{\textsf {StringSort::Char16}}{89}{section*.275}%
+\contentsline {subsubsection}{\textsf {StringSort::Char32}}{89}{section*.276}%
+\contentsline {subsubsection}{\textsf {StringSort::Wide}}{89}{section*.277}%
+\contentsline {subsubsection}{String literal structure}{90}{section*.278}%
+\contentsline {paragraph}{Partition name:}{90}{section*.279}%
+\contentsline {subsection}{\textsf {ExprSort::Temporary}}{90}{section*.280}%
+\contentsline {paragraph}{Partition name:}{90}{section*.281}%
+\contentsline {subsection}{\textsf {ExprSort::Call}}{91}{section*.282}%
+\contentsline {paragraph}{Partition name:}{91}{section*.283}%
+\contentsline {subsection}{\textsf {ExprSort::MemberInitializer}}{91}{section*.284}%
+\contentsline {paragraph}{Partition name:}{92}{section*.285}%
+\contentsline {paragraph}{Note:}{92}{section*.286}%
+\contentsline {subsection}{\textsf {ExprSort::MemberAccess}}{92}{section*.287}%
+\contentsline {paragraph}{Partition name:}{92}{section*.288}%
+\contentsline {paragraph}{Note:}{92}{section*.289}%
+\contentsline {subsection}{\textsf {ExprSort::InheritancePath}}{92}{section*.290}%
+\contentsline {paragraph}{Partition name:}{93}{section*.291}%
+\contentsline {subsection}{\textsf {ExprSort::InitializerList}}{93}{section*.292}%
+\contentsline {paragraph}{Partition name:}{93}{section*.293}%
+\contentsline {subsection}{\textsf {ExprSort::Cast}}{93}{section*.294}%
+\contentsline {paragraph}{Partition name:}{94}{section*.295}%
+\contentsline {subsection}{\textsf {ExprSort::Condition}}{94}{section*.296}%
+\contentsline {paragraph}{Partition name:}{94}{section*.297}%
+\contentsline {paragraph}{Note:}{94}{section*.298}%
+\contentsline {subsection}{\textsf {ExprSort::ExpressionList}}{94}{section*.299}%
+\contentsline {paragraph}{Partition name:}{95}{section*.300}%
+\contentsline {paragraph}{Note:}{95}{section*.301}%
+\contentsline {subsection}{\textsf {ExprSort::SizeofType}}{95}{section*.302}%
+\contentsline {paragraph}{Partition name:}{95}{section*.303}%
+\contentsline {paragraph}{Note:}{96}{section*.304}%
+\contentsline {subsection}{\textsf {ExprSort::Alignof}}{96}{section*.305}%
+\contentsline {paragraph}{Partition name:}{96}{section*.306}%
+\contentsline {paragraph}{Note:}{96}{section*.307}%
+\contentsline {subsection}{\textsf {ExprSort::Label}}{96}{section*.308}%
+\contentsline {paragraph}{Note:}{97}{section*.309}%
+\contentsline {paragraph}{Partition name:}{97}{section*.310}%
+\contentsline {subsection}{\textsf {ExprSort::Unused0}}{97}{section*.311}%
+\contentsline {subsection}{\textsf {ExprSort::Typeid}}{97}{section*.312}%
+\contentsline {paragraph}{Partition name:}{97}{section*.313}%
+\contentsline {subsection}{\textsf {ExprSort::DestructorCall}}{97}{section*.314}%
+\contentsline {paragraph}{Partition name:}{98}{section*.315}%
+\contentsline {paragraph}{Note:}{98}{section*.316}%
+\contentsline {subsection}{\textsf {ExprSort::SyntaxTree}}{98}{section*.317}%
+\contentsline {paragraph}{Partition name:}{98}{section*.318}%
+\contentsline {subsection}{\textsf {ExprSort::FunctionString}}{98}{section*.319}%
+\contentsline {paragraph}{Partition name:}{98}{section*.320}%
+\contentsline {subsection}{\textsf {ExprSort::CompoundString}}{99}{section*.321}%
+\contentsline {paragraph}{Partition name:}{99}{section*.322}%
+\contentsline {subsection}{\textsf {ExprSort::StringSequence}}{99}{section*.323}%
+\contentsline {paragraph}{Partition name:}{99}{section*.324}%
+\contentsline {subsection}{\textsf {ExprSort::Initializer}}{99}{section*.325}%
+\contentsline {paragraph}{\textsf {InitializerSort::Unknown}}{100}{section*.326}%
+\contentsline {paragraph}{\textsf {InitializerSort::Direct}}{100}{section*.327}%
+\contentsline {paragraph}{\textsf {InitializerSort::Copy}}{100}{section*.328}%
+\contentsline {paragraph}{Partition name:}{100}{section*.329}%
+\contentsline {subsection}{\textsf {ExprSort::Requires}}{100}{section*.330}%
+\contentsline {paragraph}{Partition name:}{100}{section*.331}%
+\contentsline {subsection}{\textsf {ExprSort::UnaryFold}}{100}{section*.332}%
+\contentsline {paragraph}{Partition name:}{101}{section*.333}%
+\contentsline {subsection}{\textsf {ExprSort::BinaryFoid}}{101}{section*.334}%
+\contentsline {paragraph}{Partition name:}{101}{section*.335}%
+\contentsline {subsection}{\textsf {ExprSort::HierarchyConversion}}{101}{section*.336}%
+\contentsline {paragraph}{Partition name:}{101}{section*.337}%
+\contentsline {subsection}{\textsf {ExprSort::ProductTypeValue}}{101}{section*.338}%
+\contentsline {paragraph}{Partition name:}{102}{section*.339}%
+\contentsline {paragraph}{Note:}{102}{section*.340}%
+\contentsline {subsection}{\textsf {ExprSort::SumTypeValue}}{102}{section*.341}%
+\contentsline {paragraph}{Partition name:}{103}{section*.342}%
+\contentsline {paragraph}{Note:}{103}{section*.343}%
+\contentsline {subsection}{\textsf {ExprSort::SubobjectValue}}{103}{section*.344}%
+\contentsline {paragraph}{Partition name:}{103}{section*.345}%
+\contentsline {paragraph}{Note:}{103}{section*.346}%
+\contentsline {subsection}{\textsf {ExprSort::ArrayValue}}{103}{section*.347}%
+\contentsline {paragraph}{Partition name:}{104}{section*.348}%
+\contentsline {subsection}{\textsf {ExprSort::DynamicDispatch}}{104}{section*.349}%
+\contentsline {paragraph}{Partition name:}{104}{section*.350}%
+\contentsline {subsection}{\textsf {ExprSort::VirtualFunctionConversion}}{104}{section*.351}%
+\contentsline {paragraph}{Partition name:}{104}{section*.352}%
+\contentsline {subsection}{\textsf {ExprSort::Placeholder}}{104}{section*.353}%
+\contentsline {paragraph}{Partition name:}{104}{section*.354}%
+\contentsline {subsection}{\textsf {ExprSort::Expansion}}{105}{section*.355}%
+\contentsline {paragraph}{Partition name:}{105}{section*.356}%
+\contentsline {subsection}{\textsf {ExprSort::Generic}}{105}{section*.357}%
+\contentsline {paragraph}{Partition name:}{105}{section*.358}%
+\contentsline {subsection}{\textsf {ExprSort::Tuple}}{105}{section*.359}%
+\contentsline {paragraph}{Partition name:}{105}{section*.360}%
+\contentsline {subsection}{\textsf {ExprSort::Nullptr}}{106}{section*.361}%
+\contentsline {paragraph}{Partition name:}{106}{section*.362}%
+\contentsline {subsection}{\textsf {ExprSort::This}}{106}{section*.363}%
+\contentsline {paragraph}{Partition name:}{106}{section*.364}%
+\contentsline {subsection}{\textsf {ExprSort::TemplateReference}}{106}{section*.365}%
+\contentsline {paragraph}{Partition name:}{107}{section*.366}%
+\contentsline {paragraph}{Note:}{107}{section*.367}%
+\contentsline {subsection}{\textsf {ExprSort::Statement}}{107}{section*.368}%
+\contentsline {subsection}{\textsf {ExprSort::TypeTraitIntrinsic}}{107}{section*.369}%
+\contentsline {paragraph}{Partition name:}{107}{section*.370}%
+\contentsline {subsection}{\textsf {ExprSort::DesignatedInitializer}}{108}{section*.371}%
+\contentsline {paragraph}{Partition name:}{108}{section*.372}%
+\contentsline {subsection}{\textsf {ExprSort::PackedTemplateArguments}}{108}{section*.373}%
+\contentsline {paragraph}{Partition name:}{108}{section*.374}%
+\contentsline {paragraph}{Note:}{108}{section*.375}%
+\contentsline {subsection}{\textsf {ExprSort::Tokens}}{108}{section*.376}%
+\contentsline {paragraph}{Partition name:}{109}{section*.377}%
+\contentsline {paragraph}{Note:}{109}{section*.378}%
+\contentsline {subsection}{\textsf {ExprSort::AssignInitializer}}{109}{section*.379}%
+\contentsline {paragraph}{Partition name:}{109}{section*.380}%
+\contentsline {section}{\numberline {11.2}Operators}{109}{section.11.2}%
+\contentsline {subsection}{Niladic operators}{110}{section*.381}%
+\contentsline {subsubsection}{\textsf {NiladicOperator::Unknown}}{110}{section*.382}%
+\contentsline {subsubsection}{\textsf {NiladicOperator::Phantom}}{110}{section*.383}%
+\contentsline {subsubsection}{\textsf {NiladicOperator::Constant}}{110}{section*.384}%
+\contentsline {subsubsection}{\textsf {NiladicOperator::Nil}}{110}{section*.385}%
+\contentsline {subsubsection}{\textsf {NiladicOperator::Msvc}}{110}{section*.386}%
+\contentsline {subsubsection}{\textsf {NiladicOperator::MsvcConstantObject}}{110}{section*.387}%
+\contentsline {paragraph}{Note:}{110}{section*.388}%
+\contentsline {subsubsection}{\textsf {NiladicOperator::MsvcLambda}}{110}{section*.389}%
+\contentsline {paragraph}{Note:}{110}{section*.390}%
+\contentsline {subsection}{Monadic operators}{111}{section*.391}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Unknown}}{112}{section*.392}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Plus}}{112}{section*.393}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Negate}}{112}{section*.394}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Deref}}{112}{section*.395}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Address}}{112}{section*.396}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Complement}}{112}{section*.397}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Not}}{112}{section*.398}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::PreIncrement}}{112}{section*.399}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::PreDecrement}}{112}{section*.400}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::PostIncrement}}{113}{section*.401}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::PostDecrement}}{113}{section*.402}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Truncate}}{113}{section*.403}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Ceil}}{113}{section*.404}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Floor}}{113}{section*.405}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Paren}}{113}{section*.406}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Brace}}{113}{section*.407}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Alignas}}{113}{section*.408}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Alignof}}{113}{section*.409}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Sizeof}}{113}{section*.410}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Cardinality}}{113}{section*.411}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Typeid}}{113}{section*.412}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Noexcept}}{114}{section*.413}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Requires}}{114}{section*.414}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::CoReturn}}{114}{section*.415}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Await}}{114}{section*.416}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Yield}}{114}{section*.417}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Throw}}{114}{section*.418}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::New}}{114}{section*.419}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Delete}}{114}{section*.420}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::DeleteArray}}{114}{section*.421}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Expand}}{114}{section*.422}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Read}}{114}{section*.423}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Materialize}}{114}{section*.424}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::PseudoDtorCall}}{115}{section*.425}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::LookupGlobally}}{115}{section*.426}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::Msvc}}{115}{section*.427}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcAssume}}{115}{section*.428}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcAlignof}}{115}{section*.429}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcUuidof}}{115}{section*.430}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsClass}}{115}{section*.431}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsUnion}}{115}{section*.432}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsEnum}}{115}{section*.433}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsPolymorphic}}{115}{section*.434}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsEmpty}}{115}{section*.435}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsTriviallyCopyConstructible}}{115}{section*.436}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsTriviallyCopyAssignable}}{116}{section*.437}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsTriviallyDestructible}}{116}{section*.438}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcHasVirtualDestructor}}{116}{section*.439}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsNothrowCopyConstructible}}{116}{section*.440}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsNothrowCopyAssignable}}{116}{section*.441}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsPod}}{116}{section*.442}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsAbstract}}{116}{section*.443}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsTrivial}}{116}{section*.444}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsTriviallyCopyable}}{116}{section*.445}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsStandardLayout}}{116}{section*.446}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsLiteralType}}{116}{section*.447}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsTriviallyMoveConstructible}}{116}{section*.448}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcHasTrivialMoveAssign}}{117}{section*.449}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsTriviallyMoveAssignable}}{117}{section*.450}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsNothrowMoveAssignable}}{117}{section*.451}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcUnderlyingType}}{117}{section*.452}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsDestructible}}{117}{section*.453}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsNothrowDestructible}}{117}{section*.454}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcHasUniqueObjectRepresentations}}{117}{section*.455}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsAggregate}}{117}{section*.456}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcBuiltinAddressOf}}{117}{section*.457}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsRefClass}}{117}{section*.458}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsValueClass}}{117}{section*.459}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsSimpleValueClass}}{117}{section*.460}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsInterfaceClass}}{118}{section*.461}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsDelegate}}{118}{section*.462}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsFinal}}{118}{section*.463}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcIsSealed}}{118}{section*.464}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcHasFinalizer}}{118}{section*.465}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcHasCopy}}{118}{section*.466}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcHasAssign}}{118}{section*.467}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcHasUserDestructor}}{118}{section*.468}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcConfusion}}{118}{section*.469}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcConfusedExpand}}{118}{section*.470}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcConfusedDependentSizeof}}{118}{section*.471}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcConfusedDependentExpression}}{119}{section*.472}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcConfusedSubstitution}}{119}{section*.473}%
+\contentsline {subsubsection}{\textsf {MonadicOperator::MsvcConfusedAggregateReturn}}{119}{section*.474}%
+\contentsline {subsection}{Dyadic operators}{119}{section*.475}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Unknown}}{120}{section*.476}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Plus}}{120}{section*.477}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Minus}}{120}{section*.478}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Mult}}{120}{section*.479}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Slash}}{121}{section*.480}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Modulo}}{121}{section*.481}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Remainder}}{121}{section*.482}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Bitand}}{121}{section*.483}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Bitor}}{121}{section*.484}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Bitxor}}{121}{section*.485}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Lshift}}{121}{section*.486}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Rshift}}{121}{section*.487}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Equal}}{121}{section*.488}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::NotEqual}}{121}{section*.489}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Less}}{121}{section*.490}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::LessEqual}}{122}{section*.491}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Greater}}{122}{section*.492}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::GreaterEqual}}{122}{section*.493}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Compare}}{122}{section*.494}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::LogicAnd}}{122}{section*.495}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::LogicOr}}{122}{section*.496}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Assign}}{122}{section*.497}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::PlusAssign}}{122}{section*.498}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MinusAssign}}{122}{section*.499}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MultAssign}}{122}{section*.500}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::SlashAssign}}{122}{section*.501}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::ModuloAssign}}{122}{section*.502}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::BitandAssign}}{123}{section*.503}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::BitorAssign}}{123}{section*.504}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::BitxorAssign}}{123}{section*.505}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::LshiftAssign}}{123}{section*.506}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::RshiftAssign}}{123}{section*.507}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Comma}}{123}{section*.508}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Dot}}{123}{section*.509}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Arrow}}{123}{section*.510}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::DotStar}}{123}{section*.511}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::ArrowStar}}{123}{section*.512}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Curry}}{123}{section*.513}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Apply}}{123}{section*.514}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Index}}{124}{section*.515}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::DefaultAt}}{124}{section*.516}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::New}}{124}{section*.517}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::NewArray}}{124}{section*.518}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Destruct}}{124}{section*.519}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::DestructAt}}{124}{section*.520}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Cleanup}}{124}{section*.521}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Qualification}}{124}{section*.522}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Promote}}{124}{section*.523}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Demote}}{124}{section*.524}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Coerce}}{125}{section*.525}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Rewrite}}{125}{section*.526}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Bless}}{125}{section*.527}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Cast}}{125}{section*.528}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::ExplicitConversion}}{125}{section*.529}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::ReinterpretCast}}{125}{section*.530}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::StaticCast}}{125}{section*.531}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::ConstCast}}{125}{section*.532}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::DynamicCast}}{125}{section*.533}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Narrow}}{125}{section*.534}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Widen}}{126}{section*.535}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Pretend}}{126}{section*.536}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Closure}}{126}{section*.537}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::ZeroInitialize}}{126}{section*.538}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::ClearStorage}}{126}{section*.539}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Select}}{126}{section*.540}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::Msvc}}{126}{section*.541}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcTryCast}}{126}{section*.542}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcCurry}}{126}{section*.543}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcVirtualCurry}}{127}{section*.544}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcAlign}}{127}{section*.545}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBitSpan}}{127}{section*.546}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBitfieldAccess}}{127}{section*.547}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcObscureBitfieldAccess}}{127}{section*.548}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcInitialize}}{127}{section*.549}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBuiltinOffsetOf}}{127}{section*.550}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcIsBaseOf}}{127}{section*.551}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcIsConvertibleTo}}{127}{section*.552}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcIsTriviallyAssignable}}{127}{section*.553}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcIsNothrowAssignable}}{128}{section*.554}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcIsAssignable}}{128}{section*.555}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcIsAssignableNocheck}}{128}{section*.556}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBuiltinBitCast}}{128}{section*.557}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBuiltinIsLayoutCompatible}}{128}{section*.558}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBuiltinIsPointerInterconvertibleBaseOf}}{128}{section*.559}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBuiltinIsPointerInterconvertibleWithClass}}{128}{section*.560}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBuiltinIsCorrespondingMember}}{128}{section*.561}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcIntrinsic}}{128}{section*.562}%
+\contentsline {subsubsection}{\textsf {DyadicOpererator::MsvcSaturatedArithmetic}}{128}{section*.563}%
+\contentsline {subsubsection}{\textsf {DyadicOperator::MsvcBuiltinAllocationAnnotation}}{129}{section*.564}%
+\contentsline {subsection}{Triadic operators}{129}{section*.565}%
+\contentsline {subsubsection}{\textsf {TriadicOperator::Unknown}}{129}{section*.566}%
+\contentsline {subsubsection}{\textsf {TriadicOperator::Choice}}{129}{section*.567}%
+\contentsline {subsubsection}{\textsf {TriadicOperator::ConstructAt}}{129}{section*.568}%
+\contentsline {subsubsection}{\textsf {TriadicOperator::Initialize}}{129}{section*.569}%
+\contentsline {subsubsection}{\textsf {TriadicOperator::Msvc}}{129}{section*.570}%
+\contentsline {subsubsection}{\textsf {TriadicOperator::MsvcConfusion}}{129}{section*.571}%
+\contentsline {subsubsection}{\textsf {TriadicOperator::MsvcConfusedPushState}}{130}{section*.572}%
+\contentsline {paragraph}{Note:}{130}{section*.573}%
+\contentsline {subsection}{Storage operators}{130}{section*.574}%
+\contentsline {subsubsection}{\textsf {StorageOperator::Unknown}}{130}{section*.575}%
+\contentsline {subsubsection}{\textsf {StorageOperator::AllocateSingle}}{130}{section*.576}%
+\contentsline {subsubsection}{\textsf {StorageOperator::AllocateArray}}{130}{section*.577}%
+\contentsline {subsubsection}{\textsf {StorageOperator::DeallocateSingle}}{130}{section*.578}%
+\contentsline {subsubsection}{\textsf {StorageOperator::DeallocateArray}}{130}{section*.579}%
+\contentsline {subsubsection}{\textsf {StorageOperator::Msvc}}{130}{section*.580}%
+\contentsline {subsection}{Variadic operators}{131}{section*.581}%
+\contentsline {subsubsection}{\textsf {VariadicOperator::Unknown}}{131}{section*.582}%
+\contentsline {subsubsection}{\textsf {VariadicOperator::Collection}}{131}{section*.583}%
+\contentsline {subsubsection}{\textsf {VariadicOperator::Sequence}}{131}{section*.584}%
+\contentsline {subsubsection}{\textsf {VariadicOperator::Msvc}}{131}{section*.585}%
+\contentsline {subsubsection}{\textsf {VariadicOperator::MsvcHasTrivialConstructor}}{131}{section*.586}%
+\contentsline {subsubsection}{\textsf {VariadicOperator::MsvcIsConstructible}}{131}{section*.587}%
+\contentsline {subsubsection}{\textsf {VariadicOperator::MsvcIsNothrowConstructible}}{131}{section*.588}%
+\contentsline {subsubsection}{\textsf {VariadicOperator::MsvcIsTriviallyConstructible}}{131}{section*.589}%
+\contentsline {chapter}{\chapternumberline {12}Statements}{133}{chapter.12}%
+\contentsline {paragraph}{Note: All data structures described in this chapter are subject to change.}{133}{section*.590}%
+\contentsline {section}{\numberline {12.1}Statement structures}{133}{section.12.1}%
+\contentsline {subsection}{\textsf {VendorExtension}}{133}{section*.591}%
+\contentsline {paragraph}{Partition name:}{133}{section*.592}%
+\contentsline {subsection}{\textsf {StmtSort::Try}}{134}{section*.593}%
+\contentsline {paragraph}{Note:}{134}{section*.594}%
+\contentsline {paragraph}{Partition name:}{134}{section*.595}%
+\contentsline {subsection}{\textsf {StmtSort::If}}{134}{section*.596}%
+\contentsline {paragraph}{Partition name:}{135}{section*.597}%
+\contentsline {subsection}{\textsf {StmtSort::For}}{135}{section*.598}%
+\contentsline {paragraph}{Partition name:}{135}{section*.599}%
+\contentsline {subsection}{\textsf {StmtSort::Labeled}}{136}{section*.600}%
+\contentsline {paragraph}{Partition name:}{136}{section*.601}%
+\contentsline {subsection}{\textsf {StmtSort::While}}{136}{section*.602}%
+\contentsline {paragraph}{Partition name:}{137}{section*.603}%
+\contentsline {subsection}{\textsf {StmtSort::Block}}{137}{section*.604}%
+\contentsline {paragraph}{Note:}{137}{section*.605}%
+\contentsline {paragraph}{Partition name:}{137}{section*.606}%
+\contentsline {subsection}{\textsf {StmtSort::Break}}{137}{section*.607}%
+\contentsline {paragraph}{Partition name:}{138}{section*.608}%
+\contentsline {subsection}{\textsf {StmtSort::Switch}}{138}{section*.609}%
+\contentsline {paragraph}{Partition name:}{138}{section*.610}%
+\contentsline {subsection}{\textsf {StmtSort::DoWhile}}{138}{section*.611}%
+\contentsline {paragraph}{Partition name:}{139}{section*.612}%
+\contentsline {subsection}{\textsf {StmtSort::Goto}}{139}{section*.613}%
+\contentsline {paragraph}{Partition name:}{139}{section*.614}%
+\contentsline {subsection}{\textsf {StmtSort::Continue}}{139}{section*.615}%
+\contentsline {paragraph}{Partition name:}{139}{section*.616}%
+\contentsline {subsection}{\textsf {StmtSort::Expr}}{140}{section*.617}%
+\contentsline {paragraph}{Partition name:}{140}{section*.618}%
+\contentsline {subsection}{\textsf {StmtSort::Return}}{140}{section*.619}%
+\contentsline {paragraph}{Note:}{140}{section*.620}%
+\contentsline {paragraph}{Partition name:}{140}{section*.621}%
+\contentsline {subsection}{\textsf {StmtSort::Decl}}{141}{section*.622}%
+\contentsline {paragraph}{Partition name:}{141}{section*.623}%
+\contentsline {subsection}{\textsf {StmtSort::Expansion}}{141}{section*.624}%
+\contentsline {paragraph}{Partition name:}{141}{section*.625}%
+\contentsline {subsection}{\textsf {StmtSort::SyntaxTree}}{141}{section*.626}%
+\contentsline {paragraph}{Partition name:}{141}{section*.627}%
+\contentsline {subsection}{\textsf {StmtSort::Handler}}{142}{section*.628}%
+\contentsline {paragraph}{Partition name:}{142}{section*.629}%
+\contentsline {subsection}{\textsf {StmtSort::Tuple}}{142}{section*.630}%
+\contentsline {paragraph}{Partition name:}{142}{section*.631}%
+\contentsline {subsection}{\textsf {StmtSort::Directive}}{143}{section*.632}%
+\contentsline {paragraph}{Partition name:}{143}{section*.633}%
+\contentsline {chapter}{\chapternumberline {13}Names}{145}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Name structures}{145}{section.13.1}%
+\contentsline {subsection}{\textsf {NameSort::Identifier}}{145}{section*.634}%
+\contentsline {paragraph}{Note:}{146}{section*.635}%
+\contentsline {subsection}{\textsf {NameSort::Operator}}{146}{section*.636}%
+\contentsline {paragraph}{Partition name:}{146}{section*.637}%
+\contentsline {subsection}{\textsf {NameSort::Conversion}}{146}{section*.638}%
+\contentsline {paragraph}{Note:}{146}{section*.639}%
+\contentsline {paragraph}{Partition name:}{147}{section*.640}%
+\contentsline {subsection}{\textsf {NameSort::Literal}}{147}{section*.641}%
+\contentsline {paragraph}{Note:}{147}{section*.642}%
+\contentsline {paragraph}{Partition name:}{147}{section*.643}%
+\contentsline {subsection}{\textsf {NameSort::Template}}{147}{section*.644}%
+\contentsline {paragraph}{Partition name:}{147}{section*.645}%
+\contentsline {subsection}{\textsf {NameSort::Specialization}}{147}{section*.646}%
+\contentsline {paragraph}{Partition name:}{148}{section*.647}%
+\contentsline {subsection}{\textsf {NameSort::SourceFile}}{148}{section*.648}%
+\contentsline {paragraph}{Partition name:}{148}{section*.649}%
+\contentsline {subsection}{\textsf {NameSort::Guide}}{148}{section*.650}%
+\contentsline {paragraph}{Partition name:}{148}{section*.651}%
+\contentsline {chapter}{\chapternumberline {14}Charts}{149}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Chart structures}{149}{section.14.1}%
+\contentsline {subsection}{\textsf {ChartSort::None}}{149}{section*.652}%
+\contentsline {paragraph}{Partition name:}{149}{section*.653}%
+\contentsline {subsection}{\textsf {ChartSort::Unilevel}}{149}{section*.654}%
+\contentsline {paragraph}{Partition name:}{150}{section*.655}%
+\contentsline {subsection}{\textsf {ChartSort::Multilevel}}{150}{section*.656}%
+\contentsline {paragraph}{Partition name:}{150}{section*.657}%
+\contentsline {chapter}{\chapternumberline {15}Attributes}{151}{chapter.15}%
+\contentsline {section}{\numberline {15.1}Attribute structures}{151}{section.15.1}%
+\contentsline {subsection}{\textsf {AttrSort::Nothing}}{151}{section*.658}%
+\contentsline {subsection}{\textsf {AttrSort::Basic}}{152}{section*.659}%
+\contentsline {paragraph}{Partition name:}{152}{section*.660}%
+\contentsline {subsection}{\textsf {AttrSort::Scoped}}{152}{section*.661}%
+\contentsline {paragraph}{Partition name:}{152}{section*.662}%
+\contentsline {subsection}{\textsf {AttrSort::Labeled}}{152}{section*.663}%
+\contentsline {paragraph}{Partition name:}{153}{section*.664}%
+\contentsline {subsection}{\textsf {AttrSort::Called}}{153}{section*.665}%
+\contentsline {paragraph}{Partition name:}{153}{section*.666}%
+\contentsline {subsection}{\textsf {AttrSort::Expanded}}{153}{section*.667}%
+\contentsline {paragraph}{Partition name:}{153}{section*.668}%
+\contentsline {subsection}{\textsf {AttrSort::Factored}}{154}{section*.669}%
+\contentsline {paragraph}{Partition name:}{154}{section*.670}%
+\contentsline {subsection}{\textsf {AttrSort::Elaborated}}{154}{section*.671}%
+\contentsline {paragraph}{Partition name:}{154}{section*.672}%
+\contentsline {subsection}{\textsf {AttrSort::Tuple}}{154}{section*.673}%
+\contentsline {paragraph}{Partition name:}{155}{section*.674}%
+\contentsline {chapter}{\chapternumberline {16}Syntax Tree}{157}{chapter.16}%
+\contentsline {paragraph}{Note:}{159}{section*.675}%
+\contentsline {section}{\numberline {16.1}Auxiliary types}{159}{section.16.1}%
+\contentsline {subsection}{\textsl {KeywordSyntax}}{159}{section*.676}%
+\contentsline {subsubsection}{\textsl {KeywordSort}}{159}{section*.677}%
+\contentsline {paragraph}{\textsf {KeywordSort::Nothing}}{159}{section*.678}%
+\contentsline {paragraph}{\textsf {KeywordSort::Class}}{159}{section*.679}%
+\contentsline {paragraph}{\textsf {KeywordSort::Struct}}{159}{section*.680}%
+\contentsline {paragraph}{\textsf {KeywordSort::Union}}{159}{section*.681}%
+\contentsline {paragraph}{\textsf {KeywordSort::Public}}{159}{section*.682}%
+\contentsline {paragraph}{\textsf {KeywordSort::Protected}}{160}{section*.683}%
+\contentsline {paragraph}{\textsf {KeywordSort::Private}}{160}{section*.684}%
+\contentsline {paragraph}{\textsf {KeywordSort::Default}}{160}{section*.685}%
+\contentsline {paragraph}{\textsf {KeywordSort::Delete}}{160}{section*.686}%
+\contentsline {paragraph}{\textsf {KeywordSort::Mutable}}{160}{section*.687}%
+\contentsline {paragraph}{\textsf {KeywordSort::Constexpr}}{160}{section*.688}%
+\contentsline {paragraph}{\textsf {KeywordSort::Consteval}}{160}{section*.689}%
+\contentsline {paragraph}{\textsf {KeywordSort::Typename}}{160}{section*.690}%
+\contentsline {subsection}{Direction of fold expressions}{160}{section*.691}%
+\contentsline {section}{\numberline {16.2}Syntax tree structures}{160}{section.16.2}%
+\contentsline {subsection}{\textsf {SyntaxSort::VendorExtension}}{160}{section*.692}%
+\contentsline {paragraph}{Partition name:}{160}{section*.693}%
+\contentsline {subsection}{\textsf {SyntaxSort::SimpleTypeSpecifier}}{161}{section*.694}%
+\contentsline {paragraph}{Partition name:}{161}{section*.695}%
+\contentsline {subsection}{\textsf {SyntaxSort::DecltypeSpecifier}}{161}{section*.696}%
+\contentsline {paragraph}{Partition name:}{161}{section*.697}%
+\contentsline {subsection}{\textsf {SyntaxSort::PlaceholderTypeSpecifier}}{161}{section*.698}%
+\contentsline {paragraph}{Partition name:}{161}{section*.699}%
+\contentsline {subsection}{\textsf {SyntaxSort::TypeSpecifierSeq}}{162}{section*.700}%
+\contentsline {paragraph}{Partition name:}{162}{section*.701}%
+\contentsline {subsection}{\textsf {SyntaxSort::DeclSpecifierSeq}}{162}{section*.702}%
+\contentsline {paragraph}{Partition name:}{162}{section*.703}%
+\contentsline {subsection}{\textsf {SyntaxSort::VirtualSpecifierSeq}}{162}{section*.704}%
+\contentsline {paragraph}{Partition name:}{162}{section*.705}%
+\contentsline {subsection}{\textsf {SyntaxSort::NoexceptSpecification}}{162}{section*.706}%
+\contentsline {paragraph}{Partition name:}{163}{section*.707}%
+\contentsline {subsection}{\textsf {SyntaxSort::ExplicitSpecifier}}{163}{section*.708}%
+\contentsline {paragraph}{Partition name:}{163}{section*.709}%
+\contentsline {subsection}{\textsf {SyntaxSort::EnumSpecifier}}{163}{section*.710}%
+\contentsline {paragraph}{Partition name:}{163}{section*.711}%
+\contentsline {subsection}{\textsf {SyntaxSort::EnumeratorDefinition}}{163}{section*.712}%
+\contentsline {paragraph}{Partition name:}{163}{section*.713}%
+\contentsline {subsection}{\textsf {SyntaxSort::ClassSpecifier}}{164}{section*.714}%
+\contentsline {paragraph}{Partition name:}{164}{section*.715}%
+\contentsline {subsection}{\textsf {SyntaxSort::MemberSpecification}}{164}{section*.716}%
+\contentsline {paragraph}{Partition name:}{164}{section*.717}%
+\contentsline {subsection}{\textsf {SyntaxSort::MemberDeclaration}}{164}{section*.718}%
+\contentsline {paragraph}{Partition name:}{164}{section*.719}%
+\contentsline {subsection}{\textsf {SyntaxSort::MemberDeclarator}}{164}{section*.720}%
+\contentsline {paragraph}{Partition name:}{164}{section*.721}%
+\contentsline {subsection}{\textsf {SyntaxSort::AccessSpecifier}}{165}{section*.722}%
+\contentsline {paragraph}{Partition name:}{165}{section*.723}%
+\contentsline {subsection}{\textsf {SyntaxSort::BaseSpecifierList}}{165}{section*.724}%
+\contentsline {paragraph}{Partition name:}{165}{section*.725}%
+\contentsline {subsection}{\textsf {SyntaxSort::BaseSpecifier}}{165}{section*.726}%
+\contentsline {paragraph}{Partition name:}{165}{section*.727}%
+\contentsline {subsection}{\textsf {SyntaxSort::TypeId}}{165}{section*.728}%
+\contentsline {paragraph}{Partition name:}{166}{section*.729}%
+\contentsline {subsection}{\textsf {SyntaxSort::TrailingReturnType}}{166}{section*.730}%
+\contentsline {paragraph}{Partition name:}{166}{section*.731}%
+\contentsline {subsection}{\textsf {SyntaxSort::Declarator}}{166}{section*.732}%
+\contentsline {paragraph}{Partition name:}{167}{section*.733}%
+\contentsline {subsection}{\textsf {SyntaxSort::PointerDeclarator}}{167}{section*.734}%
+\contentsline {paragraph}{Partition name:}{167}{section*.735}%
+\contentsline {subsection}{\textsf {SyntaxSort::ArrayDeclarator}}{168}{section*.736}%
+\contentsline {paragraph}{Partition name:}{168}{section*.737}%
+\contentsline {subsection}{\textsf {SyntaxSort::FunctionDeclarator}}{168}{section*.738}%
+\contentsline {paragraph}{Partition name:}{169}{section*.739}%
+\contentsline {subsection}{\textsf {SyntaxSort::ArrayOrFunctionDeclarator}}{169}{section*.740}%
+\contentsline {paragraph}{Partition name:}{169}{section*.741}%
+\contentsline {subsection}{\textsf {SyntaxSort::ParameterDeclarator}}{169}{section*.742}%
+\contentsline {paragraph}{Partition name:}{169}{section*.743}%
+\contentsline {subsection}{\textsf {SyntaxSort::InitDeclarator}}{169}{section*.744}%
+\contentsline {paragraph}{Partition name:}{169}{section*.745}%
+\contentsline {subsection}{\textsf {SyntaxSort::NewDeclarator}}{170}{section*.746}%
+\contentsline {paragraph}{Partition name:}{170}{section*.747}%
+\contentsline {subsection}{\textsf {SyntaxSort::SimpleDeclaration}}{170}{section*.748}%
+\contentsline {paragraph}{Partition name:}{170}{section*.749}%
+\contentsline {subsection}{\textsf {SyntaxSort::ExceptionDeclaration}}{170}{section*.750}%
+\contentsline {paragraph}{Partition name:}{170}{section*.751}%
+\contentsline {subsection}{\textsf {SyntaxSort::ConditionDeclaration}}{170}{section*.752}%
+\contentsline {paragraph}{Partition name:}{170}{section*.753}%
+\contentsline {subsection}{\textsf {SyntaxSort::StaticAssertDeclaration}}{171}{section*.754}%
+\contentsline {paragraph}{Partition name:}{171}{section*.755}%
+\contentsline {subsection}{\textsf {SyntaxSort::AliasDeclaration}}{171}{section*.756}%
+\contentsline {paragraph}{Partition name:}{171}{section*.757}%
+\contentsline {subsection}{\textsf {SyntaxSort::ConceptDefinition}}{171}{section*.758}%
+\contentsline {paragraph}{Partition name:}{171}{section*.759}%
+\contentsline {subsection}{\textsf {SyntaxSort::CompoundStatement}}{172}{section*.760}%
+\contentsline {paragraph}{Partition name:}{172}{section*.761}%
+\contentsline {subsection}{\textsf {SyntaxSort::ReturnStatement}}{172}{section*.762}%
+\contentsline {paragraph}{Partition name:}{172}{section*.763}%
+\contentsline {subsection}{\textsf {SyntaxSort::IfStatement}}{173}{section*.765}%
+\contentsline {paragraph}{Partition name:}{173}{section*.766}%
+\contentsline {subsection}{\textsf {SyntaxSort::WhileStatement}}{173}{section*.767}%
+\contentsline {paragraph}{Partition name:}{173}{section*.768}%
+\contentsline {subsection}{\textsf {SyntaxSort::DoWhileStatement}}{173}{section*.769}%
+\contentsline {paragraph}{Partition name:}{174}{section*.770}%
+\contentsline {subsection}{\textsf {SyntaxSort::ForStatement}}{174}{section*.771}%
+\contentsline {paragraph}{Partition name:}{174}{section*.772}%
+\contentsline {subsection}{\textsf {SyntaxSort::InitStatement}}{174}{section*.773}%
+\contentsline {paragraph}{Partition name:}{174}{section*.774}%
+\contentsline {subsection}{\textsf {SyntaxSort::RangeBasedForStatement}}{175}{section*.775}%
+\contentsline {paragraph}{Partition name:}{175}{section*.776}%
+\contentsline {subsection}{\textsf {SyntaxSort::ForRangeDeclaration}}{175}{section*.777}%
+\contentsline {paragraph}{Partition name:}{175}{section*.778}%
+\contentsline {subsection}{\textsf {SyntaxSort::LabeledStatement}}{175}{section*.779}%
+\contentsline {paragraph}{Partition name:}{175}{section*.780}%
+\contentsline {subsection}{\textsf {SyntaxSort::BreakStatement}}{176}{section*.782}%
+\contentsline {paragraph}{Partition name:}{176}{section*.783}%
+\contentsline {subsection}{\textsf {SyntaxSort::ContinueStatement}}{176}{section*.784}%
+\contentsline {paragraph}{Partition name:}{176}{section*.785}%
+\contentsline {subsection}{\textsf {SyntaxSort::SwitchStatement}}{176}{section*.786}%
+\contentsline {paragraph}{Partition name:}{176}{section*.787}%
+\contentsline {subsection}{\textsf {SyntaxSort::GotoStatement}}{176}{section*.788}%
+\contentsline {paragraph}{Partition name:}{176}{section*.789}%
+\contentsline {subsection}{\textsf {SyntaxSort::DeclarationStatement}}{177}{section*.790}%
+\contentsline {paragraph}{Partition name:}{177}{section*.791}%
+\contentsline {subsection}{\textsf {SyntaxSort::ExpressionStatement}}{177}{section*.792}%
+\contentsline {paragraph}{Partition name:}{177}{section*.793}%
+\contentsline {subsection}{\textsf {SyntaxSort::TryBlock}}{177}{section*.794}%
+\contentsline {paragraph}{Partition name:}{177}{section*.795}%
+\contentsline {subsection}{\textsf {SyntaxSort::Handler}}{177}{section*.796}%
+\contentsline {paragraph}{Partition name:}{177}{section*.797}%
+\contentsline {subsection}{\textsf {SyntaxSort::HandlerSeq}}{178}{section*.798}%
+\contentsline {paragraph}{Partition name:}{178}{section*.799}%
+\contentsline {subsection}{\textsf {SyntaxSort::FunctionTryBlock}}{178}{section*.800}%
+\contentsline {paragraph}{Partition name:}{178}{section*.801}%
+\contentsline {subsection}{\textsf {SyntaxSort::TypeIdListElement}}{178}{section*.802}%
+\contentsline {paragraph}{Partition name:}{178}{section*.803}%
+\contentsline {subsection}{\textsf {SyntaxSort::DynamicExceptionSpec}}{178}{section*.804}%
+\contentsline {paragraph}{Partition name:}{178}{section*.805}%
+\contentsline {subsection}{\textsf {SyntaxSort::StatementSeq}}{178}{section*.806}%
+\contentsline {paragraph}{Partition name:}{178}{section*.807}%
+\contentsline {subsection}{\textsf {SyntaxSort::FunctionBody}}{179}{section*.808}%
+\contentsline {paragraph}{Partition name:}{179}{section*.809}%
+\contentsline {subsection}{\textsf {SyntaxSort::Expression}}{179}{section*.810}%
+\contentsline {paragraph}{Partition name:}{179}{section*.811}%
+\contentsline {subsection}{\textsf {SyntaxSort::FunctionDefinition}}{179}{section*.812}%
+\contentsline {paragraph}{Partition name:}{179}{section*.813}%
+\contentsline {subsection}{\textsf {SyntaxSort::MemberFunctionDeclaration}}{180}{section*.814}%
+\contentsline {paragraph}{Partition name:}{180}{section*.815}%
+\contentsline {subsection}{\textsf {SyntaxSort::TemplateDeclaration}}{180}{section*.816}%
+\contentsline {paragraph}{Partition name:}{180}{section*.817}%
+\contentsline {subsection}{\textsf {SyntaxSort::RequiresClause}}{180}{section*.818}%
+\contentsline {paragraph}{Partition name:}{180}{section*.819}%
+\contentsline {subsection}{\textsf {SyntaxSort::SimpleRequirement}}{180}{section*.820}%
+\contentsline {paragraph}{Partition name:}{180}{section*.821}%
+\contentsline {subsection}{\textsf {SyntaxSort::TypeRequirement}}{181}{section*.822}%
+\contentsline {paragraph}{Partition name:}{181}{section*.823}%
+\contentsline {subsection}{\textsf {SyntaxSort::CompoundRequirement}}{181}{section*.824}%
+\contentsline {paragraph}{Partition name:}{181}{section*.825}%
+\contentsline {subsection}{\textsf {SyntaxSort::NestedRequirement}}{181}{section*.826}%
+\contentsline {paragraph}{Partition name:}{181}{section*.827}%
+\contentsline {subsection}{\textsf {SyntaxSort::RequirementBody}}{181}{section*.828}%
+\contentsline {paragraph}{Partition name:}{181}{section*.829}%
+\contentsline {subsection}{\textsf {SyntaxSort::TypeTemplateParameter}}{182}{section*.830}%
+\contentsline {paragraph}{Partition name:}{182}{section*.831}%
+\contentsline {subsection}{\textsf {SyntaxSort::TemplateTemplateParameter}}{182}{section*.832}%
+\contentsline {paragraph}{Partition name:}{183}{section*.833}%
+\contentsline {subsection}{\textsf {SyntaxSort::TypeTemplateArgument}}{183}{section*.834}%
+\contentsline {paragraph}{Partition name:}{183}{section*.835}%
+\contentsline {subsection}{\textsf {SyntaxSort::NonTypeTemplateArgument}}{183}{section*.836}%
+\contentsline {paragraph}{Partition name:}{184}{section*.837}%
+\contentsline {subsection}{\textsf {SyntaxSort::TemplateParameterList}}{184}{section*.838}%
+\contentsline {paragraph}{Partition name:}{184}{section*.839}%
+\contentsline {subsection}{\textsf {SyntaxSort::TemplateArgumentList}}{184}{section*.840}%
+\contentsline {paragraph}{Partition name:}{185}{section*.841}%
+\contentsline {subsection}{\textsf {SyntaxSort::TemplateId}}{185}{section*.842}%
+\contentsline {paragraph}{Partition name:}{185}{section*.843}%
+\contentsline {subsection}{\textsf {SyntaxSort::MemInitializer}}{185}{section*.844}%
+\contentsline {paragraph}{Partition name:}{186}{section*.845}%
+\contentsline {subsection}{\textsf {SyntaxSort::CtorInitializer}}{186}{section*.846}%
+\contentsline {paragraph}{Partition name:}{186}{section*.847}%
+\contentsline {subsection}{\textsf {SyntaxSort::LambdaIntroducer}}{186}{section*.848}%
+\contentsline {paragraph}{Partition name:}{187}{section*.849}%
+\contentsline {subsection}{\textsf {SyntaxSort::LambdaDeclarator}}{187}{section*.850}%
+\contentsline {paragraph}{Partition name:}{187}{section*.851}%
+\contentsline {subsection}{\textsf {SyntaxSort::CaptureDefault}}{188}{section*.852}%
+\contentsline {paragraph}{Partition name:}{188}{section*.853}%
+\contentsline {subsection}{\textsf {SyntaxSort::SimpleCapture}}{188}{section*.854}%
+\contentsline {paragraph}{Partition name:}{188}{section*.855}%
+\contentsline {subsection}{\textsf {SyntaxSort::InitCapture}}{188}{section*.856}%
+\contentsline {paragraph}{Partition name:}{188}{section*.857}%
+\contentsline {subsection}{\textsf {SyntaxSort::ThisCapture}}{189}{section*.858}%
+\contentsline {paragraph}{Partition name:}{189}{section*.859}%
+\contentsline {subsection}{\textsf {SyntaxSort::AttributedStatement}}{189}{section*.860}%
+\contentsline {paragraph}{Partition name:}{189}{section*.861}%
+\contentsline {subsection}{\textsf {SyntaxSort::AttributedDeclaration}}{189}{section*.862}%
+\contentsline {paragraph}{Partition name:}{189}{section*.863}%
+\contentsline {subsection}{\textsf {SyntaxSort::AttributeSpecifierSeq}}{189}{section*.864}%
+\contentsline {paragraph}{Partition name:}{189}{section*.865}%
+\contentsline {subsection}{\textsf {SyntaxSort::AttributeSpecifier}}{190}{section*.866}%
+\contentsline {paragraph}{Partition name:}{190}{section*.867}%
+\contentsline {subsection}{\textsf {SyntaxSort::AttributeUsingPrefix}}{190}{section*.868}%
+\contentsline {paragraph}{Partition name:}{190}{section*.869}%
+\contentsline {subsection}{\textsf {SyntaxSort::Attribute}}{190}{section*.870}%
+\contentsline {paragraph}{Partition name:}{190}{section*.871}%
+\contentsline {subsection}{\textsf {SyntaxSort::AttributeArgumentClause}}{191}{section*.872}%
+\contentsline {paragraph}{Partition name:}{191}{section*.873}%
+\contentsline {subsection}{\textsf {SyntaxSort::Alignas}}{191}{section*.874}%
+\contentsline {paragraph}{Partition name:}{191}{section*.875}%
+\contentsline {subsection}{\textsf {SyntaxSort::UsingDeclaration}}{191}{section*.876}%
+\contentsline {paragraph}{Partition name:}{191}{section*.877}%
+\contentsline {subsection}{\textsf {SyntaxSort::UsingDeclarator}}{192}{section*.878}%
+\contentsline {paragraph}{Partition name:}{192}{section*.879}%
+\contentsline {subsection}{\textsf {SyntaxSort::UsingDirective}}{192}{section*.880}%
+\contentsline {paragraph}{Partition name:}{192}{section*.881}%
+\contentsline {subsection}{\textsf {SyntaxSort::ArrayIndex}}{192}{section*.882}%
+\contentsline {paragraph}{Partition name:}{193}{section*.883}%
+\contentsline {subsection}{\textsf {SyntaxSort::SEHTry}}{193}{section*.884}%
+\contentsline {paragraph}{Partition name:}{193}{section*.885}%
+\contentsline {subsection}{\textsf {SyntaxSort::SEHExcept}}{193}{section*.886}%
+\contentsline {paragraph}{Partition name:}{193}{section*.887}%
+\contentsline {subsection}{\textsf {SyntaxSort::SEHFinally}}{193}{section*.888}%
+\contentsline {paragraph}{Partition name:}{193}{section*.889}%
+\contentsline {subsection}{\textsf {SyntaxSort::SEHLeave}}{194}{section*.890}%
+\contentsline {paragraph}{Partition name:}{194}{section*.891}%
+\contentsline {subsection}{\textsf {SyntaxSort::TypeTraitIntrinsic}}{194}{section*.892}%
+\contentsline {paragraph}{Partition name:}{194}{section*.893}%
+\contentsline {subsection}{\textsf {SyntaxSort::Tuple}}{194}{section*.894}%
+\contentsline {paragraph}{Partition name:}{194}{section*.895}%
+\contentsline {subsection}{\textsf {SyntaxSort::AsmStatement}}{195}{section*.896}%
+\contentsline {paragraph}{Partition name:}{195}{section*.897}%
+\contentsline {subsection}{\textsf {SyntaxSort::NamespaceAliasDefinition}}{195}{section*.898}%
+\contentsline {paragraph}{Partition name:}{195}{section*.899}%
+\contentsline {subsection}{\textsf {SyntaxSort::Super}}{195}{section*.900}%
+\contentsline {paragraph}{Partition name:}{195}{section*.901}%
+\contentsline {subsection}{\textsf {SyntaxSort::UnaryFoldExpression}}{195}{section*.902}%
+\contentsline {paragraph}{Partition name:}{196}{section*.903}%
+\contentsline {subsection}{\textsf {SyntaxSort::BinaryFoldExpression}}{196}{section*.904}%
+\contentsline {paragraph}{Partition name:}{196}{section*.905}%
+\contentsline {subsection}{\textsf {SyntaxSort::EmptyStatement}}{197}{section*.906}%
+\contentsline {paragraph}{Partition name:}{197}{section*.907}%
+\contentsline {subsection}{\textsf {SyntaxSort::StructuredBindingDeclaration}}{197}{section*.908}%
+\contentsline {paragraph}{Partition name:}{197}{section*.909}%
+\contentsline {subsection}{\textsf {SyntaxSort::StructuredBindingIdentifier}}{197}{section*.910}%
+\contentsline {paragraph}{Partition name:}{197}{section*.911}%
+\contentsline {subsection}{\textsf {SyntaxSort::UsingEnumDeclaration}}{197}{section*.912}%
+\contentsline {paragraph}{Partition name:}{198}{section*.913}%
+\contentsline {chapter}{\chapternumberline {17}Source Location}{199}{chapter.17}%
+\contentsline {section}{\numberline {17.1}File and line}{199}{section.17.1}%
+\contentsline {paragraph}{Partition name:}{200}{section*.914}%
+\contentsline {chapter}{\chapternumberline {18}Traits}{201}{chapter.18}%
+\contentsline {section}{\numberline {18.1}Deprecation texts}{201}{section.18.1}%
+\contentsline {paragraph}{Partition name:}{201}{section*.915}%
+\contentsline {paragraph}{Note:}{201}{section*.916}%
+\contentsline {section}{\numberline {18.2}Template specializations}{201}{section.18.2}%
+\contentsline {paragraph}{Partition name:}{202}{section*.917}%
+\contentsline {paragraph}{Note:}{202}{section*.918}%
+\contentsline {section}{\numberline {18.3}Friendship of a class}{202}{section.18.3}%
+\contentsline {paragraph}{Partition name:}{202}{section*.919}%
+\contentsline {paragraph}{Note:}{202}{section*.920}%
+\contentsline {section}{\numberline {18.4}Function Definition}{202}{section.18.4}%
+\contentsline {paragraph}{Note:}{202}{section*.921}%
+\contentsline {paragraph}{Partition name:}{202}{section*.922}%
+\contentsline {section}{\numberline {18.5}Template Alias}{203}{section.18.5}%
+\contentsline {paragraph}{Partition name:}{203}{section*.923}%
+\contentsline {paragraph}{Note:}{203}{section*.924}%
+\contentsline {section}{\numberline {18.6}Declared deduction guides}{203}{section.18.6}%
+\contentsline {paragraph}{Partition name:}{203}{section*.925}%
+\contentsline {section}{\numberline {18.7}Trailing constraints}{203}{section.18.7}%
+\contentsline {paragraph}{Partition name:}{203}{section*.926}%
+\contentsline {paragraph}{Note:}{203}{section*.927}%
+\contentsline {section}{\numberline {18.8}Declaration attributes}{203}{section.18.8}%
+\contentsline {paragraph}{Partition name:}{203}{section*.928}%
+\contentsline {paragraph}{Note:}{203}{section*.929}%
+\contentsline {section}{\numberline {18.9}MSVC vendor-specific traits}{203}{section.18.9}%
+\contentsline {paragraph}{Partition name:}{204}{section*.930}%
+\contentsline {subsection}{Trait for MSVC UUID}{204}{section*.931}%
+\contentsline {paragraph}{Partition name:}{204}{section*.932}%
+\contentsline {subsection}{Function parameters in functions definitions}{204}{section*.933}%
+\contentsline {paragraph}{Partition name:}{204}{section*.934}%
+\contentsline {subsection}{Attributes on declarations}{204}{section*.935}%
+\contentsline {paragraph}{Partition name:}{204}{section*.936}%
+\contentsline {paragraph}{Note:}{204}{section*.937}%
+\contentsline {subsection}{Attributes on Statements}{204}{section*.938}%
+\contentsline {paragraph}{Partition name:}{204}{section*.939}%
+\contentsline {paragraph}{Note:}{204}{section*.940}%
+\contentsline {subsection}{Mapping expressions for code generation}{204}{section*.941}%
+\contentsline {paragraph}{Partition name:}{204}{section*.942}%
+\contentsline {paragraph}{Note:}{205}{section*.943}%
+\contentsline {subsection}{Dynamic initialization of variables}{205}{section*.944}%
+\contentsline {paragraph}{Partition name:}{205}{section*.945}%
+\contentsline {subsection}{Code generation properties of labels}{205}{section*.946}%
+\contentsline {paragraph}{Partition name:}{205}{section*.947}%
+\contentsline {paragraph}{Note:}{205}{section*.948}%
+\contentsline {subsection}{Code generation type view of \lstinline !switch! statement}{205}{section*.949}%
+\contentsline {paragraph}{Partition name:}{205}{section*.950}%
+\contentsline {paragraph}{Note:}{205}{section*.951}%
+\contentsline {subsection}{Code generation trait for \lstinline !do!-statement}{205}{section*.952}%
+\contentsline {paragraph}{Partition name:}{205}{section*.953}%
+\contentsline {paragraph}{Note:}{205}{section*.954}%
+\contentsline {subsection}{Lexical scope of a declaration}{205}{section*.955}%
+\contentsline {paragraph}{Partition name:}{206}{section*.956}%
+\contentsline {paragraph}{Note:}{206}{section*.957}%
+\contentsline {subsection}{Range of source file line numbers}{206}{section*.958}%
+\contentsline {paragraph}{Partition name:}{206}{section*.959}%
+\contentsline {paragraph}{Note:}{206}{section*.960}%
+\contentsline {subsection}{Source File of a header unit}{206}{section*.961}%
+\contentsline {paragraph}{Partition name:}{206}{section*.962}%
+\contentsline {paragraph}{Note:}{206}{section*.963}%
+\contentsline {chapter}{\chapternumberline {19}Preprocessing Forms}{207}{chapter.19}%
+\contentsline {section}{\numberline {19.1}Macro definitions}{207}{section.19.1}%
+\contentsline {subsection}{\textsf {MacroSort::ObjectLike}}{207}{section*.964}%
+\contentsline {paragraph}{Partition name:}{208}{section*.965}%
+\contentsline {subsection}{\textsf {MacroSort::FunctionLike}}{208}{section*.966}%
+\contentsline {paragraph}{Partition name:}{208}{section*.967}%
+\contentsline {section}{\numberline {19.2}Preprocessing forms}{208}{section.19.2}%
+\contentsline {subsection}{Form structures}{209}{section*.968}%
+\contentsline {subsubsection}{\textsf {FormSort::Identifier}}{209}{section*.969}%
+\contentsline {paragraph}{Partition name:}{209}{section*.970}%
+\contentsline {subsubsection}{\textsf {FormSort::Number}}{209}{section*.971}%
+\contentsline {paragraph}{Partition name:}{209}{section*.972}%
+\contentsline {subsubsection}{\textsf {FormSort::Character}}{209}{section*.973}%
+\contentsline {paragraph}{Partition name:}{210}{section*.974}%
+\contentsline {subsubsection}{\textsf {FormSort::String}}{210}{section*.975}%
+\contentsline {paragraph}{Partition name:}{210}{section*.976}%
+\contentsline {subsubsection}{\textsf {FormSort::Operator}}{210}{section*.977}%
+\contentsline {paragraph}{Partition name:}{211}{section*.978}%
+\contentsline {subsubsection}{\textsf {FormSort::Keyword}}{211}{section*.979}%
+\contentsline {paragraph}{Partition name:}{211}{section*.980}%
+\contentsline {subsubsection}{\textsf {FormSort::Whitespace}}{211}{section*.981}%
+\contentsline {paragraph}{Note:}{211}{section*.982}%
+\contentsline {paragraph}{Partition name:}{212}{section*.983}%
+\contentsline {subsubsection}{\textsf {FormSort::Parameter}}{212}{section*.984}%
+\contentsline {paragraph}{Partition name:}{212}{section*.985}%
+\contentsline {subsubsection}{\textsf {FormSort::Stringize}}{212}{section*.986}%
+\contentsline {paragraph}{Partition name:}{212}{section*.987}%
+\contentsline {subsubsection}{\textsf {FormSort::Catenate}}{212}{section*.988}%
+\contentsline {paragraph}{Partition name:}{213}{section*.989}%
+\contentsline {subsubsection}{\textsf {FormSort::Pragma}}{213}{section*.990}%
+\contentsline {paragraph}{Partition name:}{213}{section*.991}%
+\contentsline {subsubsection}{\textsf {FormSort::Header}}{213}{section*.992}%
+\contentsline {paragraph}{Partition name:}{214}{section*.993}%
+\contentsline {paragraph}{Note:}{214}{section*.994}%
+\contentsline {subsubsection}{\textsf {FormSort::Parenthesized}}{214}{section*.995}%
+\contentsline {paragraph}{Partition name:}{214}{section*.996}%
+\contentsline {subsubsection}{\textsf {FormSort::Tuple}}{214}{section*.997}%
+\contentsline {paragraph}{Partition name:}{214}{section*.998}%
+\contentsline {subsubsection}{\textsf {FormSort::Junk}}{215}{section*.999}%
+\contentsline {paragraph}{Partition name:}{215}{section*.1000}%
+\contentsline {paragraph}{Note:}{215}{section*.1001}%
+\contentsline {section}{\numberline {19.3}Preprocessing operators}{215}{section.19.3}%
+\contentsline {section}{\numberline {19.4}Pragmas}{215}{section.19.4}%
+\contentsline {chapter}{\chapternumberline {20}Words}{217}{chapter.20}%
+\contentsline {section}{\numberline {20.1}Sentences}{217}{section.20.1}%
+\contentsline {paragraph}{Partition name:}{218}{section*.1002}%
+\contentsline {section}{\numberline {20.2}Words}{218}{section.20.2}%
+\contentsline {paragraph}{Partition name:}{218}{section*.1003}%
+\contentsline {subsection}{Word structures}{218}{section*.1004}%
+\contentsline {subsubsection}{\textsf {WordSort::Unkown}}{219}{section*.1005}%
+\contentsline {subsubsection}{\textsf {WordSort::Directive}}{219}{section*.1006}%
+\contentsline {paragraph}{\textsf {SourceDirective::Msvc}}{220}{section*.1007}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaPush}}{220}{section*.1008}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaPop}}{220}{section*.1009}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcDirectiveStart}}{220}{section*.1010}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcDirectiveEnd}}{220}{section*.1011}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaAllocText}}{220}{section*.1012}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaAutoInline}}{220}{section*.1013}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaBssSeg}}{220}{section*.1014}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaCheckStack}}{220}{section*.1015}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaCodeSeg}}{220}{section*.1016}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaComment}}{220}{section*.1017}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaComponent}}{220}{section*.1018}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaConform}}{221}{section*.1019}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaConstSeg}}{221}{section*.1020}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaDataSeg}}{221}{section*.1021}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaDeprecated}}{221}{section*.1022}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaDetectMismatch}}{221}{section*.1023}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaEndregion}}{221}{section*.1024}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaExecutionCharacterSet}}{221}{section*.1025}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaFenvAccess}}{221}{section*.1026}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaFileHash}}{221}{section*.1027}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaFloatControl}}{221}{section*.1028}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaFpContract}}{221}{section*.1029}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaFunction}}{221}{section*.1030}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaBGI}}{221}{section*.1031}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaIdent}}{221}{section*.1032}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaImplementationKey}}{221}{section*.1033}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaIncludeAlias}}{221}{section*.1034}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaInitSeg}}{221}{section*.1035}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaInlineDepth}}{221}{section*.1036}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaInlineRecursion}}{221}{section*.1037}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaIntrinsic}}{221}{section*.1038}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaLoop}}{221}{section*.1039}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaMakePublic}}{222}{section*.1040}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaManaged}}{222}{section*.1041}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaMessage}}{222}{section*.1042}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaOMP}}{222}{section*.1043}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaOptimize}}{222}{section*.1044}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaPack}}{222}{section*.1045}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaPointerToMembers}}{222}{section*.1046}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaPopMacro}}{222}{section*.1047}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaPrefast}}{222}{section*.1048}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaPushMacro}}{222}{section*.1049}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaRegion}}{222}{section*.1050}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaRuntimeChecks}}{222}{section*.1051}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaSameSeg}}{222}{section*.1052}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaSection}}{222}{section*.1053}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaSegment}}{222}{section*.1054}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaSetlocale}}{222}{section*.1055}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaStartMapRegion}}{222}{section*.1056}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaStopMapRegion}}{222}{section*.1057}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaStrictGSCheck}}{222}{section*.1058}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaSystemHeader}}{222}{section*.1059}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaUnmanaged}}{222}{section*.1060}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaVtordisp}}{223}{section*.1061}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaWarning}}{223}{section*.1062}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaP0include}}{223}{section*.1063}%
+\contentsline {paragraph}{\textsf {SourceDirective::MsvcPragmaP0line}}{223}{section*.1064}%
+\contentsline {subsubsection}{\textsf {WordSort::Punctuator}}{223}{section*.1065}%
+\contentsline {paragraph}{SourcePunctuator::Unknown}{223}{section*.1066}%
+\contentsline {paragraph}{SourcePunctuator::LeftParenthesis}{223}{section*.1067}%
+\contentsline {paragraph}{SourcePunctuator::RightParenthesis}{223}{section*.1068}%
+\contentsline {paragraph}{SourcePunctuator::LeftBracket}{223}{section*.1069}%
+\contentsline {paragraph}{SourcePunctuator::RightBracket}{223}{section*.1070}%
+\contentsline {paragraph}{SourcePunctuator::LeftBrace}{223}{section*.1071}%
+\contentsline {paragraph}{SourcePunctuator::RightBrace}{224}{section*.1072}%
+\contentsline {paragraph}{SourcePunctuator::Colon}{224}{section*.1073}%
+\contentsline {paragraph}{SourcePunctuator::Question}{224}{section*.1074}%
+\contentsline {paragraph}{SourcePunctuator::Semicolon}{224}{section*.1075}%
+\contentsline {paragraph}{SourcePunctuator::ColonColon}{224}{section*.1076}%
+\contentsline {paragraph}{SourcePunctuator::Msvc}{224}{section*.1077}%
+\contentsline {paragraph}{SourcePunctuator::MsvcZeroWidthSpace}{224}{section*.1078}%
+\contentsline {paragraph}{SourcePunctuator::MsvcEndOfPhrase}{224}{section*.1079}%
+\contentsline {paragraph}{SourcePunctuator::MsvcFullStop}{224}{section*.1080}%
+\contentsline {paragraph}{SourcePunctuator::MsvcNestedTempltateStart}{224}{section*.1081}%
+\contentsline {paragraph}{SourcePunctuator::MsvcDefaultArgumentStart}{224}{section*.1082}%
+\contentsline {paragraph}{SourcePunctuator::MsvcAlignasEdictStart}{224}{section*.1083}%
+\contentsline {paragraph}{SourcePunctuator::MsvcDefaultInitStart}{224}{section*.1084}%
+\contentsline {subsubsection}{\textsf {WordSort::Literal}}{224}{section*.1085}%
+\contentsline {paragraph}{\textsf {SourceLiteral::Unknown}}{225}{section*.1086}%
+\contentsline {paragraph}{\textsf {SourceLiteral::Scalar}}{225}{section*.1087}%
+\contentsline {paragraph}{\textsf {SourceLiteral::String}}{225}{section*.1088}%
+\contentsline {paragraph}{\textsf {SourceLiteral::DefinedString}}{225}{section*.1089}%
+\contentsline {paragraph}{\textsf {SourceLiteral::Msvc}}{225}{section*.1090}%
+\contentsline {paragraph}{\textsf {SourceLiteral::MsvcFunctionNameMacro}}{225}{section*.1091}%
+\contentsline {paragraph}{\textsf {SourceLiteral::MsvcStringPrefixMacro}}{225}{section*.1092}%
+\contentsline {paragraph}{\textsf {SourceLiteral::MsvcBinding}}{226}{section*.1093}%
+\contentsline {paragraph}{\textsf {SourceLiteral::MsvcResolvedType}}{226}{section*.1094}%
+\contentsline {paragraph}{\textsf {SourceLiteral::MsvcDefinedConstant}}{226}{section*.1095}%
+\contentsline {paragraph}{\textsf {SourceLiteral::MsvcCastTargetType}}{226}{section*.1096}%
+\contentsline {subsubsection}{\textsf {WordSort::Operator}}{226}{section*.1097}%
+\contentsline {paragraph}{\textsf {SourceOperator::Unknown}}{227}{section*.1098}%
+\contentsline {paragraph}{\textsf {SourceOperator::Equal}}{227}{section*.1099}%
+\contentsline {paragraph}{\textsf {SourceOperator::Comma}}{227}{section*.1100}%
+\contentsline {paragraph}{\textsf {SourceOperator::Exclaim}}{227}{section*.1101}%
+\contentsline {paragraph}{\textsf {SourceOperator::Plus}}{227}{section*.1102}%
+\contentsline {paragraph}{\textsf {SourceOperator::Dash}}{227}{section*.1103}%
+\contentsline {paragraph}{\textsf {SourceOperator::Star}}{227}{section*.1104}%
+\contentsline {paragraph}{\textsf {SourceOperator::Slash}}{227}{section*.1105}%
+\contentsline {paragraph}{\textsf {SourceOperator::Percent}}{227}{section*.1106}%
+\contentsline {paragraph}{\textsf {SourceOperator::LeftChevron}}{227}{section*.1107}%
+\contentsline {paragraph}{\textsf {SourceOperator::RightChevron}}{227}{section*.1108}%
+\contentsline {paragraph}{\textsf {SourceOperator::Tilde}}{227}{section*.1109}%
+\contentsline {paragraph}{\textsf {SourceOperator::Caret}}{227}{section*.1110}%
+\contentsline {paragraph}{\textsf {SourceOperator::Bar}}{227}{section*.1111}%
+\contentsline {paragraph}{\textsf {SourceOperator::Ampersand}}{227}{section*.1112}%
+\contentsline {paragraph}{\textsf {SourceOperator::PlusPlus}}{228}{section*.1113}%
+\contentsline {paragraph}{\textsf {SourceOperator::DashDash}}{228}{section*.1114}%
+\contentsline {paragraph}{\textsf {SourceOperator::Less}}{228}{section*.1115}%
+\contentsline {paragraph}{\textsf {SourceOperator::LessEqual}}{228}{section*.1116}%
+\contentsline {paragraph}{\textsf {SourceOperator::Greater}}{228}{section*.1117}%
+\contentsline {paragraph}{\textsf {SourceOperator::GreaterEqual}}{228}{section*.1118}%
+\contentsline {paragraph}{\textsf {SourceOperator::EqualEqual}}{228}{section*.1119}%
+\contentsline {paragraph}{\textsf {SourceOperator::ExclaimEqual}}{228}{section*.1120}%
+\contentsline {paragraph}{\textsf {SourceOperator::Diamond}}{228}{section*.1121}%
+\contentsline {paragraph}{\textsf {SourceOperator::PlusEqual}}{228}{section*.1122}%
+\contentsline {paragraph}{\textsf {SourceOperator::DashEqual}}{228}{section*.1123}%
+\contentsline {paragraph}{\textsf {SourceOperator::StarEqual}}{228}{section*.1124}%
+\contentsline {paragraph}{\textsf {SourceOperator::SlashEqual}}{228}{section*.1125}%
+\contentsline {paragraph}{\textsf {SourceOperator::PercentEqual}}{228}{section*.1126}%
+\contentsline {paragraph}{\textsf {SourceOperator::AmpersandEqual}}{228}{section*.1127}%
+\contentsline {paragraph}{\textsf {SourceOperator::BarEqual}}{228}{section*.1128}%
+\contentsline {paragraph}{\textsf {SourceOperator::CaretEqual}}{228}{section*.1129}%
+\contentsline {paragraph}{\textsf {SourceOperator::LeftChevronEqual}}{228}{section*.1130}%
+\contentsline {paragraph}{\textsf {SourceOperator::RightChevronEqual}}{228}{section*.1131}%
+\contentsline {paragraph}{\textsf {SourceOperator::AmpersandAmpersand}}{228}{section*.1132}%
+\contentsline {paragraph}{\textsf {SourceOperator::BarBar}}{228}{section*.1133}%
+\contentsline {paragraph}{\textsf {SourceOperator::Ellipsis}}{229}{section*.1134}%
+\contentsline {paragraph}{\textsf {SourceOperator::Dot}}{229}{section*.1135}%
+\contentsline {paragraph}{\textsf {SourceOperator::Arrow}}{229}{section*.1136}%
+\contentsline {paragraph}{\textsf {SourceOperator::DotStar}}{229}{section*.1137}%
+\contentsline {paragraph}{\textsf {SourceOperator::ArrowStar}}{229}{section*.1138}%
+\contentsline {subsubsection}{\textsf {WordSort::Keyword}}{229}{section*.1139}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Unknown}}{232}{section*.1140}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Alignas}}{232}{section*.1141}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Alignof}}{232}{section*.1142}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Asm}}{232}{section*.1143}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Auto}}{232}{section*.1144}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Bool}}{232}{section*.1145}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Break}}{232}{section*.1146}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Case}}{232}{section*.1147}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Catch}}{232}{section*.1148}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Char}}{232}{section*.1149}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Char8T}}{232}{section*.1150}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Char16T}}{232}{section*.1151}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Char32T}}{232}{section*.1152}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Class}}{232}{section*.1153}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Concept}}{232}{section*.1154}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Const}}{232}{section*.1155}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Consteval}}{232}{section*.1156}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Constexpr}}{232}{section*.1157}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Constinit}}{232}{section*.1158}%
+\contentsline {paragraph}{\textsf {SourceKeyword::ConstCast}}{233}{section*.1159}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Continue}}{233}{section*.1160}%
+\contentsline {paragraph}{\textsf {SourceKeyword::CoAwait}}{233}{section*.1161}%
+\contentsline {paragraph}{\textsf {SourceKeyword::CoReturn}}{233}{section*.1162}%
+\contentsline {paragraph}{\textsf {SourceKeyword::CoYield}}{233}{section*.1163}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Decltype}}{233}{section*.1164}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Default}}{233}{section*.1165}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Delete}}{233}{section*.1166}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Do}}{233}{section*.1167}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Double}}{233}{section*.1168}%
+\contentsline {paragraph}{\textsf {SourceKeyword::DynamicCast}}{233}{section*.1169}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Else}}{233}{section*.1170}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Enum}}{233}{section*.1171}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Explicit}}{233}{section*.1172}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Export}}{233}{section*.1173}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Extern}}{233}{section*.1174}%
+\contentsline {paragraph}{\textsf {SourceKeyword::False}}{233}{section*.1175}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Float}}{233}{section*.1176}%
+\contentsline {paragraph}{\textsf {SourceKeyword::For}}{233}{section*.1177}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Friend}}{233}{section*.1178}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Generic}}{233}{section*.1179}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Goto}}{234}{section*.1180}%
+\contentsline {paragraph}{\textsf {SourceKeyword::If}}{234}{section*.1181}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Inline}}{234}{section*.1182}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Int}}{234}{section*.1183}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Long}}{234}{section*.1184}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Mutable}}{234}{section*.1185}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Namespace}}{234}{section*.1186}%
+\contentsline {paragraph}{\textsf {SourceKeyword::New}}{234}{section*.1187}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Noexcept}}{234}{section*.1188}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Nullptr}}{234}{section*.1189}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Operator}}{234}{section*.1190}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Pragma}}{234}{section*.1191}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Private}}{234}{section*.1192}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Protected}}{234}{section*.1193}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Public}}{234}{section*.1194}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Register}}{234}{section*.1195}%
+\contentsline {paragraph}{\textsf {SourceKeyword::ReinterpretCast}}{234}{section*.1196}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Requires}}{234}{section*.1197}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Restrict}}{234}{section*.1198}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Return}}{234}{section*.1199}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Short}}{234}{section*.1200}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Signed}}{235}{section*.1201}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Sizeof}}{235}{section*.1202}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Static}}{235}{section*.1203}%
+\contentsline {paragraph}{\textsf {SourceKeyword::StaticAssert}}{235}{section*.1204}%
+\contentsline {paragraph}{\textsf {SourceKeyword::StaticCast}}{235}{section*.1205}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Struct}}{235}{section*.1206}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Switch}}{235}{section*.1207}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Template}}{235}{section*.1208}%
+\contentsline {paragraph}{\textsf {SourceKeyword::This}}{235}{section*.1209}%
+\contentsline {paragraph}{\textsf {SourceKeyword::ThreadLocal}}{235}{section*.1210}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Throw}}{235}{section*.1211}%
+\contentsline {paragraph}{\textsf {SourceKeyword::True}}{235}{section*.1212}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Try}}{235}{section*.1213}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Typedef}}{235}{section*.1214}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Typeid}}{235}{section*.1215}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Typename}}{235}{section*.1216}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Union}}{235}{section*.1217}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Unsigned}}{235}{section*.1218}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Using}}{235}{section*.1219}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Virtual}}{235}{section*.1220}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Void}}{235}{section*.1221}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Volatile}}{236}{section*.1222}%
+\contentsline {paragraph}{\textsf {SourceKeyword::WcharT}}{236}{section*.1223}%
+\contentsline {paragraph}{\textsf {SourceKeyword::While}}{236}{section*.1224}%
+\contentsline {paragraph}{\textsf {SourceKeyword::Msvc}}{236}{section*.1225}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcAsm}}{236}{section*.1226}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcAssume}}{236}{section*.1227}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcAlignof}}{236}{section*.1228}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcBased}}{236}{section*.1229}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcCdecl}}{236}{section*.1230}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcClrcall}}{236}{section*.1231}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcDeclspec}}{236}{section*.1232}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcEabi}}{236}{section*.1233}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcEvent}}{236}{section*.1234}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcSehExcept}}{236}{section*.1235}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcFastcall}}{236}{section*.1236}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcSehFinally}}{236}{section*.1237}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcForceinline}}{236}{section*.1238}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHook}}{236}{section*.1239}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIdentifier}}{236}{section*.1240}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIfExists}}{236}{section*.1241}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIfNotExists}}{237}{section*.1242}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcInt8}}{237}{section*.1243}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcInt16}}{237}{section*.1244}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcInt32}}{237}{section*.1245}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcInt64}}{237}{section*.1246}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcInt128}}{237}{section*.1247}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcInterface}}{237}{section*.1248}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcLeave}}{237}{section*.1249}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcMultipleInheritance}}{237}{section*.1250}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcNullptr}}{237}{section*.1251}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcNovtordisp}}{237}{section*.1252}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcPragma}}{237}{section*.1253}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcPtr32}}{237}{section*.1254}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcPtr64}}{237}{section*.1255}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcRestrict}}{237}{section*.1256}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcSingleInheritance}}{237}{section*.1257}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcSptr}}{237}{section*.1258}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcStdcall}}{237}{section*.1259}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcSuper}}{237}{section*.1260}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcThiscall}}{237}{section*.1261}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcSehTry}}{238}{section*.1262}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcUptr}}{238}{section*.1263}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcUuidof}}{238}{section*.1264}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcUnaligned}}{238}{section*.1265}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcUnhook}}{238}{section*.1266}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcVectorcall}}{238}{section*.1267}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcVirtualInheritance}}{238}{section*.1268}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcW64}}{238}{section*.1269}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsClass}}{238}{section*.1270}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsUnion}}{238}{section*.1271}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsEnum}}{238}{section*.1272}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsPolymorphic}}{238}{section*.1273}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsEmpty}}{238}{section*.1274}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHasTrivialConstructor}}{238}{section*.1275}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTriviallyConstructible}}{238}{section*.1276}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTriviallyCopyConstructible}}{238}{section*.1277}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTriviallyCopyAssignable}}{238}{section*.1278}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTriviallyDestructible}}{239}{section*.1279}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHasVirtualDestructor}}{239}{section*.1280}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsNothrowConstructible}}{239}{section*.1281}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsNothrowCopyConstructible}}{239}{section*.1282}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsNothrowCopyAssignable}}{239}{section*.1283}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsPod}}{239}{section*.1284}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsAbstract}}{239}{section*.1285}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsBaseOf}}{239}{section*.1286}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsConvertibleTo}}{239}{section*.1287}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTrivial}}{239}{section*.1288}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTriviallyCopyable}}{239}{section*.1289}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsStandardLayout}}{239}{section*.1290}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsLiteralType}}{239}{section*.1291}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTriviallyMoveConstructible}}{239}{section*.1292}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHasTrivialMoveAssign}}{239}{section*.1293}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTriviallyMoveAssignable}}{240}{section*.1294}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsNothrowMoveAssignable}}{240}{section*.1295}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsConstructible}}{240}{section*.1296}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcUnderlyingType}}{240}{section*.1297}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsTriviallyAssignable}}{240}{section*.1298}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsNothrowAssignable}}{240}{section*.1299}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsDestructible}}{240}{section*.1300}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsNothrowDestructible}}{240}{section*.1301}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsAssignable}}{240}{section*.1302}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsAssignableNocheck}}{240}{section*.1303}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHasUniqueObjectRepresentations}}{240}{section*.1304}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsAggregate}}{240}{section*.1305}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcBuiltinAddressOf}}{240}{section*.1306}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcBuiltinOffsetOf}}{240}{section*.1307}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcBuiltinBitCast}}{240}{section*.1308}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcBuiltinIsLayoutCompatible}}{241}{section*.1309}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcBuiltinIsPointerInterconvertibleBaseOf}}{241}{section*.1310}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcBuiltinIsPointerInterconvertibleWithClass}}{241}{section*.1311}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcBuiltinIsCorrespondingMember}}{241}{section*.1312}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsRefClass}}{241}{section*.1313}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsValueClass}}{241}{section*.1314}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsSimpleValueClass}}{241}{section*.1315}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsInterfaceClass}}{241}{section*.1316}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsDelegate}}{241}{section*.1317}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsFinal}}{241}{section*.1318}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcIsSealed}}{241}{section*.1319}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHasFinalizer}}{241}{section*.1320}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHasCopy}}{241}{section*.1321}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHasAssign}}{241}{section*.1322}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcHasUserDestructor}}{241}{section*.1323}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcPackCardinality}}{241}{section*.1324}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcConfusedSizeof}}{242}{section*.1325}%
+\contentsline {paragraph}{\textsf {SourceKeyword::MsvcConfusedAlignas}}{242}{section*.1326}%
+\contentsline {subsubsection}{\textsf {WordSort::Identifier}}{242}{section*.1327}%
+\contentsline {paragraph}{\textsf {SourceIdentifier::Plain}}{242}{section*.1328}%
+\contentsline {paragraph}{\textsf {SourceIdentifier::Msvc}}{242}{section*.1329}%
+\contentsline {paragraph}{\textsf {SourceIdentifier::MsvcBuiltinHugeVal}}{242}{section*.1330}%
+\contentsline {paragraph}{\textsf {SourceIdentifier::MsvcBuiltinHugeValf}}{242}{section*.1331}%
+\contentsline {paragraph}{\textsf {SourceIdentifier::MsvcBuiltinNan}}{242}{section*.1332}%
+\contentsline {paragraph}{\textsf {SourceIdentifier::MsvcBuiltinNanf}}{242}{section*.1333}%
+\contentsline {paragraph}{\textsf {SourceIdentifier::MsvcBuiltinNans}}{242}{section*.1334}%
+\contentsline {paragraph}{\textsf {SourceIdentifier::MsvcBuiltinNansf}}{242}{section*.1335}%
+\contentsline {chapter}{Bibliography}{243}{appendix*.1336}%
