@@ -675,7 +675,7 @@ template (class-type or function).
 		\DeclareMember{home\_scope}{DeclIndex} \\
 		\DeclareMember{chart}{ChartIndex} \\
 		\DeclareMember{entity}{ParameterizedEntity} \\
-		\DeclareMember{form}{Index} \\
+		\DeclareMember{form}{SpecFormIndex} \\
 		\DeclareMember{specifiers}{BasicSpecifiers} \\
 		\DeclareMember{access}{Access} \\
 		\DeclareMember{properties}{ReachableProperties} \\
@@ -689,7 +689,7 @@ The \field{locus} field denotes the source location.
 The \field{home\_scope} field denotes the parent declaration of this partial specialization.
 The \field{chart} field denotes the set of template-parameter lists of this partial specialization.
 The \field{entity} field describes the current instantiation of this partial specialization.
-The \field{form} field is an index into the partition of specialization form (template and template-argument list) named \code{"form.spec"}.
+The \field{form} field is an index into the partition of specialization form (template and template-argument list) named \code{"form.spec"} (\secref{sec:ifc-specialization-forms}).
 The \field{specifiers} field denotes the declaration specifiers of this partial specialization.
 The \field{access} field denotes the access level of this partial specialization.
 The \field{properties} field denotes the set of reachable semantic properties.
@@ -709,7 +709,7 @@ Each entry in that partition is a structure with the following layout
 \begin{figure}[H]
 	\centering
 	\structure[text width = 14em]{
-		\DeclareMember{form}{Index} \\
+		\DeclareMember{form}{SpecFormIndex} \\
 		\DeclareMember{decl}{DeclIndex} \\
 		\DeclareMember{sort}{SpecializationSort} \\
 	}
@@ -719,7 +719,7 @@ Each entry in that partition is a structure with the following layout
 %
 and meanings of the fields
 \begin{itemize}
-	\item The value of \field{form} is an index into the specialization form partition (named "form.spec").
+	\item The value of \field{form} is an index into the specialization form partition (named "form.spec") (\secref{sec:ifc-specialization-forms}).
 	\item \field{decl}, when non null, denotes the declaration produced by the specialization.
 	\item \field{sort} designates how the specialization is obtained (\secref{sec:ifc-SpecializationSort}).
 \end{itemize}
@@ -1435,3 +1435,42 @@ Each code segment is associated with a ``code segment type'', a value of type
 \partition{decl.segment}
 
 \note{This is a vendor extension, the meta description of which is subject to change}
+
+
+\section{Specialization forms}
+\label{sec:ifc-specialization-forms}
+
+An explicit specialization or a partial specialization of a primary template declaration
+provides an alternate implementation for a specialization request.
+The semantic pattern for the \grammar{template-id} of such a specialization declaration is 
+stored in the specialization form partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{primary}{DeclIndex} \\
+		\DeclareMember{arguments}{ExprIndex} \\
+	}
+\end{figure}
+%
+with the following meanings
+\begin{itemize}
+	\item \field{primary} is an abstract reference designating the primary template declaration for which a specialization is provided
+	\item \field{arguments} designates the template-argument list to the \field{primary} declaration 
+\end{itemize}
+
+\partition{form.spec}
+
+\note{This representation is subject to change}.
+
+\subsection{Abstract reference for specialization forms}
+\label{sec:ifc-spec-form-index}
+
+Specialization forms are referenced via abstract references of type \type{SpecForm},
+a $32$-bit value type defined as
+%
+\begin{typedef}{SpecFormIndex}{}
+	enum class SpecFormIndex : uint32_t { };
+\end{typedef}
+%
