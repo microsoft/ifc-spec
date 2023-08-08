@@ -277,7 +277,7 @@ Each entry in that partition is a structure with the following layout
 			\DeclareMember{locus}{SourceLocation} \\
 			\DeclareMember{type}{TypeIndex} \\
 			\DeclareMember{constraint}{ExprIndex} \\
-			\DeclareMember{initializer}{ExprIndex} \\
+			\DeclareMember{initializer}{DefaultArgIndex} \\
 			\DeclareMember{level}{ParameterLevel} \\
 			\DeclareMember{position}{ParameterPosition} \\
 			\DeclareMember{sort}{ParameterSort} \\
@@ -318,6 +318,36 @@ The various notions of parameters (function parameter, type template parameter, 
 		Template,					// Template template parameter
 	};
 \end{typedef}
+
+\paragraph{The \field{sort} field is redundant.}
+Indeed, in a fully and strongly typed representation like the IFC (where every single expression has a type), the
+\field{sort} field of a \valueTag{DeclSort::Parameter} structure is redundant because it is a piece of
+ information that can simply be recovered as follows:
+\begin{itemize}
+	\item A \code{Template} template-parameter (or argument) has a \sortref{Forall}{TypeSort} type.
+	\item A \code{Type} template-parameter (or argument) has a \sortref{Typename}{TypeBasis} type,
+	 or a refinement thereof.
+	 \item In function and lambda paremeter contexts, only \code{Object} can appear.  Otherwise, in template
+	 parameter context, \code{NonType} has a reference or an object type.
+\end{itemize}
+
+\subsubsection{Values for default argument}
+\label{sec:ifc-parameter-default-initializer}
+
+The value for a possible default argument for a parameter (whether function parameter or a template parameter)
+is indicated by an expression (\sortref{NamedDecl}{ExprSort}) that references the declaration for a default
+argument (\sortref{DefaultArgument}{DeclSort}).  An abstract reference to that specific expression
+pattern is of type \type{DefaultArgIndex} defined as
+%
+\begin{typedef}{DefaultArgIndex}{}
+	enum class DefaultArgIndex : uint32_t { };
+\end{typedef}
+%
+
+Valid values of this abstract reference starts at $1$.
+The value of that abstract reference (when not null) minus $1$ is an index into the 
+\sortref{NamedDecl}{ExprSort} partition.\ that references the default argument declaration.
+
 
 \subsection{\valueTag{DeclSort::Field}} 
 \label{sec:ifc:DeclSort:Field}
