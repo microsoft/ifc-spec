@@ -1363,9 +1363,26 @@ The meaning of the fields is as follows
 \subsection{\valueTag{ExprSort::SubobjectValue}}
 \label{sec:ifc:ExprSort:SubobjectValue}
 
+An \type{ExprIndex} abstract reference with tag \valueTag{ExprSort::SubobjectValue} designates 
+an expression that is value of a subobject (of class type) of a complete object.
+The \field{index} field of that abstract reference is an index into the subobject value partition.
+Each entry in that partition is a structure with the following layout
+%
+\begin{figure][H]
+	\centering
+	\structure{
+		\DeclareMember{value}{ExprIndex} \\
+	}
+\end{figure}
+%
+with the following meanings:
+\begin{itemize}
+	\item \field{value} refers to the value of the subobject of type of this subobject
+\end{itemize}
+
 \partition{expr.class-subobject-value}
 
-\note{This structure is scheduled for removal in future releases}
+\note{This structure is scheduled for removal in future releases as the indirection is unnecessary}
 
 
 \subsection{\valueTag{ExprSort::ArrayValue}}
