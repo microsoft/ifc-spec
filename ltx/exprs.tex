@@ -1368,11 +1368,13 @@ an expression that is value of a subobject (of class type) of a complete object.
 The \field{index} field of that abstract reference is an index into the subobject value partition.
 Each entry in that partition is a structure with the following layout
 %
-\begin{figure][H]
+\begin{figure}[H]
 	\centering
 	\structure{
 		\DeclareMember{value}{ExprIndex} \\
 	}
+	\caption{Structure of a subobject value structure}
+	\label{fig:ifc:ExprSort:SubobjectValue}
 \end{figure}
 %
 with the following meanings:
