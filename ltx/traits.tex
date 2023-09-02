@@ -17,7 +17,8 @@ template (\secref{sec:ifc-specialization-trait}), etc.
 \end{figure}
 %
 where the \field{decl} field is an abstract reference designating the entity, and the \field{trait} designates the property associated with the entity.
-The entries in a trait table are stored by increasing values of the \field{decl} field.
+The entries in a trait table are stored by increasing values of the \field{decl} field.  There is at most one entry for a given \field{decl} per trait
+table.  Note however that some \field{trait} may be tuples of sort \type{T} when there are conceptually multiple traits associated with a \field{decl}.
 
 \section{Deprecation texts}
 \label{sec:ifc-deprecated-trait}
