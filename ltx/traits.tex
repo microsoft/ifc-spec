@@ -264,3 +264,59 @@ This information should be made standard in the normal IFC representation.
 \partition{.msvc.trait.header-unit-source-file}
 
 \note{This trait is scheduled for removal in future releases of MSVC.}
+
+\subsection{Source file hash}
+\label{sec:ifc-msvc-source-file-hash-trait}
+
+The MSVC toolset associates a source file name with a hash computed from the input source code contained in 
+the designated source file, using a designated secure algorithm hash. 
+The associated type \type{T} is a structure with the following  layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{bytes}{\arrayType{32}{u8}} \\
+		\DeclareMember{algorithm}{MsvcHashAlgorithm} \\
+		\DeclareMember{unused}{\arrayType{3}{u8}} \\
+	}
+	\caption{Structure of an MSVC hash data for a source file}
+	\label{fig:ifc-msvc-hash-file-data-structure}
+\end{figure}
+%
+with the following meanings for the fields:
+\begin{itemize}
+	\item \field{bytes} is a $32$-byte array containing the hash value computed.  The actual number of bytes
+		used to represent the hash value is dependent on the hash function.
+	\item \field{algorithm} designates the hash algorithm used to compute the hash value.
+	\item \field{padding} designates a $3$-byte padding of unused space.
+\end{itemize}
+
+\partition{.msvc.trait.file-hash}
+
+\note{This trait is scheduled for removal in future releases of MSVC.}
+
+\subsubsection{MSVC hash algorithm}
+
+The set of hash algorithms used by the MSVC toolset are denotated by enumerated values defined 
+by the type 
+%
+\begin{typedef}{MsvcHashAlgorithm}{}
+	enum class MsvcHashAlgorithm : uint8_t {
+		None = 0x00,
+		MD5 = 0x01,
+		SHA128 = 0x02,
+		SHA256 = 0x03,
+	};
+\end{typedef}
+%
+with the following meanings:
+\begin{itemize}
+	\item \valueTag{MsvcHashAlgorithm::None} indicates no hash function.
+	\item \valueTag{MsvcHashAlgorithm::MD5} indicates the \textbf{MD5} hash algorithm.  
+	The has value is stored in the first $16$ slots of the \field{bytes} array.
+	\item \valueTag{MsvcHashAlgorithm::SH128} indicates the \textbf{SHA-128} hash algorithm.
+	The has value is stored in the first $20$ slots of the \field{bytes} array.
+	\item \valueTag{MsvcHashAlgorithm::SH256} indicates the \textbf{SHA-256} hash algorithm 
+	The has value is stored in the entire $32$ slots of the \field{bytes} array.
+\end{itemize}
+
