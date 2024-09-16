@@ -1880,6 +1880,9 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{Materialize}
 	\enumerator{PseudoDtorCall}
 	\enumerator{LookupGlobally}
+	\enumerator{Artificial}
+	\enumerator{MetaDescriptor}
+	\enumerator{Suffix}
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
@@ -1999,6 +2002,10 @@ Source-level postfix ``\code{--}'' operator.
 \ifcSortSection{Materialize}{MonadicOperator} C++ abstract machine class temporary materialization operator.
 \ifcSortSection{PseudoDtorCall}{MonadicOperator} Pseudo-destructor call operator.
 \ifcSortSection{LookupGlobally}{MonadicOperator} Any operator in the immediate operand expression, at source-level, is to be looked-up in the global scope.  For example, in \code{::new T(a, b)}, the corresponding storage allocation function \code{operator new} is to be looked up in the global scope.
+\ifcSortSection{Artificial}{MonadicOperator} A notional operator indicating that the operand is implicitly generated and does not appear lexically in the input source code.
+\ifcSortSection{MetaDescriptor}{MonadicOperator}  A notional operator indicating that the operand (a \sortref{NamedDecl}{ExprSort}) 
+   designates the RTTI object (the runtime type descriptor) for a type \type{T}.  The type of the runtime type descriptor object is \type{T}.
+\ifcSortSection{Suffix}{MonadicOperator} Indicator of a literal operator applied (as suffix) to a string literal (\sortref{String}{ExprSort}).
 
 \ifcSortSection{Msvc}{MonadicOperator} This is a marker, not an actual operator. Monadic operators with 
 value greater that this are MSVC extensions.
