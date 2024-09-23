@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Note: Needed in order to generate a tag on the associated commit.
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4

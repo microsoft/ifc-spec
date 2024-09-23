@@ -9,6 +9,8 @@ on:
 jobs:
   build_draft_pdf:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Note: Needed in order to generate a tag on the associated commit.
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4
@@ -33,7 +35,6 @@ jobs:
       - name: Create prerelease
         uses: ncipollo/release-action@v1
         with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
           allowUpdates: true
           name: Prerelease
           prerelease: true
