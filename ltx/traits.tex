@@ -320,3 +320,19 @@ with the following meanings:
 	The has value is stored in the entire $32$ slots of the \field{bytes} array.
 \end{itemize}
 
+
+\subsection{Debug Record Stream}
+\label{sec:ifc-msvc-debug-record-stream-trait}
+
+The MSVC toolset emits a debug record stream into the IFC in order to support lightweight debug record emission once
+a decl from this IFC is materialized as part of the reading process.  The debug stream itself is a MSVC-specific format.
+
+\partition{.msvc.trait.debug-records}
+
+
+\subsection{Debug Record on Declarations}
+\label{sec:ifc-msvc-debug-record-trait}
+
+The MSVC compiler associates a specific \type{DeclIndex} with an individual debug record recorded in \secref{sec:ifc-msvc-debug-record-stream-trait}.
+
+\partition{.msvc.trait.debug-record}
