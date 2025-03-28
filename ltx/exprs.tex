@@ -1244,7 +1244,7 @@ with \newtype{Associativity}{8}
 \partition{expr.unary-fold}
 
 
-\subsection{\valueTag{ExprSort::BinaryFoid}}
+\subsection{\valueTag{ExprSort::BinaryFold}}
 \label{sec:ifc:ExprSort:BinaryFold}
 
 \begin{figure}[H]
@@ -2231,6 +2231,7 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{ZeroInitialize}
 	\enumerator{ClearStorage}
 	\enumerator{Select}
+	\enumerator{Address}
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
@@ -2476,6 +2477,13 @@ See also \sortref{ZeroInitialize}{DyadicOperator}.
 \ifcSortSection{Select}{DyadicOperator}
 Use of the source-level scope resolution operator ``\code{::}''.
 The first operand designates the scope, and the second operand designates the member to select.
+
+\ifcSortSection{Address}{DyadicOperator}
+Semantic resolution of a pointer to a non-static member of a class.  The first operand designates the class-type scope, 
+and the second operand designates the member of the class.
+\note{While the source-level construct ``\code{&S::m}'' is generally represented as a \sortref{Address}{MonadicOperator} of
+	a \sortref{Select}{DyadicOperator} syntactic tree (especially in template code), this specific operator is used only 
+	when the scope is known to be a class-type and the member is known to be a non-static data member or a non-static member function.}
 
 \ifcSortSection{Msvc}{DyadicOperator}
 This is a marker, not an actual operator. Dyadic operators with 
