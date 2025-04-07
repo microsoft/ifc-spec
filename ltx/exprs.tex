@@ -938,13 +938,14 @@ field represents the source location of the closing delimiter.
 The \field{delimiter} field is of type
 \begin{typedef}{DelimiterSort}{}
 	enum class DelimiterSort : uint8_t {
-		Unknown = 0,
+		None = 0,
 		Brace = 1,
 		Parenthesis = 2,
 	};
 \end{typedef}
 and denotes the sort of delimiter:
 \begin{itemize}
+	\item \valueTag{DelimiterSort::None} for no delimiter
 	\item \valueTag{DelimiterSort::Brace} for matching brace delimiters
 	\item \valueTag{DelimiterSort::Parenthesis} for matching parenthesis delimiters
 \end{itemize}
