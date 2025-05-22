@@ -863,7 +863,7 @@ The \field{elements} field denotes the sequence of expressions enclosed in the b
 \label{sec:ifc:ExprSort:Cast}
 
 An \type{ExprIndex} value with tag \valueTag{ExprSort::Cast} designates a conversion operation.
-The conversion may be explicit (in the input source code) and implicit (as required by semantics analysis).
+The conversion may be explicit (in the input source code), or implicit (as required by semantic analysis).
 The \field{index} field of this abstract reference  is a position into the partition of cast expressions.
 Each entry in that partition is a structure with the following layout
 %
@@ -882,7 +882,9 @@ Each entry in that partition is a structure with the following layout
 %
 The \field{source} field denotes the operand expression, whereas the \field{target} field denotes
 the type to convert that expression to.  The \field{operator} designates the sort of conversion operation
-to perform.
+to perform, which is conceptually a dyadic operator (\secref{sec:ifc:OperatorSort:Dyadic}).  This representation
+is to be used for all conversion or coercion operations as it does not necessitate 
+an additional indirection for obtaining the target type.
 
 \partition{expr.cast}
 
@@ -1884,6 +1886,8 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{Artificial}
 	\enumerator{MetaDescriptor}
 	\enumerator{Suffix}
+	\enumerator{DecayArray}
+	\enumerator{DecayFunction}
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
@@ -2007,6 +2011,11 @@ Source-level postfix ``\code{--}'' operator.
 \ifcSortSection{MetaDescriptor}{MonadicOperator}  A notional operator indicating that the operand (a \sortref{NamedDecl}{ExprSort}) 
    designates the RTTI object (the runtime type descriptor) for a type \type{T}.  The type of the runtime type descriptor object is \type{T}.
 \ifcSortSection{Suffix}{MonadicOperator} Indicator of a literal operator applied (as suffix) to a string literal (\sortref{String}{ExprSort}).
+\ifcSortSection{DecayArray}{MonadicOperator} The abstract machine operation of converting an expression of type "array of $N$ \code{T}" 
+or "array of unknown bound of \code{T}" to a prvalue of type "pointer to \code{T}".
+\ifcSortSection{DecayFunction}{MonadicOperator} The abstract machine operation of converting an lvalue of function type \code{T} to a prvalue of
+type "pointer to \code{T}".
+
 
 \ifcSortSection{Msvc}{MonadicOperator} This is a marker, not an actual operator. Monadic operators with 
 value greater that this are MSVC extensions.
@@ -2412,18 +2421,22 @@ Abstract machine operation evaluating the first operand, then running the second
 \ifcSortSection{Qualification}{DyadicOperator}
 Abstract machine operation corresponding to implicit cv-qualification of the type of the expression, 
 e.g. as in from ``\code{T}'' to ``\code{const T}''.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{Promote}{DyadicOperator}
 Abstract machine operation corresponding to integral or floating point promotion at the source level.
-See also \sortref{Demote}{DyadicOperator}.
+See also \sortref{Demote}{DyadicOperator}. This operator may be referenced by a \sortref{Cast}{ExprSort}
+structure.
 
 \ifcSortSection{Demote}{DyadicOperator}
 Abstract machine operation corresponding to the inverse of an integral or floating point promotion at the source level.
-See also \sortref{Promote}{DyadicOperator}.
+See also \sortref{Promote}{DyadicOperator}. This operator may be referenced by a \sortref{Cast}{ExprSort}
+structure.
 
 \ifcSortSection{Coerce}{DyadicOperator}
 Abstract machine operation corresponding to an implicit conversion at the source level that is neither 
 a promotion (\sortref{Promote}{DyadicOperator}) nor a demotion (\sortref{Demote}{DyadicOperator}).
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{Rewrite}{DyadicOperator}
 Abstract machine operation where the semantics of the first operand (source-level construct) is defined by that of the second operand.
@@ -2433,35 +2446,45 @@ Abstract machine operation proclaiming a valid object of given type (second oper
 Note that this operation is not a placement-new operator (which would entail running a constructor).
 
 \ifcSortSection{Cast}{DyadicOperator}
-A C-style cast operation, e.g. ``\code{T)x}''
+A C-style cast operation, e.g. ``\code{(T)x}''
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{ExplicitConversion}{DyadicOperator}
-A functional cast notation, e.g. ``\code{T(x)}''.
+A functional cast notation, e.g. ``\code{T(x)}'' at the source level.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{ReinterpretCast}{DyadicOperator}
 Source level operator ``\code{reinterpret\_cast}''.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{StaticCast}{DyadicOperator}
 Source level operator ``\code{static\_cast}''.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
+
 
 \ifcSortSection{ConstCast}{DyadicOperator}
 Source level operator ``\code{const\_cast}''.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{DynamicCast}{DyadicOperator}
 Source level operator ``\code{dynamic\_cast}''.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{Narrow}{DyadicOperator}
 Abstract machine operation corresponding to the runtime-checked conversion of a pointer of type ``\code{B*}'' 
 (or reference of type ``\code{B\&}'') to a pointer of type ``\code{D*}'' (or reference of type ``\code{D\&}'')
 where the class ``\code{D}'' is a derived class of ``\code{B}''.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{Widen}{DyadicOperator}
 Abstract machine operation corresponding to the implicit conversion of a pointer of type ``\code{D*}'' (or 
 reference of type ``\code{D\&}'') to a pointer of type ``\code{B*}'' (or a reference of type ``\code{B&}''),
 where the class ``\code{D}'' is a derived class of ``\code{B}''.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{Pretend}{DyadicOperator}
-Abstract machine operation generalizing \code{bitcat} and \code{rinterpret\_cast}.
+Abstract machine operation generalizing \code{bitcat} and \code{reinterpret\_cast}.
+This operator may be referenced by a \sortref{Cast}{ExprSort} structure.
 
 \ifcSortSection{Closure}{DyadicOperator}
 Abstract machine operation pairing a function pointer (the second operand) and an environment of captured variables (the first operand) 
