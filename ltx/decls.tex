@@ -913,7 +913,9 @@ Certain function-specific cumulative properties are expressed as values of the b
 		Deleted		= 1 << 8,
 		Constrained   = 1 << 9,
 		Immediate = 1 << 10,
-		ExplicitObjectParameter = 1 << 11,
+		Final = 1 << 11,
+		Override = 1 << 12,
+		ExplicitObjectParameter = 1 << 13,
 		Vendor			= 1 << 15,
 	};
 \end{typedef}
@@ -925,11 +927,13 @@ with the following meaning
 	\item \code{FunctionTraits::Constexpr}: the function is declared \code{constexpr}
 	\item \code{FunctionTraits::Explicit}: the function is declared \code{explicit}
 	\item \code{FunctionTraits::Virtual}: the function is declared \code{virtual}
-	\item \code{FunctionTraits::NoReturn}: the function is declared \code{[[noreturn]]} or \code{\_\_declspec(noreturn)}
+	\item \code{FunctionTraits::NoReturn}: the function is declared \code{[[noreturn]]} or \code{\_\_declspec(noreturn)}.  Note: this trait will be removed in future releases in favor of attributes.
 	\item \code{FunctionTraits::PureVirtual}: the function is pure virtual, e.g. with \code{ = 0}
-	\item \code{FunctionTraits::HiddenFriend}: the function is a hidden friend
+	\item \code{FunctionTraits::HiddenFriend}: the function is a hidden friend.  Note: this trait will be removed in future releases.
     \item \code{FunctionTraits::Constrained} : the function has requires-constraints
     \item \code{FunctionTraits::Immediate}: the function is a \code{consteval}, or an immediate function. 
+	\item \code{FunctionTraits::Final}: the function is declared as `final`.
+	\item \code{FunctionTraits::Override}: the function is declared as `override`.
 	\item \code{FunctionTraits::ExplicitObjectParameter}: the member-function has an explicit object parameter (the first parameter).
     \item \code{FunctionTraits::Vendor}: the function has vendor-defined traits stored in the
 	 MSVC vendor-specific traits (\secref{sec:ifc-msvc-vendor-specific-trait}).
