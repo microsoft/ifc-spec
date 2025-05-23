@@ -913,6 +913,7 @@ Certain function-specific cumulative properties are expressed as values of the b
 		Deleted		= 1 << 8,
 		Constrained   = 1 << 9,
 		Immediate = 1 << 10,
+		ExplicitObjectParameter = 1 << 11,
 		Vendor			= 1 << 15,
 	};
 \end{typedef}
@@ -927,9 +928,10 @@ with the following meaning
 	\item \code{FunctionTraits::NoReturn}: the function is declared \code{[[noreturn]]} or \code{\_\_declspec(noreturn)}
 	\item \code{FunctionTraits::PureVirtual}: the function is pure virtual, e.g. with \code{ = 0}
 	\item \code{FunctionTraits::HiddenFriend}: the function is a hidden friend
-     \item \code{FunctionTraits::Constrained} : the function has requires-constraints
-     \item \code{FunctionTraits::Immediate}: the function is a \code{consteval}, or an immediate function. 
-     \item \code{FunctionTraits::Vendor}: the function has vendor-defined traits stored in the
+    \item \code{FunctionTraits::Constrained} : the function has requires-constraints
+    \item \code{FunctionTraits::Immediate}: the function is a \code{consteval}, or an immediate function. 
+	\item \code{FunctionTraits::ExplicitObjectParameter}: the member-function has an explicit object parameter (the first parameter).
+    \item \code{FunctionTraits::Vendor}: the function has vendor-defined traits stored in the
 	 MSVC vendor-specific traits (\secref{sec:ifc-msvc-vendor-specific-trait}).
 \end{description}
 
