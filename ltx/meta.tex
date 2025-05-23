@@ -1,0 +1,14 @@
+\label{sec:ifc-meta}
+
+An IFC file may include partitions containing descriptions about the tools producing that file or other metadescription of the file.
+
+
+\section{Producing Tool}
+\label{sec:ifc-tool-maker}
+
+A tool producing an IFC may embed a partition identifying that tool along with other information about that tool. 
+That partition is called the \emph{tool maker} partition.
+Each entry in that partition is a \type{TextOffset} representing a NUL-terminated UTF-8 encoded string (see \secref{sec:ifc-textoffset-data-type}).  
+The partition has as many entries as the tool deems necessary for identification purposes.
+
+\partition{meta.tool-maker}
