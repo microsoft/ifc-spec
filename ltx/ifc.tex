@@ -35,13 +35,13 @@
 %% Turn off indentation of paragraph
 \setlength{\parindent}{0pt}
 
-\setcounter{secnumdepth}{3}
-%\addtocounter{secnumdepth}{1}
+%\setcounter{secnumdepth}{3}
+\setsecnumdepth{subsubsection}
 
 
 \title{
   IFC Binary Format\\
-    Version: Draft
+    Version: Draft (0.44)
 }
 
 \author{Gabriel Dos~Reis \\ Microsoft}
@@ -63,7 +63,7 @@ It is intended as a portable, structured, complete semantics representation of C
 \end{abstract}
 
 \frontmatter
-\copyright 2021 Microsoft. 
+\copyright \the\year{} Microsoft. 
 
 This material is licensed under Creative Commons Attribution 4.0 International.
 \clearpage
@@ -126,7 +126,7 @@ This material is licensed under Creative Commons Attribution 4.0 International.
 \chapter{Traits}
 \input{traits}
 
-\chapter{Preprocessing Forms}
+\chapter{Preprocessing}
 \input{forms}
 
 \chapter{Words}
