@@ -1999,9 +1999,34 @@ Source-level postfix ``\code{--}'' operator.
 \ifcSortSection{Await}{MonadicOperator} Source-level ``\code{co_await}'' operator.
 \ifcSortSection{Yield}{MonadicOperator} Source-level ``\code{co_yield}'' operator.
 \ifcSortSection{Throw}{MonadicOperator} Source-level ``\code{throw}'' operator.
-\ifcSortSection{New}{MonadicOperator} Source-level ``\code{new}'' operator.
-\ifcSortSection{Delete}{MonadicOperator} Source-level ``\code{delete}'' operator.
-\ifcSortSection{DeleteArray}{MonadicOperator} Source-level ``\code{delete[]}'' operator.
+
+\ifcSortSection{New}{MonadicOperator} 
+Source-level ``\code{new}'' operator.
+
+When used as the value of the \field{assoc} field of a \sortref{Monad}{ExprSort} structure, 
+that structure reprsents a \grammar{new-expression} of the form \code{new T}, 
+and the \field{argument} of that structure is an abstract reference designating the type \code{T}.
+
+\note{See also \sortref{LookupGlobally}{MonadicOperator} for the representation of a \grammar{new-expression} of the form \code{::new T}}
+
+\ifcSortSection{Delete}{MonadicOperator}
+Source-level ``\code{delete}'' operator.
+
+When used as the value of the \field{assoc} field of a \sortref{Monad}{ExprSort} structure, 
+that structure reprsents a \grammar{delete-expression} of the form \code{delete p}, 
+and the \field{argument} of that structure is an abstract reference designating the expression \code{p}.
+
+\note{See also \sortref{LookupGlobally}{MonadicOperator} for the representation of a \grammar{delete-expression} of the form \code{::delete p}}
+
+\ifcSortSection{DeleteArray}{MonadicOperator}
+Source-level ``\code{delete[]}'' operator.
+
+When used as the value of the \field{assoc} field of a \sortref{Monad}{ExprSort} structure, 
+that structure reprsents a \grammar{delete-expression} of the form \code{delete[] p}, 
+and the \field{argument} of that structure is an abstract reference designating the expression \code{p}.
+
+\note{See also \sortref{LookupGlobally}{MonadicOperator} for the representation of a \grammar{delete-expression} of the form \code{::delete[] p}}
+
 \ifcSortSection{Expand}{MonadicOperator} Source-level pack-expansion operator.
 \ifcSortSection{Read}{MonadicOperator} C++ abstract machine lvalue-to-rvalue conversion operator.
 \ifcSortSection{Materialize}{MonadicOperator} C++ abstract machine class temporary materialization operator.
@@ -2397,15 +2422,40 @@ Abstract machine operation applying a callable to an argument list (conceptually
 Source level binary operator ``\code{[]}'' as in ``\code{x[y]}''.
 
 \ifcSortSection{DefaultAt}{DyadicOperator}
-Abstraction machine operation corresponding to default construction of an object at a given address, e.g. ``\code{new(p) T}''.
+Abstraction machine operation corresponding to default construction of an object at a given address.
+
+When used as the value of the \field{assoc} field of a \sortref{Dyadic}{ExprSort} structure, 
+that structure reprsents a placement \grammar{new-expression} of the form \code{new(p) T}, 
+and the \field{argument[0]} of that structure is an abstract reference designating the expression \code{p} 
+(which can be an \grammar{expression-list}) and the \field{argument[1]} is an abstract reference designating the type \code{T}.
+
+\note{See also \sortref{LookupGlobally}{MonadicOperator} for the representation 
+of a placement \grammar{new-expression} of the form \code{::new(p) T}}
 
 \ifcSortSection{New}{DyadicOperator}
 Abstract machine operation corresponding to allocating appropriate storage and constructing an object of a given type 
-and with a given initializer, e.g. ``\code{new T(x)}''.
+and with a given initializer.
+
+When used as the value of the \field{assoc} field of a \sortref{Dyadic}{ExprSort} structure, 
+that structure reprsents a \grammar{new-expression} of the form \code{new T(x)} or \code{new T{x}}, 
+and the \field{argument[0]} of that structure is an abstract reference designating the type \code{T} 
+and the \field{argument[1]} is an abstract reference designating the initializer (which can be an \grammar{expression-list}).
+
+\note{See also \sortref{LookupGlobally}{MonadicOperator} for the representation 
+of a \grammar{new-expression} with the global scope resolution operator (\code{::}) as prefix} 
 
 \ifcSortSection{NewArray}{DyadicOperator}
-Abstract machine operation corresponding to allocating appropriate storage and default constructing an array of a given element type and length, 
-e.g. ``\code{new T[n]}''. 
+Abstract machine operation corresponding to allocating appropriate storage and default constructing an array of a given element type and length. 
+
+When used as the value of the \field{assoc} field of a \sortref{Dyadic}{ExprSort} structure, 
+that structure reprsents a \grammar{new-expression} of the form \code{new T[n]}, 
+and the \field{argument[0]} of that structure is an abstract reference designating the type \code{T} 
+and the \field{argument[1]} is an abstract reference designating the length \code{n}.
+
+\note{See also \sortref{LookupGlobally}{MonadicOperator} for the representation 
+of a \grammar{new-expression} with the global scope resolution operator (\code{::}) as prefix} 
+
+
 
 \ifcSortSection{Destruct}{DyadicOperator}
 Abstract machine operation corresponding to the explicit call of a destructor for an object, e.g. ``\code{x.~T()}''.
@@ -2628,12 +2678,19 @@ An invalid triadic operator.  This value should never be generated.
 Source-level ternary ``\code{?:}'' operator.
 
 \ifcSortSection{ConstructAt}{TriadicOperator}
-Source-level representation of ``\code{new(p) T(x)}'', where
+
+When used as the value for the \field{assoc} field of a \sortref{Triad}{ExprSort} structure, that structure
+represents a placement \grammar{new-expression} of the form ``\code{new(p) T(x)}'' or ``\code{new(p) T{x}}'' 
+ where
 \begin{itemize}
-	\item the first operand is the placement \code{p}
-	\item the second operand is the constructed type \code{T}
-	\item the third operand is the initializing value \code{x}
+	\item the first operand is the placement expression, which can be an \grammar{expression-list} 
+	\item the second operand designates the constructed type
+	\item the third operand is the initializer
 \end{itemize}
+
+\note{See also \sortref{LookupGlobally}{MonadicOperator} for the representation 
+of a \grammar{new-expression} with the global scope resolution operator (\code{::}) as prefix} 
+
 
 \ifcSortSection{Initialize}{TriadicOperator}
 
@@ -2681,16 +2738,16 @@ value of the \field{index} is to be interpreted as a value of type
 An invalid triadic operator.  This value should never be generated.
 
 \ifcSortSection{AllocateSingle}{StorageOperator}
-Source-level ``\code{new}'' operator.
+Source-level ``\code{operator new}'' \grammar{operator-function-id}.
 
 \ifcSortSection{AllocateArray}{StorageOperator}
-Source-level ``\code{new[]}'' operator.
+Source-level ``\code{operator new[]}'' \grammar{operator-function-id}.
 
 \ifcSortSection{DeallocateSingle}{StorageOperator}
-Source-level ``\code{delete}'' operator.
+Source-level ``\code{operator delete}'' \grammar{operator-function-id}.
 
 \ifcSortSection{DeallocateArray}{StorageOperator}
-Source-level ``\code{delete[]}'' operator.
+Source-level ``\code{operator delete[]}'' \grammar{operator-function-id}.
 
 \ifcSortSection{Msvc}{StorageOperator}
 This is a marker, not an actual operator. Triadic operators with 
