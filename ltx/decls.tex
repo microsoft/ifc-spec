@@ -172,6 +172,52 @@ Parameter nesting level starts from 1.  The nesting level is given by a value of
 
 A parameter at a given level can be identified by its position in its enclosing parameter list.  The  position of a template parameter is given by a value of type \type{ParameterPosition}, defined as \newtype{ParameterPosition}{32}
 
+\subsection{Exception Specification}
+\label{sec:ifc:exception-specification}
+
+The semantics of a \grammar{noexcept-specifier} are currently 
+captured by the type \type{NoexceptSpecification} with the following
+structural layout
+%
+\begin{figure}[H]
+	\centering
+	\structure[text width = 15em]{
+		\DeclareMember{expr}{ExprIndex} \\
+		\DeclareMember{sort}{NoexceptSort} \\
+	}
+	\caption{Structure of a \code{noexcept}-specification}
+	\label{fig:ifc-noexcept-specification-structure}
+\end{figure}
+%
+The \field{expr} field, when not null, denotes the operand to the \code{noexcept} operator
+used in a \grammar{noexcept-specifier} if present in the declaration of a function.
+This field is meaningful only for templated functions for which the \grammar{noexcept-specifier} is a dependent expression.
+The \field{sort} field describes the computed semantics, if not dependent.
+It has type
+\begin{typedef}{NoexceptSort}{}
+	enum class NoexceptSort : uint8_t {
+		None,
+		False,
+		True,
+		Expression,
+		Inferred,
+		Unenforced,
+	};
+\end{typedef}
+with the following meaning
+\begin{itemize}
+	\item \valueTag{NoexceptSort::None}:  No specification is lexically present in the input source
+	\item \valueTag{NoexceptSort::False}: The syntax \code{noexcept(false)} was explicitly used, or the determination has similar semantic effect
+	\item \valueTag{NoexceptSort::True}: The syntax \code{noexcept(true)} was explicitly used, or the determination has similar semantic effect.
+	\item \valueTag{NoexceptSort::Expression}: The syntax \code{noexcept(expr)} was explicitly used, and no determination could be made because the expression is dependent.
+	\item \valueTag{NoexceptSort::Inferred}: The \code{noexcept} specification (for a special member) is inferred and dependent on that of the associated functions
+		the special member invokes from base class subobjects or non-static data members. 
+	\item \valueTag{NoexceptSort::Unenforced}: This is the specification for the static type system, but with no runtime termination enforcement
+\end{itemize}
+
+\note{In version 0.43 and prior of the IFC, the \field{expr} field of a 
+	\type{NoexceptSpecification} structure was previously named \field{words} and was of type \type{SentenceIndex}}
+
 \section{Declaration structures}
 \label{sec:ifc:decl-structures}
 
@@ -1015,43 +1061,6 @@ The meaning of the fields is as follows:
 \partition{decl.constructor}
 
 \note{The \field{name} field is subject of further design modification}
-
-The structure \type{NoexceptSpecification} has the following layout
-%
-\begin{figure}[H]
-	\centering
-	\structure[text width = 15em]{
-		\DeclareMember{words}{SentenceIndex} \\
-		\DeclareMember{sort}{NoexceptSort} \\
-	}
-	\caption{Structure of a \code{noexcept}-specification}
-	\label{fig:ifc-noexcept-specification-structure}
-\end{figure}
-%
-The \field{words} field denotes the sentence making up the syntax of the noexcept-specification.
-This field is meaningful only for templated functions for which the noexcept-specification is a dependent expression.
-The \field{sort} field describes the computed semantics, if not dependent.
-It has type
-\begin{typedef}{NoexceptSort}{}
-	enum class NoexceptSort : uint8_t {
-		None,
-		False,
-		True,
-		Expression,
-		Inferred,
-		Unenforced,
-	};
-\end{typedef}
-with the following meaning
-\begin{itemize}
-	\item \valueTag{NoexceptSort::None}:  No specification is lexically present in the input source
-	\item \valueTag{NoexceptSort::False}: The syntax \code{noexcept(false)} was explicitly used, or the determination has similar semantic effect
-	\item \valueTag{NoexceptSort::True}: The syntax \code{noexcept(true)} was explicitly used, or the determination has similar semantic effect.
-	\item \valueTag{NoexceptSort::Expression}: The syntax \code{noexcept(expr)} was explicitly used, and no determination could be made because the expression is dependent.
-	\item \valueTag{NoexceptSort::Inferred}: The \code{noexcept} specification (for a special member) is inferred and dependent on that of the associated functions
-		the special member invokes from base class subobjects or non-static data members. 
-	\item \valueTag{NoexceptSort::Unenforced}: This is the specification for the static type system, but with no runtime termination enforcement
-\end{itemize}
 
 \subsection{\valueTag{DeclSort::InheritedConstructor}}
 \label{sec:ifc:DeclSort:InheritedConstructor}
