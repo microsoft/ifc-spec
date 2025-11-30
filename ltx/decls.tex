@@ -33,7 +33,7 @@ declaration.  Like all abstract references, it is a 32-bit value
 	\enumerator{Destructor}
 	\enumerator{Reference}
 	\enumerator{UsingDeclaration}
-	\enumerator{Unused0}
+	\enumerator{Prolongation}
 	\enumerator{Friend}
 	\enumerator{Expansion}
 	\enumerator{DeductionGuide}
@@ -1221,11 +1221,124 @@ The \field{hidden} field indicates whether the member is hidden.
 \note{This representation is subject to change.  Future revision will represents this as the result of executing a \grammar{using-declaration} (\sortref{DeclUse}{DirSort}) directive.}
 
 
-\subsection{\valueTag{DeclSort::Unused0}}
-\label{sec:ifc:DeclSort:Unused0}
+\subsection{\valueTag{DeclSort::Prolongation}}
+\label{sec:ifc:DeclSort:Prolongation}
 
-\diffNote{This tag was previously named \valueTag{DeclSort::UsingDirective} but had no defined structure and was never emitted. 
-	For \grammar{using-directive}, see \sortref{Using}{DirSort}.}
+A \type{DeclIndex} abstract reference with tag \valueTag{DeclSort::Prolongation} designates an out-of-home-scope 
+definition for an entity previously declared in its home scope.  The \field{index} of that abstract reference
+is an index into the prolongation declaration partition.  Each entry in that partition is a structure with the 
+following layout
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{NamedIndex} \\
+		\DeclareMember{locus}{SourceLocation} \\
+		\DeclareMember{enclosing\_scope}{DeclIndex} \\
+		\DeclareMember{home\_scope}{DeclIndex} \\
+		\DeclareMember{original\_decl}{DeclIndex} \\
+	}
+	\caption{Structure of a prolongation}
+	\label{fig:DeclSort:Prolongation}
+\end{figure}
+%
+with the following semantics:
+\begin{itemize}
+	\item The \field{name} field designates the \grammar{unqualified-id} name of the prolongation
+	\item The \field{locus} field designates the source location of the prolongation
+	\item The \field{enclosing\_scope} field is the \type{DeclIndex} for the lexical enclosing scope of the prolongation
+	\item The \field{home\_scope} field designates the home scope of the original declaration
+	\item The \field{original\_decl} field designates the original declaration being prolonged by this prolongation
+\end{itemize}
+
+\partition{decl.prolongation}
+
+\subsubsection{Prolongations, by examples}
+\label{ifc:DeclSort:Prolongation-by-examples}
+
+Below are various examples of prolongations.  The term \textit{proclamation} is used to
+mean a parameterized prolongation.
+
+\paragraph{Prolongation of a class template}
+A member declared in a class template can be defined outside out the enclosing class scope definition.
+For instance, in
+\begin{lstlisting}
+template<typename S>
+struct X {
+   void f();           // #6
+};
+
+template<typename S>
+void X<S>::f() { }     // #7
+\end{lstlisting}
+
+the definition on line \#7 proclaims a prolongation of \code{X<S>} for \code{X<S>::f} given any
+type \code{S}.  That is called a prolongation proclamation, \ie{} a prescription of prolongations
+for all instantiations of the class template \code{X} for a member code{f}.
+
+\paragraph{Prolongation for a member template}
+A member template of a class (that is not a template) defined outside of the enclosing class definition
+yields a prolongation.  For example, in
+\begin{lstlisting}
+struct A {
+	template<typename T> T f(T);    // #8
+};
+
+template<typename T>                // #9
+T A::f(T t) { return t; }
+\end{lstlisting}
+
+the definition at line \#9 is a prolongation of the class \code{A} for the member template \code{f}
+delcared at line \#8.
+
+When a member template of a class template is defined outside of the enclosing class template definition, the
+out-of-class template definition is a prolongation of that class template for that member template.
+For example, the program fragments
+\begin{lstlisting}
+template<typename U>
+struct X {
+	template<typename V>         // #10
+	struct Y;
+	template<typename T>         // #11
+	int cmp(Y<T>);
+};
+
+template<typename U>             // #12
+template<typename V>
+struct X<U>::Y { };
+
+template<typename S>             // #13
+template<typename T>
+int X<S>::cmp(Y<T>) { return 1; }
+\end{lstlisting}
+
+contains the following parameterized prolongations (proclamations):
+\begin{itemize}
+	\item the definition at line \#12 is a prolongation proclamation (with parameters \code{<typename U>})
+		of the class template \code{X} for the member class template \code{X<U>:Y}
+	\item the deifnition  at line \#13 is a prolongation proclamation (with parameters \code{<typename S>})
+		of the class template \code{X} for the non-static member function template \code{X<S>::cmp}
+\end{itemize} 
+
+\paragraph{Prolongation of an implicit instantiation}
+A program can provide (through explicit specialization) a definition for a member of an implicit instantiation of a class template.
+For example, in
+\begin{lstlisting}
+template<typename T>
+struct Z {
+	T f(T t) { return t + 1; }     // #14
+};
+
+// explicit specialization for Z<int>::f
+template<>                         // #15
+int Z<int>::f(int t) { return t * t; }
+\end{lstlisting}
+
+although the definition of the class \code{Z<int>} is generated from the primary template \code{Z},
+the definition of the member function \code{Z<int>::f} is not generated is not implicitly generated
+from that of \code{Z<int>::f} at line \#14.  Rather, that definition is given by the explicit specialization
+at line \#15.  In short, the definition at line \#15 is a prolongation of \code{Z<int>} for the
+non-defining declaration implicitly generated from the templated declaration at line \#14.
 
 \subsection{\valueTag{DeclSort::Friend}}
 \label{sec:ifc:DeclSort:Friend}
