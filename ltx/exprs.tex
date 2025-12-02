@@ -2272,6 +2272,8 @@ value of the \field{index} is to be interpreted as a value of type
 	\enumerator{ClearStorage}
 	\enumerator{Select}
 	\enumerator{Address}
+	\enumerator{BindTemporaryToReference}
+	\enumerator{ConvertTemporaryToReference}
 
 	\setcounter{enumi}{1023}
 	\enumerator{Msvc}
@@ -2563,6 +2565,15 @@ and the second operand designates the member of the class.
 \note{While the source-level construct ``\code{&S::m}'' is generally represented as a \sortref{Address}{MonadicOperator} of
 	a \sortref{Select}{DyadicOperator} syntactic tree (especially in template code), this specific operator is used only 
 	when the scope is known to be a class-type and the member is known to be a non-static data member or a non-static member function.}
+
+\ifcSortSection{BindTemporaryToReference}{DyadicOperator}
+A meta-operator the operands of which are type expressions.  Let's $U$ and $V$ be the types designated by the first and second operands, respectively.
+The value of this predicate on $U$ and $V$ is the same as that of \code{std::reference_constructs_from_temporary_v<}$U$\code{, }$V$\code{>}.
+
+\ifcSortSection{ConvertTemporaryToReference}{DyadicOperator}
+A meta-operator the operands of which are type expressions.  Let's $U$ and $V$ be the types designated by the first and second operands, respectively.
+The value of this predicate on $U$ and $V$ is the same as that of \code{std::reference_convert_from_temporary_v<}$U$\code{, }$V$\code{>}.
+
 
 \ifcSortSection{Msvc}{DyadicOperator}
 This is a marker, not an actual operator. Dyadic operators with 
