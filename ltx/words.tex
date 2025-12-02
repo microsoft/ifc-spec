@@ -687,6 +687,8 @@ Values of type \type{SourceKeyword} are classified in two groups.
 	\enumerator{Volatile}
 	\enumerator{WcharT}
 	\enumerator{While}
+	\enumerator{BindTemporaryToReference}
+	\enumerator{ConvertTemporaryToReference}
 \end{Enumeration}
 and those with values greater than $0x1FFF$
 \begin{Enumeration}{SourceKeyword}\setcounter{enumi}{8190}
@@ -890,6 +892,8 @@ to that keyword.
 \ifcdoc{Volatile}{SourceKeyword} A reserved word for ``\code{volatile}''.
 \ifcdoc{WcharT}{SourceKeyword} A reserved word for ``\code{wchar_t}''.
 \ifcdoc{While}{SourceKeyword} A reserved word for ``\code{while}''.
+\ifdoc{BindTemporaryToReference} A reserved word for ``\code{__reference_constructs_from_temporary}''.
+\ifcdoc{ConvertTemporaryToReference} A reserved word for ``\code{__reference_converts_from_temporary}''.
 
 
 \ifcdoc{Msvc}{SourceKeyword}  No reserved word of this value shall be produced.  All MSVC-specific
