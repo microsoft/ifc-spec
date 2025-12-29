@@ -11,4 +11,34 @@ That partition is called the \emph{tool maker} partition.
 Each entry in that partition is a \type{TextOffset} representing a NUL-terminated UTF-8 encoded string (see \secref{sec:ifc-textoffset-data-type}).  
 The partition has as many entries as the tool deems necessary for identification purposes.
 
-\partition{meta.tool-maker}
+\partition{meta.tool.maker}
+
+\section{Tool Invocation}
+\label{sec:ifc-tool-invocation}
+
+A tool producing an IFC file may embed a partition describing the sequence of invocations of tools leading to the creating of that file.
+That partition is called the \emph{tool invocation} partition.  Each entry in that partition is
+a structure of the layout
+%
+\begin{figure}[H]
+    \centering
+    \structure{
+        \DeclareMember{cmd}{TextOffset} \\
+        \DeclareMember{args}{Sequence TextOffset} \\
+    }
+    \caption{Structure of a tool invocation}
+    \label{fig:ifc-tool-invocation}
+\end{figure}
+%
+with the following meaning:
+\begin{itemize}
+    \item The \field{cmd} field describes the name of the invoked command
+    \item The \field{args} field describes the sequence (\secref{sec:ifc-sequence}) of arguments to the 
+    invoked command.  It is a slice of the string heap (\secref{sec:ifc-string-heap}), meaning that the field \field{args.start}
+    designates an entry into the \emph{string heap} and \field{args.cardinality} designates how many 
+    \type{TextOffset} values there are in that sequence.  Each element of that sequence designates a NUL-terminated UTF-8 string.
+\end{itemize}
+
+
+\partition{meta.tool.invocation}
+
