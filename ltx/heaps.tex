@@ -76,3 +76,9 @@ The chart heap is a partition consisting entirely of \type{ChartIndex} values.
 The attribute heap is a partition consisting entirely of \type{AttrIndex} values.
 
 \partition{heap.attr}
+
+\subsection{String heap}
+\label{sec:ifc-string-heap}
+
+The string heap is a partition consisting entirely of \type{TextOffset} values.  Each entry in that
+heap designates a NUL-terminated UTF-8 encoded string (\secref{sec:ifc-textoffset-data-type}).
