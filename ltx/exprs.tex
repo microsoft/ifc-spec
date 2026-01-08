@@ -2444,12 +2444,15 @@ Abstract machine operation corresponding to allocating appropriate storage and c
 and with a given initializer.
 
 When used as the value of the \field{assoc} field of a \sortref{Dyadic}{ExprSort} structure, 
-that structure reprsents a \grammar{new-expression} of the form \code{new T(x)} or \code{new T{x}}, 
+that structure reprsents a \grammar{new-expression} of the form \code{new T(x)} or \code{new T\{x\}}, 
 and the \field{argument[0]} of that structure is an abstract reference designating the type \code{T} 
-and the \field{argument[1]} is an abstract reference designating the initializer (which can be an \grammar{expression-list}).
+and the \field{argument[1]} is an abstract reference designating the initializer 
+(which can be an \grammar{expression-list}).  None of these operands shall be null, even if the generate case
+of the second operand being null can represent an expression of the form \code{new T} 
+(see \sortref{New}{MonadicOperator}).
 
 \note{See also \sortref{LookupGlobally}{MonadicOperator} for the representation 
-of a \grammar{new-expression} with the global scope resolution operator (\code{::}) as prefix} 
+of a \grammar{new-expression} with the global scope resolution operator (\code{::}) as prefix}.
 
 \ifcSortSection{NewArray}{DyadicOperator}
 Abstract machine operation corresponding to allocating appropriate storage and default constructing an array of a given element type and length. 
