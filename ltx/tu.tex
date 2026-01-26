@@ -16,6 +16,7 @@ of type \type{UnitIndex}.
 	\enumerator{Partition}
 	\enumerator{Header}
 	\enumerator{ExportedTU}
+	\enumerator{Archive}
 \end{SortEnum}
 
 with meaning as explained in the sections below.  The \field{index} value has a tag-dependent interpretation as defined below.
@@ -67,3 +68,18 @@ switch \texttt{/module:name}.
 
 \note{An IFC unit of this sort is deprecated and scheduled for removal from MSVC.}
 
+\subsection{\valueTag{UnitSort::Archive}}
+\label{sec:ifc:UnitSort:Archive}
+
+A \type{UnitIndex} value with this tag designates an IFC file that is a conglomerate of other non-archive IFC files.
+Each partition (\secref{sec:ifc-partition}) listed in the table of contents (\secref{sec:ifc-toc}) has the
+following additional interpretation:
+\begin{itemize}
+	\item \field{name}: name of the IFC file described by that partition
+	\item \field{offset}: distance, from the beginning of the archive IFC, to the content of the descrived IFC file
+	\item \field{cardinality}: number of IFC files described by this partition; should always be $1$
+	\item \field{entry\_size}: size (number of bytes) of the described IFC file
+\end{itemize}
+
+An archive IFC file is useful as a ``packaging'' container for smaller IFC files, not unlike object file archives 
+(\eg{} \code{.a} files).
