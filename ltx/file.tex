@@ -344,6 +344,44 @@ following layout
 So, the byte count of a partition is obtained by multiplying the individual
 \field{entry\_size} by the \field{cardinality}.
 
+\subsection{Archive member}
+\label{sec:ifc-archive-member}
+
+When an IFC is an archive (\secref{sec:ifc:UnitSort:Archive}), its table of contents does not
+hold partition summaries (secref{sec:ifc-partition}).  Instead, each entry is an \type{ArchiveMember}
+record describing  one member IFC embedded in the archive, with the following layout:
+%
+\begin{figure}[H]
+	\centering
+	\structure{
+		\DeclareMember{name}{UnitIndex} \\
+		\DeclareMember{path}{TextOffset} \\
+		\DeclareMember{offset}{ByteOffset} \\
+		\DeclareMember{size}{EntitySize} \\
+	}
+	\caption{Archive member descriptor}
+	\label{fig:ifc-archive-member}
+\end{figure}
+%
+\begin{description}
+\item[name] The member's sort and canonical name, encoded as a \type{UnitIndex}
+	(\secref{sec:ifc-tu}): its \field{tag} is the \type{UnitSort} of the IFC member itself,
+	and its \field{index} is an index (interpreted as \type{TextOffset}) into the archive's
+	string table (\secref{sec:ifc-string-table}) naming the member.
+
+\item[path] An index into the archive's string table point to a NUL-terminated pathname of the 
+	file the IFC member was taken from, using \code{/} as the directory separator.
+
+\item[offset] Location (file offset in bytes) of the member's content relative to the beginning of the archive IFC.
+
+\item[size]  The size, in bytes, of the archive member's IFC content.
+\end{description}
+
+Unlike a partition summary, an \type{ArchiveMember} has no \field{cardinality} field: it always describes 
+exactly one member.  The number of \type{AchiveMember} entries is given by the \field{partition\_count} field
+of the header (\secref{sec:ifc-file-header}).  The identity, the ordering, and well-formedness rules for 
+archive members are given with the archive translation-unit sort (\secref{sec:ifc:UnitSort:Archive}).
+
 \section{Elaboration vs. syntax tree}
 \label{sec:ifc-elaboration-vs-syntax-tree}
 

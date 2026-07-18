@@ -53,7 +53,10 @@ the colon character (\texttt{:}), and the relative name \texttt{P} of the partit
 \subsection{\valueTag{UnitSort::Header}}
 \label{sec:ifc:UnitSort:Header}
 
-A \type{UnitIndex} value with this tag designates a C++ header unit.  The \field{index} value is undefined and has no meaning.
+A \type{UnitIndex} value with this tag designates a C++ header unit.  
+The \field{index} value is to be interpreted as a \type{TextOffset} value (\secref{sec:ifc-textoffset-data-type})
+into the string table (\secref{sec:ifc:string-table}); the string at that offset is the name of the
+header unit, \ie{} the \grammar{header-name} as specified when IFC for the header unit was built.
 
 
 \subsection{\valueTag{UnitSort::ExportedTU}}
@@ -71,15 +74,35 @@ switch \texttt{/module:name}.
 \subsection{\valueTag{UnitSort::Archive}}
 \label{sec:ifc:UnitSort:Archive}
 
-A \type{UnitIndex} value with this tag designates an IFC file that is a conglomerate of other non-archive IFC files.
-Each partition (\secref{sec:ifc-partition}) listed in the table of contents (\secref{sec:ifc-toc}) has the
-following additional interpretation:
+A \type{UnitIndex} value with this tag designates an IFC file that is an \emph{archive}: a conglomerate that packages
+a set of other, non-archive, IFC files.  An archive is useful as a ``packaging'' container for smaller IFC files, not unlike
+object file archives (\eg{} \code{.a} files).
+
+The \field{index} is to be interpreted  as a \type{TextOffset} value (\secref{sec:ifc-textoffset-data-type}) into the
+archive's string table (\secref{sec:ifc-string-table}).  When non-null, the string at that offset is a name for the archive
+as a whole; the null offset (value $0$) means the archive is unnamed.
+
+Each packaged IFC file is a \emph{member} of the archive.  A member is identified by its
+\emph{sort} (its own \type{UnitSort}) together with is \emph{canonical name}, the name
+recorded in the member's own \field{unit} descriptor (\secref{sec:ifc-tu}) -- \eg{} the module name of a primary
+module interface (\valueTag{UnitSort::Primary}) or module partition (\valueTag{UnitSort::Partition}), or the
+header-name of a header unit (\valueTag{UnitSort::Header}).  Members of different sorts may therefore share
+a canonical name, \eg{} a named module and a header unit both named \code{M}.  A member's content
+is the complete IFC image (file signature, header, partitions, string table, and table of contents), stored verbatim.
+
+A well-formed archive IFC satisfies the following constraints:
 \begin{itemize}
-	\item \field{name}: name of the IFC file described by that partition
-	\item \field{offset}: distance, from the beginning of the archive IFC, to the content of the descrived IFC file
-	\item \field{cardinality}: number of IFC files described by this partition; should always be $1$
-	\item \field{entry\_size}: size (number of bytes) of the described IFC file
+\item Every member has a canonical name; an IFC whose \field{unit} descriptor names no unit 
+	(\eg{} \valueTag{UnitSort::Source} with no name) cannot be a member.
+\item  No two members share the same sort and the same canonical name.
+\item The \type{ArchiveMember} records (\secref{sec:ifc-archive-member}) are sorted by canonical name,
+	with the member's sort distinguishing members that share a name, so the table of contents can be 
+	binary searched by name.
+\item Members are non-archive IFCs: an archive cannot contain another archive (\ie{} no \type{ArchiveMember} has a member whose
+	\field{tag} is also \valueTag{UnitSort::Archive}).
 \end{itemize}
 
-An archive IFC file is useful as a ``packaging'' container for smaller IFC files, not unlike object file archives 
-(\eg{} \code{.a} files).
+In all other respects an archive IFC is an ordinary IFC file: it begins with the file signature (\secref{sec:ifc-file-signature});
+its header (\secref{sec:ifc-file-header}) is covered by the content hash (\secref{sec:ifc-content-sha256-hash}) as usual; and the
+header, string table, and table of contents are stored in little-endian (\secref{sec:ifc-endianness}).  
+Each begins at a 4-byte boundary.
