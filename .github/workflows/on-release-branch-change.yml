@@ -13,7 +13,7 @@ jobs:
       contents: write # Note: Needed in order to generate a tag on the associated commit.
     steps:
       - name: Set up Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
 
@@ -25,7 +25,7 @@ jobs:
         run: echo "RELEASE_NAME=$(echo ${GITHUB_REF#refs/heads/release/})" >> $GITHUB_ENV
 
       - name: Compile document
-        uses: xu-cheng/latex-action@v2
+        uses: xu-cheng/latex-action@8c9adec310ed05afa3650bd2727d1e71ca1dfd0d # 2.8.2
         with:
           root_file: ifc.tex
           working_directory: ltx
@@ -37,7 +37,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
 
       - name: Update release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           allowUpdates: true
