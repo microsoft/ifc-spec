@@ -13,7 +13,7 @@ jobs:
       contents: write # Note: Needed in order to generate a tag on the associated commit.
     steps:
       - name: Set up Git repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -21,7 +21,7 @@ jobs:
         run: git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/main
 
       - name: Compile document
-        uses: xu-cheng/latex-action@8c9adec310ed05afa3650bd2727d1e71ca1dfd0d # 2.8.2
+        uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # 4.1.0
         with:
           root_file: ifc.tex
           working_directory: ltx
